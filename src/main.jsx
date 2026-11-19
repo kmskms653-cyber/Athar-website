@@ -1,4 +1,4 @@
-rt React, { useState } from 'react';
+import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ArrowUpLeft, Menu, X, Instagram, Mail, Sparkles, PenTool, Camera, Layers, ArrowLeft } from 'lucide-react';
 import './style.css';
