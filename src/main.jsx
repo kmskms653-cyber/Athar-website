@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ArrowUpLeft, Menu, X, Instagram, Mail, Sparkles, PenTool, Camera, Layers, ArrowLeft } from 'lucide-react';
+import { ArrowUpLeft, Menu, X, Mail, Sparkles, PenTool, Camera, Layers, ArrowLeft } from 'lucide-react';
 import './style.css';
-
+const Instagram = ({ size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+  </svg>
+);
 const services = [
   { icon: <Sparkles />, title: 'الهوية البصرية', desc: 'نبني هويات متكاملة تعبّر عن شخصية مشروعك وتمنحه حضوراً لا يُنسى.' },
   { icon: <Camera />, title: 'صناعة المحتوى', desc: 'نحوّل الأفكار والمنتجات إلى محتوى بصري يحكي قصتك بوضوح.' },
