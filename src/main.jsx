@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ArrowUpLeft, Menu, X, Instagram, Mail, Sparkles, PenTool, Camera, Layers, ArrowLeft } from 'lucide-react';
+import { ArrowUpLeft, Menu, X, Mail, Sparkles, PenTool, Camera, Layers, ArrowLeft } from 'lucide-react';
 import './style.css';
 
 const services = [
@@ -65,7 +65,7 @@ function App() {
 
       <section className="contact section" id="contact">
         <div className="section-head"><div><div className="section-tag">04 — لنبدأ معاً</div><h2>لديك فكرة؟<br/><em>لنصنع أثرها.</em></h2></div><p>أخبرنا عن مشروعك، وسنعود إليك لمناقشة الخطوة التالية.</p></div>
-        <div className="contact-grid"><div className="contact-aside"><p>نحب الأفكار التي تحمل معنى، والمشاريع التي تطمح إلى ترك بصمتها.</p><a href="mailto:hello@athar.studio"><Mail size={17}/> hello@athar.studio</a><span><Instagram size={17}/> @athar.studio</span></div>
+        <div className="contact-grid"><div className="contact-aside"><p>نحب الأفكار التي تحمل معنى، والمشاريع التي تطمح إلى ترك بصمتها.</p><a href="mailto:hello@athar.studio"><Mail size={17}/> hello@athar.studio</a><span><<Camera size={17}/> @athar.studio</span></div>
           <form onSubmit={submit} className="contact-form"><label>الاسم<input required value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="اسمك الكريم"/></label><label>البريد الإلكتروني<input required type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="name@example.com"/></label><label>الخدمة المطلوبة<select value={form.service} onChange={e=>setForm({...form,service:e.target.value})}><option value="">اختر الخدمة</option><option>الهوية البصرية</option><option>صناعة المحتوى</option><option>التصميم الرقمي</option><option>أخرى</option></select></label><label>حدثنا عن فكرتك<textarea rows="3" value={form.message} onChange={e=>setForm({...form,message:e.target.value})} placeholder="اكتب تفاصيل مشروعك هنا..."/></label><button className="btn gold" type="submit">إرسال الطلب <ArrowLeft size={17}/></button>{sent&&<p className="form-msg">تم تجهيز طلبك في هذه الصفحة. يلزم ربط النموذج بخدمة استقبال الطلبات ليتم إرساله فعلياً.</p>}</form>
         </div>
       </section>
