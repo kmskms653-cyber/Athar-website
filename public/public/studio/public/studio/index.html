@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1C1A19">
+<meta name="description" content="استوديو قوالب أثر لتصميم منشورات وإعلانات عربية بهوية أنيقة.">
+<title>استوديو القوالب — ATHAR | أثر</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@400;500;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{--bg:#F5F2EB;--card:#FBF9F4;--ink:#1C1A19;--mut:#5C544B;--line:#C5A880}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1C1A19;--card:#26231F;--ink:#F5F2EB;--mut:#BDB3A5}}
+:root[data-theme="dark"]{--bg:#1C1A19;--card:#26231F;--ink:#F5F2EB;--mut:#BDB3A5}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Tajawal,'Segoe UI',sans-serif;line-height:1.7}
+.w{max-width:760px;margin:0 auto;padding:18px 16px 50px}
+h1{font-family:'Aref Ruqaa',serif;font-size:34px;margin:6px 0}
+.mut{color:var(--mut);font-size:14px;margin:0 0 14px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px}
+.chips button{flex:none;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:8px 14px;border-radius:20px;font:inherit;font-size:14px}
+.chips button.on{background:var(--ink);color:var(--bg)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--line);outline-offset:2px}
+button:disabled{opacity:.65;cursor:wait}
+.status{min-height:24px;margin:8px 0 0;color:var(--mut);font-size:13px}
+#stage{position:relative;width:100%;overflow:hidden;margin:12px 0;border:1px solid var(--line);direction:ltr}
+#wrap{position:absolute;top:0;left:0;transform-origin:top left;width:1080px}
+.ctl{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ctl label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mut)}
+.ctl .f{grid-column:1/-1}
+.ctl input,.ctl textarea,.ctl select{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;padding:10px;font:inherit}
+.dl{margin-top:14px;width:100%;background:var(--ink);color:var(--bg);border:0;padding:14px;border-radius:6px;font:inherit;font-size:16px}
+#card{width:1080px;position:relative;overflow:hidden;background:var(--cbg);color:var(--cink);font-family:Tajawal,sans-serif;direction:rtl}
+#card.sq{height:1080px}#card.pt{height:1350px}
+.pk{--cbg:#C8B8A6;--cink:#1C1A19;--cacc:#6B4F2A}.iv{--cbg:#F5F2EB;--cink:#1C1A19;--cacc:#A8844F}.ch{--cbg:#1C1A19;--cink:#F5F2EB;--cacc:#C5A880}
+.h{font-family:'Aref Ruqaa',serif;font-weight:700;font-size:96px;line-height:1.3}
+.s{font-size:38px;line-height:1.8;white-space:pre-line}.c{font-size:30px;letter-spacing:1px}
+.b{position:absolute;bottom:46px;left:56px;right:56px;text-align:center;font-size:26px;opacity:.85;letter-spacing:2px;display:flex;align-items:center;justify-content:center;gap:14px}.b img{max-width:100px;max-height:64px;object-fit:contain}
+.t{position:absolute;inset:0;padding:90px 80px 130px;display:flex;flex-direction:column;gap:30px}
+.im{background-size:cover;background-position:center;border-radius:24px}
+.ph{border:3px dashed var(--cacc);color:var(--cacc);display:flex;align-items:center;justify-content:center;font-size:34px;border-radius:24px;text-align:center}
+#ov{position:fixed;inset:0;background:#000d;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;z-index:9;color:#fff;text-align:center}
+#ov img{max-width:100%;max-height:70vh}#ov button{padding:10px 24px;border-radius:6px;border:0;font:inherit}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>استوديو القوالب</h1>
+<p class="mut">ثمانية قوالب جاهزة بهوية أثر: اختر قالباً، عدّل النص وأضف صورة منتجك، ثم نزّل الصورة.</p>
+<div class="chips" id="chips" aria-label="اختيار قالب التصميم"></div>
+<div id="stage" aria-label="معاينة التصميم"><div id="wrap"><div id="card"></div></div></div>
+<div class="ctl">
+<label class="f">العنوان<input id="h"></label>
+<label class="f">النص (كل سطر يظهر منفصلاً في قالب المميزات)<textarea id="s" rows="3"></textarea></label>
+<label>زر / اسم<input id="c"></label>
+<label>اسم علامتك<input id="brand" value="ATHAR | أثر"></label>
+<label>المقاس<select id="ratio"><option value="sq">مربع 1080×1080</option><option value="pt">طولي 1080×1350</option></select></label>
+<label>الألوان<select id="pal"><option value="ch">فحمي</option><option value="iv">عاجي</option><option value="pk">كرافت</option></select></label>
+<label class="f">صورة المنتج (لبقية القوالب)<input id="file" type="file" accept="image/png,image/jpeg,image/webp"></label>
+<label>صورة «قبل» (لقالب قبل وبعد)<input id="beforeFile" type="file" accept="image/png,image/jpeg,image/webp"></label>
+<label>صورة «بعد» (لقالب قبل وبعد)<input id="afterFile" type="file" accept="image/png,image/jpeg,image/webp"></label>
+<label class="f">شعارك (اختياري — يظهر تلقائياً أسفل التصميم)<input id="logoFile" type="file" accept="image/png,image/jpeg,image/webp"></label>
+</div>
+<div class="ctl" style="margin-top:12px">
+<label class="f">التصاميم المحفوظة<select id="savedDesigns"><option value="">اختر تصميماً محفوظاً</option></select></label>
+<button type="button" class="dl" id="saveDesign" style="margin-top:0">حفظ التصميم الحالي</button>
+<button type="button" class="dl" id="deleteDesign" style="margin-top:0;background:#7b3028">حذف التصميم المحدد</button>
+<button type="button" class="dl" id="savePreset" style="margin-top:0">حفظ إعدادات هذا القالب</button>
+<label class="f">الإعدادات المحفوظة<select id="savedPresets"><option value="">اختر إعدادات محفوظة</option></select></label>
+<button type="button" class="dl" id="deletePreset" style="margin-top:0;background:#7b3028">حذف الإعدادات المحددة</button>
+</div>
+<button class="dl" id="dl">تنزيل الصورة PNG</button>
+<p class="mut" id="alt" style="display:none;margin-top:10px">لم يبدأ التنزيل؟ <a href="#" id="show">اعرض الصورة لتحفظها بالضغط المطوّل</a></p>
+<p class="status" id="status" role="status" aria-live="polite"></p>
+</div>
+<div id="ov"><img id="ovi" alt=""><span>اضغط مطولاً على الصورة لحفظها</span><button id="ovc">إغلاق</button></div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=x=>String(x).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+const names=['التباين الأنيق','الإطار الفاخر','قبل وبعد','اقتباس ملهم','بطاقة المميزات','الإرث الثقافي','عرض خاطف','شهادة عميل'];
+const D=[['فخامة تبدأ من التفاصيل','منتجك يستحق حضوراً يليق به','اطلب الآن'],['اختيارك الأرقى','تصميم يعكس هويتك','تسوّق الآن'],['الفرق يُرى من النظرة الأولى','','قبل|بعد'],['الأثر الجميل لا يحتاج إلى ضجيج','يكفي أن يكون صادقاً','تابعنا'],['لماذا تختارنا؟','جودة عالية\nتصميم أنيق\nتوصيل سريع','اطلب الآن'],['أصالة تعكس الجذور','هوية تجمع بين دفء التراث والابتكار','اكتشف المزيد'],['خصم 20%','على أول طلب لك','اطلب الآن'],['تجربة تستحق التكرار','جودة وذوق رفيع، وسأعود حتماً.','اسم العميل']];
+let t=0,img=null,beforeImg=null,afterImg=null,logoImg=null;
+const pic=(st,source=img,label='ضع صورة منتجك هنا')=>source
+ ? `<div class="im" style="${st};background-image:url('${source}')"></div>`
+ : `<div class="ph" style="${st}">${label}</div>`;
+const T=[
+(h,s,c)=>`<div class="t" style="align-items:center;text-align:center"><div class="h">${h}</div>${pic('flex:1;width:100%')}<div class="s">${s}</div></div>`,
+(h,s,c)=>`<div style="position:absolute;inset:36px;border:3px solid var(--cacc)"></div><div class="t" style="align-items:center;text-align:center;padding:110px 110px 150px">${pic('flex:1;width:100%')}<div class="h" style="font-size:80px">${h}</div><div class="c" style="color:var(--cacc)">${c}</div></div>`,
+(h,s,c)=>{const [a,b]=c.split('|');return `<div class="t"><div class="h" style="text-align:center;font-size:84px">${h}</div><div style="flex:1;display:flex;gap:24px;min-height:0">${pic('flex:1;min-width:0',beforeImg,'أضف صورة «قبل»')}${pic('flex:1;min-width:0',afterImg,'أضف صورة «بعد»')}</div><div class="c" style="display:flex;justify-content:space-around"><span>${a||'قبل'}</span><span style="color:var(--cacc)">${b||'بعد'}</span></div></div>`},
+(h,s,c)=>`<div class="t" style="justify-content:center;align-items:center;text-align:center"><div style="font-family:'Aref Ruqaa';font-size:260px;line-height:.6;color:var(--cacc)">“</div><div class="h" style="font-size:88px">${h}</div><div class="s" style="opacity:.8">${s}</div><div class="c" style="color:var(--cacc)">${c}</div></div>`,
+(h,s,c)=>`<div class="t"><div class="h">${h}</div>${pic('height:34%')}<div class="s" style="white-space:normal">${s.split('\n').map(x=>`<div style="display:flex;gap:20px;align-items:center"><i style="width:22px;height:22px;border-radius:50%;background:var(--cacc);flex:none"></i>${x}</div>`).join('')}</div></div>`,
+(h,s,c)=>`${pic('position:absolute;inset:0;border-radius:0')}<div style="position:absolute;inset:0;background:linear-gradient(transparent 30%,#000c)"></div><div class="t" style="justify-content:flex-end;color:#F5F2EB"><div class="h">${h}</div><div class="s">${s}</div></div>`,
+(h,s,c)=>`<div class="t" style="align-items:center;text-align:center;justify-content:center"><div class="c" style="border:3px solid var(--cacc);color:var(--cacc);padding:10px 34px;border-radius:50px">عرض لفترة محدودة</div><div class="h" style="font-size:150px">${h}</div><div class="s">${s}</div><div style="background:var(--cacc);color:var(--cbg);padding:20px 60px;border-radius:60px;font-size:40px;font-weight:700">${c}</div></div>`,
+(h,s,c)=>`<div class="t" style="justify-content:center"><div style="background:#F5F2EB;color:#1C1A19;border-radius:30px;padding:80px 70px;box-shadow:0 20px 60px #0004"><div style="color:#C5A880;font-size:50px;letter-spacing:6px">★★★★★</div><div class="h" style="font-size:72px;margin:20px 0">${h}</div><div class="s">${s}</div><div class="c" style="margin-top:30px;font-weight:700">— ${c}</div></div></div>`];
+function fit(){const st=$('stage'),k=Math.min(1,st.clientWidth/1080),h=$('card').offsetHeight;$('wrap').style.transform='scale('+k+')';st.style.height=h*k+'px'}
+function draw(){const c=$('card');c.className=$('ratio').value+' '+$('pal').value;
+ const v=id=>esc($(id).value);let x=T[t](v('h'),v('s'),$('c').value.includes('|')?esc($('c').value):v('c'));
+ c.innerHTML=x+'<div class="b">'+(logoImg?'<img src="'+logoImg+'" alt="الشعار">':'')+'<span>'+v('brand')+'</span></div>';fit()}
+function load(i){t=i;const d=D[i];$('h').value=d[0];$('s').value=d[1];$('c').value=d[2];
+ document.querySelectorAll('#chips button').forEach((b,j)=>b.classList.toggle('on',j===i));draw()}
+names.forEach((n,i)=>{const b=document.createElement('button');b.textContent=(i+1)+'. '+n;b.onclick=()=>load(i);$('chips').appendChild(b)});
+['h','s','c','brand','ratio','pal'].forEach(id=>$(id).addEventListener('input',draw));
+function readImage(file,done){if(!file)return;if(!file.type||file.size===0){alert('الملف فارغ أو نوعه غير معروف. اختر صورة صالحة.');return;}
+ if(!['image/png','image/jpeg','image/webp'].includes(file.type)){alert('الصيغ المدعومة: PNG وJPG وWebP.');return;}
+ if(file.size>8*1024*1024){alert('حجم الصورة يتجاوز 8 ميغابايت. اختر صورة أصغر.');return;}
+ const reader=new FileReader();reader.onload=()=>{done(reader.result);draw()};reader.onerror=()=>alert('تعذرت قراءة الصورة. جرّب ملفاً آخر.');reader.readAsDataURL(file)}
+$('file').onchange=e=>readImage(e.target.files[0],value=>{img=value});
+$('beforeFile').onchange=e=>readImage(e.target.files[0],value=>{beforeImg=value});
+$('afterFile').onchange=e=>readImage(e.target.files[0],value=>{afterImg=value});
+$('logoFile').onchange=e=>readImage(e.target.files[0],value=>{logoImg=value});
+// حفظ محلي خاص بهذا المتصفح باستخدام IndexedDB لتجنب حدود localStorage مع الصور.
+const DB_NAME='athar-template-studio', DB_VERSION=1;
+function openDB(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains('designs'))db.createObjectStore('designs',{keyPath:'id',autoIncrement:true});if(!db.objectStoreNames.contains('presets'))db.createObjectStore('presets',{keyPath:'id',autoIncrement:true});};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});}
+async function dbAction(store,mode,action){const db=await openDB();return new Promise((resolve,reject)=>{const tx=db.transaction(store,mode),os=tx.objectStore(store);let req;try{req=action(os)}catch(e){reject(e);db.close();return;}tx.oncomplete=()=>{resolve(req&&req.result);db.close()};tx.onerror=()=>{reject(tx.error);db.close()};tx.onabort=()=>{reject(tx.error);db.close()};});}
+function snapshot(){return {template:t,h:$('h').value,s:$('s').value,c:$('c').value,brand:$('brand').value,ratio:$('ratio').value,pal:$('pal').value,img,beforeImg,afterImg,logoImg,updatedAt:new Date().toISOString()};}
+function applySnapshot(d){t=d.template??0;$('h').value=d.h||'';$('s').value=d.s||'';$('c').value=d.c||'';$('brand').value=d.brand||'ATHAR | أثر';$('ratio').value=d.ratio||'sq';$('pal').value=d.pal||'ch';img=d.img||null;beforeImg=d.beforeImg||null;afterImg=d.afterImg||null;logoImg=d.logoImg||null;document.querySelectorAll('#chips button').forEach((b,j)=>b.classList.toggle('on',j===t));draw();}
+async function refreshLists(){try{const designs=await dbAction('designs','readonly',os=>os.getAll()),presets=await dbAction('presets','readonly',os=>os.getAll());$('savedDesigns').innerHTML='<option value="">اختر تصميماً محفوظاً</option>'+designs.map(x=>`<option value="${x.id}">${esc(x.name)} — ${new Date(x.updatedAt).toLocaleDateString('ar')}</option>`).join('');$('savedPresets').innerHTML='<option value="">اختر إعدادات محفوظة</option>'+presets.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join('');}catch(e){console.warn('IndexedDB unavailable',e);$('status').textContent='ميزة الحفظ المحلي غير متاحة في هذا المتصفح أو عند فتح الملف مباشرة. جرّب فتحه عبر استضافة HTTPS أو متصفح حديث.';}}
+$('saveDesign').onclick=async()=>{const name=prompt('اكتب اسماً للتصميم:');if(!name||!name.trim())return;try{await dbAction('designs','readwrite',os=>os.add({...snapshot(),name:name.trim()}));await refreshLists();alert('تم حفظ التصميم على هذا الجهاز.');$('status').textContent='حُفظ التصميم محلياً على هذا الجهاز والمتصفح.';}catch(e){console.error(e);alert('تعذر الحفظ. تحقق من مساحة المتصفح.');}};
+$('savedDesigns').onchange=async e=>{if(!e.target.value)return;try{const d=await dbAction('designs','readonly',os=>os.get(Number(e.target.value)));if(d){applySnapshot(d);$('status').textContent='تم استرجاع التصميم المحفوظ.';}}catch(err){alert('تعذر فتح التصميم المحفوظ.');}};
+$('deleteDesign').onclick=async()=>{const id=$('savedDesigns').value;if(!id){alert('اختر تصميماً لحذفه أولاً.');return;}if(!confirm('هل تريد حذف هذا التصميم المحفوظ نهائياً من هذا الجهاز؟'))return;try{await dbAction('designs','readwrite',os=>os.delete(Number(id)));await refreshLists();alert('تم حذف التصميم.');}catch(e){alert('تعذر حذف التصميم.');}};
+$('savePreset').onclick=async()=>{const name=prompt('اكتب اسماً للقالب المخصص:');if(!name||!name.trim())return;try{const d=snapshot();delete d.img;delete d.beforeImg;delete d.afterImg;delete d.logoImg;await dbAction('presets','readwrite',os=>os.add({...d,name:name.trim()}));await refreshLists();alert('تم حفظ إعدادات القالب على هذا الجهاز.');}catch(e){console.error(e);alert('تعذر حفظ الإعدادات.');}};
+$('savedPresets').onchange=async e=>{if(!e.target.value)return;try{const d=await dbAction('presets','readonly',os=>os.get(Number(e.target.value)));if(d){applySnapshot({...d,img:null,beforeImg:null,afterImg:null,logoImg:null});$('status').textContent='تم تطبيق الإعدادات المحفوظة. أضف الصور من جديد عند الحاجة.';}}catch(err){alert('تعذر فتح الإعدادات المحفوظة.');}};
+$('deletePreset').onclick=async()=>{const id=$('savedPresets').value;if(!id){alert('اختر إعدادات محفوظة لحذفها أولاً.');return;}if(!confirm('هل تريد حذف هذا القالب المخصص نهائياً؟'))return;try{await dbAction('presets','readwrite',os=>os.delete(Number(id)));await refreshLists();alert('تم حذف الإعدادات المحفوظة.');}catch(e){alert('تعذر حذف الإعدادات.');}};
+
+addEventListener('resize',fit);if('ResizeObserver' in window){new ResizeObserver(fit).observe($('stage'));}
+$('show').onclick=e=>{e.preventDefault();if(!window.__last)return;$('ovi').src=window.__last;$('ov').style.display='flex'};
+$('ovc').onclick=()=>{$('ov').style.display='none'};
+$('dl').onclick=async()=>{const b=$('dl');b.disabled=true;b.textContent='جارٍ التجهيز...';
+ try{await document.fonts.ready;
+  if(typeof html2canvas!=='function')throw new Error('html2canvas library is unavailable');
+  const cv=await html2canvas($('card'),{scale:1,useCORS:true,backgroundColor:null,logging:false,allowTaint:false});
+  const blob=await new Promise(r=>cv.toBlob(r,'image/png'));
+  if(!blob)throw new Error('PNG export returned an empty file');
+  const u=URL.createObjectURL(blob);if(window.__last)URL.revokeObjectURL(window.__last);window.__last=u;const a=document.createElement('a');a.href=u;a.download='athar-template-'+(t+1)+'.png';document.body.appendChild(a);a.click();a.remove();$('alt').style.display='block';$('status').textContent='تم تجهيز الصورة بالحجم الكامل 1080px. إذا لم يبدأ التنزيل فاستخدم رابط عرض الصورة.';
+ }catch(e){console.error('Athar export error:',e);$('status').textContent='تعذر تصدير الصورة. تحقق من اتصال الإنترنت لتحميل أداة التصدير، ثم أعد المحاولة.';alert('تعذّر تصدير الصورة. تحقق من اتصال الإنترنت لتحميل أداة التصدير، ثم جرّب متصفحاً حديثاً.')}
+ b.disabled=false;b.textContent='تنزيل الصورة PNG'};
+load(0);refreshLists();document.fonts&&document.fonts.ready.then(fit);
+</script>
+</body>
+</html>
