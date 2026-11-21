@@ -3,7 +3,7 @@ import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyDbkXT2ALoYsD2nqSKZLS7wzR_Oqc8jnv8',
+  apiKey: '',
   authDomain: 'athar-studio-584dd.firebaseapp.com',
   projectId: 'athar-studio-584dd',
   storageBucket: 'athar-studio-584dd.firebasestorage.app',
