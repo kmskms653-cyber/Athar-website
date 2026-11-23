@@ -1,0 +1,178 @@
+import { useEffect, useState } from "react";
+import { signInWithPopup, signOut } from "firebase/auth";
+import { collection, doc, getDoc, onSnapshot, query, where } from "firebase/firestore";
+import { ADMIN_EMAIL, auth, db, googleProvider } from "./firebase";
+import { useAuth } from "./useAuth";
+import { BUNDLES } from "./bundles";
+import { ORDER_STATUS } from "./orders";
+import BankTransfer from "./BankTransfer.jsx";
+import Receipt from "./Receipt.jsx";
+
+// Google يمنع تسجيل الدخول داخل متصفحات التطبيقات (إنستغرام وسناب وتيك توك...)
+const IN_APP = /Instagram|FBAN|FBAV|Snapchat|TikTok|musical_ly|Line\//i.test(typeof navigator !== "undefined" ? navigator.userAgent : "");
+
+function authMessage(err) {
+  switch (err && err.code) {
+    case "auth/unauthorized-domain": return `النطاق ${location.hostname} غير مضاف في Firebase ← Authentication ← Settings ← Authorized domains.`;
+    case "auth/operation-not-allowed": return "مزوّد Google غير مفعّل في Firebase Authentication.";
+    case "auth/popup-blocked": return "المتصفح حجب النافذة المنبثقة، اسمح بها وحاول مجدداً.";
+    case "auth/popup-closed-by-user":
+    case "auth/cancelled-popup-request": return "أُغلقت نافذة تسجيل الدخول قبل الإكمال.";
+    default: return "تعذر تسجيل الدخول، حاول مجدداً.";
+  }
+}
+
+function readIntent() {
+  try { return BUNDLES.find((b) => b.id === sessionStorage.getItem("athar:buy")) || null; } catch { return null; }
+}
+const clearIntent = () => { try { sessionStorage.removeItem("athar:buy"); } catch { /* ignore */ } };
+
+// ملفات الحزمة بعد اكتمال الطلب: files = [{label, url}]
+function Delivery({ order }) {
+  const [state, setState] = useState({ loading: true, files: [], note: "", error: "" });
+  useEffect(() => {
+    let alive = true;
+    getDoc(doc(db, "deliveries", order.bundleId))
+      .then((snap) => {
+        if (!alive) return;
+        const d = snap.exists() ? snap.data() : {};
+        const files = Array.isArray(d.files) && d.files.length ? d.files : d.url ? [{ label: "تحميل / فتح الملفات", url: d.url }] : [];
+        setState({ loading: false, files, note: d.note || "", error: files.length ? "" : "روابط الحزمة لم تُرفع بعد، سنوافيك بها قريباً." });
+      })
+      .catch((e) => { console.error(e); if (alive) setState({ loading: false, files: [], note: "", error: "تعذر جلب الروابط، حاول لاحقاً." }); });
+    return () => { alive = false; };
+  }, [order.bundleId]);
+
+  if (state.loading) return <p className="note">جارٍ تحميل الملفات…</p>;
+  return (
+    <div className="deliv">
+      <div className="files">
+        {state.files.map((f) => <a className="btn" key={f.url} href={f.url} target="_blank" rel="noreferrer">{f.label}</a>)}
+      </div>
+      {state.note && <p className="note">{state.note}</p>}
+      {state.error && <p className="err">{state.error}</p>}
+    </div>
+  );
+}
+
+export default function Account() {
+  const user = useAuth();
+  const [error, setError] = useState("");
+  const [orders, setOrders] = useState([]);
+  const [ordersError, setOrdersError] = useState("");
+  const [intent, setIntent] = useState(readIntent);
+  const [msg, setMsg] = useState({ cls: "ok", text: "" });
+
+  useEffect(() => {
+    if (!user) { setOrders([]); return undefined; }
+    const q = query(collection(db, "orders"), where("uid", "==", user.uid));
+    return onSnapshot(
+      q,
+      (snap) => {
+        setOrdersError("");
+        const list = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        list.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        setOrders(list);
+      },
+      (e) => setOrdersError(e.code === "permission-denied" ? "لا توجد صلاحية: انشر firestore.rules المحدّثة." : "تعذر تحميل الطلبات.")
+    );
+  }, [user]);
+
+  async function login() {
+    setError("");
+    try { await signInWithPopup(auth, googleProvider); } catch (e) { console.error(e); setError(authMessage(e)); }
+  }
+
+  function done(res) {
+    clearIntent(); setIntent(null);
+    if (res.exists) setMsg({ cls: "note", text: "لديك طلب سابق لهذه الحزمة، تجده أدناه." });
+    else if (res.receiptFailed) setMsg({ cls: "err", text: "سُجّل طلبك، لكن تعذر رفع الإيصال. أرسله إلى atharstudio653@gmail.com ليُطابَق مع طلبك." });
+    else setMsg({ cls: "ok", text: "تم استلام إيصالك. سنتحقق من الحوالة وتُفعَّل ملفاتك هنا فور تأكيدها." });
+  }
+
+  function cancelIntent() { clearIntent(); setIntent(null); }
+
+  function resend(order) {
+    const b = BUNDLES.find((x) => x.id === order.bundleId);
+    if (!b) return;
+    try { sessionStorage.setItem("athar:buy", b.id); } catch { /* ignore */ }
+    setIntent(b);
+  }
+
+  if (user === undefined) return <div className="fatal"><p>جارٍ التحميل…</p></div>;
+
+  if (!user) {
+    return (
+      <div className="fatal">
+        <img src="/logo.png" alt="أثر" style={{ height: 72 }} />
+        <h1>حسابي</h1>
+        <p>سجّل الدخول لشراء الحزم الرقمية واستلام ملفاتك.</p>
+        {intent && <p className="note">الحزمة المختارة: {intent.title} — {intent.price} {intent.currency}</p>}
+        {IN_APP && (
+          <p className="err">تسجيل Google لا يعمل داخل متصفح التطبيقات (إنستغرام/سناب/تيك توك). افتح هذا الرابط في Safari أو Chrome ثم سجّل الدخول.
+            {" "}<button type="button" className="cp" onClick={() => navigator.clipboard && navigator.clipboard.writeText(location.href)}>نسخ الرابط</button></p>
+        )}
+        <button className="btn" onClick={login}>الدخول عبر Google</button>
+        {error && <p className="err">{error}</p>}
+        <a className="back" href="#">← العودة للموقع</a>
+      </div>
+    );
+  }
+
+  const isAdmin = user.emailVerified && user.email === ADMIN_EMAIL;
+
+  return (
+    <div className="admin">
+      <header className="admin-bar">
+        <strong>حسابي</strong>
+        <div>
+          {isAdmin && <a className="tab" href="#admin">لوحة الإدارة</a>}
+          <a className="tab" href="#">الموقع</a>
+          <button className="tab" onClick={() => signOut(auth)}>خروج</button>
+        </div>
+      </header>
+
+      <div className="panel">
+        <p className="note">{user.displayName || user.email}</p>
+        {msg.text && <p className={msg.cls}>{msg.text}</p>}
+
+        <h3>مشترياتي</h3>
+        {ordersError && <p className="err">{ordersError}</p>}
+        {!ordersError && orders.length === 0 && <p className="note">لا توجد طلبات بعد. تصفّح <a href="#store" style={{ color: "var(--gold)" }}>المتجر</a>.</p>}
+        {orders.map((o) => (
+          <article className="req" key={o.id}>
+            <header>
+              <strong>{o.title}</strong>
+              <span className={`st st-${o.status}`}>{ORDER_STATUS[o.status] || o.status}</span>
+            </header>
+            <p>{o.price} {o.currency}</p>
+
+            {o.status === "pending_review" && (
+              <div className="amber">
+                <div>
+                  <h4>تم استلام إيصال التحويل — جارٍ التحقق</h4>
+                  <p>سيتم تفعيل أزرار تحميل جميع ملفات الحزمة هنا تلقائياً فور تأكيد وصول الحوالة لحساب urPay.</p>
+                </div>
+                {o.receiptPath && <Receipt path={o.receiptPath} label="عرض الإيصال المرفق" />}
+              </div>
+            )}
+
+            {o.status === "completed" && <Delivery order={o} />}
+
+            {o.status === "rejected" && (
+              <div className="amber bad">
+                <div>
+                  <h4>تعذر اعتماد الحوالة</h4>
+                  <p>لم نتمكن من مطابقة الحوالة. يمكنك إعادة إرسال إيصال صحيح.</p>
+                </div>
+                <button className="btn" onClick={() => resend(o)}>إعادة إرسال الإيصال</button>
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+
+      {intent && <BankTransfer bundle={intent} user={user} onClose={cancelIntent} onDone={done} />}
+    </div>
+  );
+}
