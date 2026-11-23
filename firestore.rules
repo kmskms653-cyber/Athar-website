@@ -1,0 +1,79 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == 'kmskms653@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+
+    // محتوى الموقع: قراءة عامة، وكتابة للمدير فقط
+    match /site/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    function orderKeys() {
+      return ['uid','email','name','bundleId','title','price','currency','paymentMethod','senderName','receiptPath','receiptFileName','status','createdAt'];
+    }
+
+    // طلبات شراء الحزم (تحويل + إيصال): العميل ينشئ طلبه ويقرؤه، والمدير يعتمد
+    match /orders/{orderId} {
+      allow read: if isAdmin()
+        || (request.auth != null && (resource == null || resource.data.uid == request.auth.uid));
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(orderKeys())
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.bundleId in ['starter-bundle','ads-bundle','reels-bundle','athar-complete-bundle']
+        && orderId == request.auth.uid + '_' + request.resource.data.bundleId
+        && request.resource.data.status == 'pending_review'
+        && request.resource.data.currency == 'ر.س'
+        && request.resource.data.price == {'starter-bundle': 129, 'ads-bundle': 189, 'reels-bundle': 229, 'athar-complete-bundle': 379}[request.resource.data.bundleId]
+        && request.resource.data.senderName is string && request.resource.data.senderName.size() <= 100
+        && request.resource.data.receiptPath is string && request.resource.data.receiptPath.size() <= 300
+        && (request.resource.data.receiptPath == ''
+            || request.resource.data.receiptPath.matches('receipts/' + request.auth.uid + '/.*'))
+        && request.resource.data.receiptFileName is string && request.resource.data.receiptFileName.size() <= 200
+        && request.resource.data.createdAt == request.time;
+      // العميل لا يعدّل إلا لإعادة إرسال إيصال بعد الرفض
+      allow update: if isAdmin()
+        || (request.auth != null
+            && resource.data.uid == request.auth.uid
+            && resource.data.status == 'rejected'
+            && request.resource.data.status == 'pending_review'
+            && request.resource.data.uid == request.auth.uid
+            && request.resource.data.bundleId == resource.data.bundleId
+            && request.resource.data.price == resource.data.price
+            && request.resource.data.title == resource.data.title
+            && request.resource.data.currency == resource.data.currency
+            && request.resource.data.keys().hasOnly(orderKeys()));
+      allow delete: if isAdmin();
+    }
+
+    // ملفات التسليم: لا تُقرأ إلا بعد اكتمال الطلب لنفس العميل
+    match /deliveries/{bundleId} {
+      allow read: if isAdmin()
+        || (request.auth != null
+            && exists(/databases/$(database)/documents/orders/$(request.auth.uid + '_' + bundleId))
+            && get(/databases/$(database)/documents/orders/$(request.auth.uid + '_' + bundleId)).data.status == 'completed');
+      allow write: if isAdmin();
+    }
+
+    // الطلبات: أي زائر يستطيع الإرسال (بحقول محددة)، والمدير فقط يقرأ ويعدّل
+    match /requests/{requestId} {
+      allow create: if request.resource.data.keys().hasOnly(['name','contact','service','message','status','createdAt'])
+        && request.resource.data.keys().hasAll(['name','contact','message','status','createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0 && request.resource.data.name.size() <= 100
+        && request.resource.data.contact is string
+        && request.resource.data.contact.size() > 0 && request.resource.data.contact.size() <= 150
+        && request.resource.data.message is string
+        && request.resource.data.message.size() > 0 && request.resource.data.message.size() <= 2000
+        && (!('service' in request.resource.data) || (request.resource.data.service is string && request.resource.data.service.size() <= 100))
+        && request.resource.data.status == 'new'
+        && request.resource.data.createdAt == request.time;
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}
