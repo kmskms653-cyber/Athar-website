@@ -1,21 +1,32 @@
 
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // التحقق من المدير
+    // التحقق من حساب المدير
     function isAdmin() {
       return request.auth != null
         && request.auth.token.email == 'kmskms653@gmail.com'
         && request.auth.token.email_verified == true;
     }
 
-    // تحديد أسعار الباقات المعتمدة
+    // التحقق من سعر الباقة
     function bundlePrice(bundleId) {
       return bundleId == 'starter-bundle' ? 129 :
         bundleId == 'ads-bundle' ? 189 :
         bundleId == 'reels-bundle' ? 229 :
-        bundleId == 'athar-complete-bundle' ? 379 : -1;
+        bundleId == 'athar-complete-bundle' ? 379 : 0;
+    }
+
+    // التحقق من مسار الإيصال
+    function validReceiptPath(path) {
+      return path is string
+        && path.size() <= 300
+        && (
+          path == ''
+          || path.matches('receipts/' + request.auth.uid + '/.*')
+        );
     }
 
     // محتوى الموقع
@@ -43,20 +54,10 @@ service cloud.firestore {
       ];
     }
 
-    // التحقق من مسار الإيصال
-    function validReceiptPath(path) {
-      return path is string
-        && path.size() <= 300
-        && (
-          path == ''
-          || path.matches('receipts/' + request.auth.uid + '/.*')
-        );
-    }
-
     // طلبات شراء الباقات
     match /orders/{orderId} {
 
-      // قراءة الطلبات
+      // قراءة الطلب للمدير وصاحب الطلب
       allow read: if isAdmin()
         || (
           request.auth != null
@@ -66,6 +67,17 @@ service cloud.firestore {
       // إنشاء طلب جديد
       allow create: if request.auth != null
         && request.resource.data.keys().hasOnly(orderKeys())
+        && request.resource.data.keys().hasAll([
+          'uid',
+          'bundleId',
+          'price',
+          'currency',
+          'senderName',
+          'receiptPath',
+          'receiptFileName',
+          'status',
+          'createdAt'
+        ])
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.bundleId in [
           'starter-bundle',
@@ -73,10 +85,12 @@ service cloud.firestore {
           'reels-bundle',
           'athar-complete-bundle'
         ]
-        && orderId == request.auth.uid + '_' + request.resource.data.bundleId
+        && orderId == request.auth.uid + '_'
+          + request.resource.data.bundleId
         && request.resource.data.status == 'pending_review'
         && request.resource.data.currency == 'ر.س'
-        && request.resource.data.price == bundlePrice(request.resource.data.bundleId)
+        && request.resource.data.price
+          == bundlePrice(request.resource.data.bundleId)
         && request.resource.data.senderName is string
         && request.resource.data.senderName.size() <= 100
         && validReceiptPath(request.resource.data.receiptPath)
@@ -84,41 +98,35 @@ service cloud.firestore {
         && request.resource.data.receiptFileName.size() <= 200
         && request.resource.data.createdAt == request.time;
 
-      // تحديث الطلب: المدير أو إعادة إرسال إيصال بعد الرفض
+      // تعديل الطلب من المدير أو إعادة الإرسال بعد الرفض
       allow update: if isAdmin()
         || (
           request.auth != null
           && resource.data.uid == request.auth.uid
           && resource.data.status == 'rejected'
           && request.resource.data.status == 'pending_review'
-          && request.resource.data.uid == resource.data.uid
+          && request.resource.data.uid == request.auth.uid
           && request.resource.data.bundleId == resource.data.bundleId
           && request.resource.data.price == resource.data.price
           && request.resource.data.title == resource.data.title
           && request.resource.data.currency == resource.data.currency
-          && request.resource.data.diff(resource.data).affectedKeys()
-              .hasOnly([
-                'receiptPath',
-                'receiptFileName',
-                'senderName',
-                'status'
-              ])
-          && request.resource.data.keys().hasOnly(orderKeys())
-          && request.resource.data.senderName is string
-          && request.resource.data.senderName.size() <= 100
+          && request.resource.data.diff(resource.data)
+            .affectedKeys()
+            .hasOnly([
+              'senderName',
+              'receiptPath',
+              'receiptFileName',
+              'status'
+            ])
           && validReceiptPath(request.resource.data.receiptPath)
-          && request.resource.data.receiptFileName is string
-          && request.resource.data.receiptFileName.size() <= 200
         );
 
-      // الحذف للمدير فقط
       allow delete: if isAdmin();
     }
 
     // ملفات تسليم الباقات
     match /deliveries/{bundleId} {
 
-      // القراءة للمدير أو العميل الذي اكتمل طلبه
       allow read: if isAdmin()
         || (
           request.auth != null
@@ -130,15 +138,14 @@ service cloud.firestore {
           ).data.status == 'completed'
         );
 
-      // الكتابة للمدير فقط
       allow write: if isAdmin();
     }
 
-    // طلبات التواصل والاستفسارات
+    // طلبات التواصل والخدمات
     match /requests/{requestId} {
 
-      // استقبال طلبات الزوار
-      allow create: if request.resource.data.keys().hasOnly([
+      allow create: if
+        request.resource.data.keys().hasOnly([
           'name',
           'contact',
           'service',
@@ -165,14 +172,13 @@ service cloud.firestore {
         && (
           !request.resource.data.keys().hasAny(['service'])
           || (
-            request.resource.data.service is string
-            && request.resource.data.service.size() <= 100
+            request.resource.data.get('service', '') is string
+            && request.resource.data.get('service', '').size() <= 100
           )
         )
         && request.resource.data.status == 'new'
         && request.resource.data.createdAt == request.time;
 
-      // قراءة وتعديل وحذف الطلبات للمدير فقط
       allow read, update, delete: if isAdmin();
     }
   }
