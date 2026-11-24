@@ -6,7 +6,6 @@ import { useAuth } from "./useAuth";
 import { BUNDLES } from "./bundles";
 import { ORDER_STATUS } from "./orders";
 import BankTransfer from "./BankTransfer.jsx";
-import Receipt from "./Receipt.jsx";
 
 // Google يمنع تسجيل الدخول داخل متصفحات التطبيقات (إنستغرام وسناب وتيك توك...)
 const IN_APP = /Instagram|FBAN|FBAV|Snapchat|TikTok|musical_ly|Line\//i.test(typeof navigator !== "undefined" ? navigator.userAgent : "");
@@ -87,7 +86,8 @@ export default function Account() {
     clearIntent(); setIntent(null);
     if (res.exists) setMsg({ cls: "note", text: "لديك طلب سابق لهذه الحزمة، تجده أدناه." });
     else if (res.receiptFailed) setMsg({ cls: "err", text: "سُجّل طلبك، لكن تعذر رفع الإيصال. أرسله إلى atharstudio653@gmail.com ليُطابَق مع طلبك." });
-    else setMsg({ cls: "ok", text: "تم استلام إيصالك. سنتحقق من الحوالة وتُفعَّل ملفاتك هنا فور تأكيدها." });
+    else if (res.via === "drive") setMsg({ cls: "ok", text: "وصل إيصالك إلى مجلد أثر في Google Drive. سنتحقق من الحوالة وتُفعَّل ملفاتك هنا فور تأكيدها." });
+    else setMsg({ cls: "ok", text: "تم استلام إيصالك وحفظه لدى الأستوديو. سنتحقق من الحوالة وتُفعَّل ملفاتك هنا فور تأكيدها." });
   }
 
   function cancelIntent() { clearIntent(); setIntent(null); }
@@ -153,7 +153,11 @@ export default function Account() {
                   <h4>تم استلام إيصال التحويل — جارٍ التحقق</h4>
                   <p>سيتم تفعيل أزرار تحميل جميع ملفات الحزمة هنا تلقائياً فور تأكيد وصول الحوالة لحساب urPay.</p>
                 </div>
-                {o.receiptPath && <Receipt path={o.receiptPath} label="عرض الإيصال المرفق" />}
+                {o.receiptDriveId || o.receiptPath ? (
+                  <span className="rcpt-ok">✓ الإيصال محفوظ لدى الأستوديو</span>
+                ) : (
+                  <span className="rcpt-missing">لم يُرفع إيصال — أرسله إلى atharstudio653@gmail.com</span>
+                )}
               </div>
             )}
 

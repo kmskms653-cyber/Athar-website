@@ -49,6 +49,11 @@ service cloud.firestore {
         'senderName',
         'receiptPath',
         'receiptFileName',
+        'receiptDriveId',
+        'receiptDriveUrl',
+        'receiptMime',
+        'receiptSize',
+        'receiptDeletedAt',
         'status',
         'createdAt'
       ];
@@ -96,6 +101,16 @@ service cloud.firestore {
         && validReceiptPath(request.resource.data.receiptPath)
         && request.resource.data.receiptFileName is string
         && request.resource.data.receiptFileName.size() <= 200
+        && request.resource.data.receiptDriveId is string
+        && request.resource.data.receiptDriveId.size() <= 120
+        && request.resource.data.receiptDriveUrl is string
+        && request.resource.data.receiptDriveUrl.size() <= 600
+        && request.resource.data.receiptMime is string
+        && request.resource.data.receiptMime.size() <= 100
+        && request.resource.data.receiptSize is int
+        && request.resource.data.receiptSize >= 0
+        && request.resource.data.receiptSize <= 20971520
+        && request.resource.data.receiptDeletedAt == null
         && request.resource.data.createdAt == request.time;
 
       // تعديل الطلب من المدير أو إعادة الإرسال بعد الرفض
@@ -116,6 +131,11 @@ service cloud.firestore {
               'senderName',
               'receiptPath',
               'receiptFileName',
+              'receiptDriveId',
+              'receiptDriveUrl',
+              'receiptMime',
+              'receiptSize',
+              'receiptDeletedAt',
               'status'
             ])
           && validReceiptPath(request.resource.data.receiptPath)
