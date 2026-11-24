@@ -8,6 +8,8 @@ const LS_URL = "athar.drive.url";
 const LS_PUBLIC = "athar.drive.publicKey";
 const LS_ADMIN = "athar.drive.adminKey";
 
+const DEFAULT_BRIDGE_URL = "https://script.google.com/macros/s/AKfycbxWmSxydAl-wODTpY39yU-6WxX4DDvQSlplk8TAV4QVOuViAZ1aBAr_oR8hZvmKhQNsQQ/exec";
+
 export const DRIVE_FOLDER_LABEL = "Athar / Customer Receipts";
 export const DRIVE_ACCOUNT = "atharstudio653@gmail.com";
 export const MAX_RECEIPT_BYTES = 10 * 1024 * 1024;
@@ -21,7 +23,7 @@ const write = (k, v) => {
 
 export function getDriveConfig() {
   return {
-    url: read(LS_URL),
+    url: read(LS_URL, DEFAULT_BRIDGE_URL),
     publicKey: read(LS_PUBLIC, "athar-upload-2026"),
     adminKey: read(LS_ADMIN),
   };
