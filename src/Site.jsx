@@ -139,6 +139,7 @@ export default function Site() {
           <button onClick={() => go("works")}>الأعمال</button>
           <button onClick={() => go("store")}>المتجر</button>
           <button onClick={() => go("contact")}>التواصل</button>
+          <button onClick={() => { setMenu(false); window.location.hash = "#cards"; }}>بطاقات الإهداء والدعوة</button>
           <button onClick={() => { setMenu(false); window.location.hash = "#creative"; }}>صانع الهوية</button>
           <button onClick={() => { setMenu(false); window.location.hash = "#studio"; }}>استديو القوالب</button>
         </nav>
@@ -211,6 +212,7 @@ export default function Site() {
       <footer className="footer">
         <span>© {c.footerYear} أثر — ATHAR STUDIO · لكل حكاية أثر</span>
         <nav className="foot-links">
+          <a href="#cards">بطاقات الإهداء والدعوة</a>
           <a href="#creative">صانع الهوية</a>
           <a href="#studio">استديو القوالب</a>
           <a href="#terms">شروط الاستخدام</a>
