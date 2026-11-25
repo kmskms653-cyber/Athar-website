@@ -497,6 +497,14 @@ function Deliveries() {
   }, []);
 
   const set = (id, k) => (v) => setVals((s) => ({ ...s, [id]: { ...(s[id] || {}), [k]: v } }));
+  const [folders, setFolders] = useState(null);
+  async function makeFolders() {
+    setMsg("جارٍ إنشاء المجلدات…");
+    try {
+      const r = await setupDeliveryFolders(getDriveConfig().adminKey);
+      setFolders(r.folders); setMsg("المجلدات جاهزة.");
+    } catch (e) { setMsg(e.message || "تعذر الإنشاء؛ تأكد من مفتاح الإدارة في تبويب Drive."); }
+  }
 
   async function save(id) {
     setMsg("جارٍ الحفظ…");
@@ -510,6 +518,11 @@ function Deliveries() {
   return (
     <div className="panel">
       <h3>ملفات تسليم الحزم</h3>
+      <div className="sub">
+        <p className="note">الطريقة الأساسية: ضع ملفات كل حزمة في مجلدها داخل Drive (Athar / Deliveries / رقم الحزمة)، فتظهر للعميل تلقائياً بعد تأكيد الدفع ويتحقق Drive نفسه من ذلك. الروابط أدناه احتياطية فقط.</p>
+        <button className="btn" onClick={makeFolders}>إنشاء مجلدات التسليم وعرض روابطها</button>
+        {folders && <ul>{folders.map((f) => <li key={f.bundleId}><a href={f.url} target="_blank" rel="noreferrer">{f.bundleId}</a> — {f.files} ملف</li>)}</ul>}
+      </div>
       <p className="note">اكتب كل ملف في سطر بصيغة: اسم الزر | الرابط (Drive أو Notion…). لا يراها إلا العميل الذي اكتمل طلبه.</p>
       {BUNDLES.map((b) => (
         <div className="sub" key={b.id}>

@@ -21,7 +21,14 @@ var CFG = {
   NOTIFY_EMAIL: 'atharstudio653@gmail.com',
   MAX_BYTES: 10 * 1024 * 1024,
   ALLOWED: ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'],
-  MAX_LIST: 200
+  MAX_LIST: 200,
+  // ----- تسليم الملفات بعد التحقق من الدفع -----
+  FIREBASE_API_KEY: 'AIzaSyDbkXT2ALoYsD2nqSKZLS7wzR_Oqc8jnv8',
+  FIREBASE_PROJECT: 'athar-studio-584dd',
+  DELIVERY_FOLDER: 'Deliveries',
+  BUNDLES: ['starter-bundle', 'ads-bundle', 'reels-bundle', 'athar-complete-bundle'],
+  // أكبر ملف يُرسل مباشرة عبر الجسر؛ الأكبر يُشارك مع بريد المشتري فقط
+  MAX_DELIVER_BYTES: 24 * 1024 * 1024
 };
 
 /* ------------------------------------------------------------------ */
@@ -58,6 +65,13 @@ function doPost(e) {
       case 'delete':
         requireAdmin(body);
         return json(deleteFile(body));
+      case 'deliveryList':
+        return json(deliveryList(body));
+      case 'deliveryFile':
+        return json(deliveryFile(body));
+      case 'setupDelivery':
+        requireAdmin(body);
+        return json(setupDelivery());
       case 'list':
         requireAdmin(body);
         return json(listFiles());
@@ -263,4 +277,100 @@ function message(err) {
 
 function escape_(s) {
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+
+/* ------------------------------------------------------------------ */
+/* تسليم الملفات: لا يُسلَّم شيء قبل التحقق من الدفع                  */
+/* ------------------------------------------------------------------ */
+
+/** يتحقق من هوية المشتري (Firebase ID token) ومن أن طلبه بحالة completed */
+function verifyBuyer(body) {
+  var bundleId = String(body.bundleId || '');
+  if (CFG.BUNDLES.indexOf(bundleId) === -1) throw new Error('حزمة غير معروفة');
+  var idToken = String(body.idToken || '');
+  if (!idToken) throw new Error('سجّل الدخول أولاً');
+
+  var lk = UrlFetchApp.fetch(
+    'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=' + CFG.FIREBASE_API_KEY,
+    { method: 'post', contentType: 'application/json', payload: JSON.stringify({ idToken: idToken }), muteHttpExceptions: true }
+  );
+  if (lk.getResponseCode() !== 200) throw new Error('جلسة الدخول غير صالحة، أعد تسجيل الدخول');
+  var user = (JSON.parse(lk.getContentText()).users || [])[0];
+  if (!user || !user.localId) throw new Error('جلسة الدخول غير صالحة');
+
+  // قراءة الطلب بصلاحية المشتري نفسه: قواعد Firestore تسمح له بقراءة طلبه فقط
+  var url = 'https://firestore.googleapis.com/v1/projects/' + CFG.FIREBASE_PROJECT +
+    '/databases/(default)/documents/orders/' + encodeURIComponent(user.localId + '_' + bundleId);
+  var od = UrlFetchApp.fetch(url, { headers: { Authorization: 'Bearer ' + idToken }, muteHttpExceptions: true });
+  if (od.getResponseCode() !== 200) throw new Error('لا يوجد طلب لهذه الحزمة');
+  var f = JSON.parse(od.getContentText()).fields || {};
+  var status = f.status && f.status.stringValue;
+  var owner = f.uid && f.uid.stringValue;
+  if (owner !== user.localId || status !== 'completed') {
+    throw new Error('لم يتم تأكيد الدفع بعد؛ لا تُسلَّم الملفات قبل ذلك');
+  }
+  return { uid: user.localId, email: String(user.email || '').toLowerCase(), bundleId: bundleId };
+}
+
+function deliveryRoot_() {
+  var root = rootFolder();
+  var it = root.getFoldersByName(CFG.DELIVERY_FOLDER);
+  return it.hasNext() ? it.next() : root.createFolder(CFG.DELIVERY_FOLDER);
+}
+
+function bundleFolder_(bundleId, create) {
+  var parent = deliveryRoot_();
+  var it = parent.getFoldersByName(bundleId);
+  if (it.hasNext()) return it.next();
+  if (create) return parent.createFolder(bundleId);
+  return null;
+}
+
+function deliveryList(body) {
+  var buyer = verifyBuyer(body);
+  var folder = bundleFolder_(buyer.bundleId, false);
+  var files = [];
+  if (folder) {
+    var it = folder.getFiles();
+    while (it.hasNext() && files.length < 100) {
+      var f = it.next();
+      files.push({ id: f.getId(), name: f.getName(), size: f.getSize(), mimeType: f.getMimeType() });
+    }
+  }
+  files.sort(function (a, b) { return a.name < b.name ? -1 : 1; });
+  return { ok: true, files: files, maxDirect: CFG.MAX_DELIVER_BYTES };
+}
+
+function deliveryFile(body) {
+  var buyer = verifyBuyer(body);
+  var id = String(body.fileId || '');
+  var folder = bundleFolder_(buyer.bundleId, false);
+  if (!folder || !id) throw new Error('الملف غير موجود');
+  var it = folder.getFiles();
+  var file = null;
+  while (it.hasNext()) { var c = it.next(); if (c.getId() === id) { file = c; break; } }
+  if (!file) throw new Error('الملف غير موجود في هذه الحزمة');
+
+  if (file.getSize() > CFG.MAX_DELIVER_BYTES) {
+    // ملف كبير: يُشارك مع بريد المشتري فقط ويُفتح من Drive
+    file.addViewer(buyer.email);
+    return { ok: true, mode: 'share', name: file.getName(), url: file.getUrl() };
+  }
+  var blob = file.getBlob();
+  return {
+    ok: true, mode: 'direct', name: file.getName(),
+    mimeType: blob.getContentType(), size: file.getSize(),
+    data: Utilities.base64Encode(blob.getBytes())
+  };
+}
+
+/** ينشئ مجلدات التسليم لكل حزمة ويعيد روابطها (للمدير) */
+function setupDelivery() {
+  var out = [];
+  CFG.BUNDLES.forEach(function (id) {
+    var f = bundleFolder_(id, true);
+    out.push({ bundleId: id, url: f.getUrl(), files: (function () { var n = 0, it = f.getFiles(); while (it.hasNext()) { it.next(); n++; } return n; })() });
+  });
+  return { ok: true, root: deliveryRoot_().getUrl(), folders: out };
 }
