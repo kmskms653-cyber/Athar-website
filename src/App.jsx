@@ -8,6 +8,8 @@ import BundlePage from "./BundlePage.jsx";
 import CreativeStudio from "./CreativeStudio.jsx";
 import CardMaker from "./CardMaker.jsx";
 import StudioHub from "./StudioHub.jsx";
+import ServiceOrder from "./ServiceOrder.jsx";
+import CartoonStudio from "./CartoonStudio.jsx";
 import LegalPage from "./LegalPage.jsx";
 
 function useHash() {
@@ -29,6 +31,9 @@ export default function App() {
   if (/^#creative(-(personal|corporate|signature|mark))?$/.test(hash)) return <CreativeStudio />;
   const hb = /^#studio-([1-5])$/.exec(hash);
   if (hb) return <StudioHub id={Number(hb[1])} />;
+  if (hash === "#cartoon") return <CartoonStudio />;
+  const so = /^#order-([a-zA-Z0-9]+)$/.exec(hash);
+  if (so) return <ServiceOrder keyName={so[1]} />;
   if (hash === "#terms") return <LegalPage kind="terms" />;
   if (hash === "#privacy") return <LegalPage kind="privacy" />;
   if (hash === "#refund") return <LegalPage kind="refund" />;

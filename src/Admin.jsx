@@ -1,3 +1,4 @@
+import ServiceRequestsAdmin from "./ServiceRequestsAdmin.jsx";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, ref as storageRef, uploadBytes } from "firebase/storage";
@@ -887,6 +888,7 @@ export default function Admin() {
         <div className="tabs">
           <button className={tab === "orders" ? "tab on" : "tab"} onClick={() => setTab("orders")}>الطلبات والإيصالات</button>
           <button className={tab === "catalog" ? "tab on" : "tab"} onClick={() => setTab("catalog")}>الخدمات والقوالب</button>
+          <button className={tab === "svcreq" ? "tab on" : "tab"} onClick={() => setTab("svcreq")}>طلبات الخدمات</button>
           <button className={tab === "requests" ? "tab on" : "tab"} onClick={() => setTab("requests")}>طلبات التواصل</button>
           <button className={tab === "delivery" ? "tab on" : "tab"} onClick={() => setTab("delivery")}>التسليم</button>
           {isSuper && <button className={tab === "content" ? "tab on" : "tab"} onClick={() => setTab("content")}>المحتوى</button>}
@@ -914,6 +916,7 @@ export default function Admin() {
       {tab === "orders" && <ReceiptManager adminKey={adminKey} />}
       {tab === "catalog" && <CatalogPanel isSuper={isSuper} />}
       {tab === "drive" && isSuper && <DriveSetup adminKey={adminKey} setAdminKey={setAdminKey} />}
+      {tab === "svcreq" && <ServiceRequestsAdmin />}
       {tab === "requests" && <Requests />}
       {tab === "delivery" && <Deliveries />}
       {tab === "content" && isSuper && <ContentEditor />}

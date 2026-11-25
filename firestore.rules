@@ -24,6 +24,14 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/consents/$(request.auth.uid)).data.privacyVersion == '2026-11-25';
     }
 
+    // السعر الأساسي لكل خدمة حسب الطلب (يطابق src/serviceCatalog.js)
+    function serviceUnit(svc) {
+      return {
+        'cartoon3d': 19, 'adventure': 69, 'stickers': 29, 'productPhoto': 35,
+        'productPresentation': 39, 'visualContent': 49, 'adTemplates': 19, 'brandTemplates': 39
+      }.get(svc, 0);
+    }
+
     function email() {
       return request.auth.token.email.lower();
     }
@@ -344,6 +352,59 @@ service cloud.firestore {
         && request.resource.data.createdAt == request.time;
 
       allow read, update, delete: if isAdmin();
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* طلبات الخدمات حسب الطلب (صور + وصف + حوالة، ثم تجهيز من فريق أثر)   */
+    /* ------------------------------------------------------------------ */
+
+    match /serviceRequests/{requestId} {
+      allow create: if hasConsent()
+        && request.resource.data.keys().hasOnly([
+          'uid','email','name','service','title','quantity','price','currency','status',
+          'description','photos','receiptDriveId','receiptDriveUrl','receiptFileName',
+          'senderName','ownershipConfirmed','policyAccepted','createdAt'
+        ])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == email()
+        && serviceUnit(request.resource.data.service) > 0
+        && request.resource.data.quantity is int
+        && request.resource.data.quantity >= 1
+        && request.resource.data.quantity <= 6
+        && (request.resource.data.service == 'productPhoto' || request.resource.data.quantity == 1)
+        && request.resource.data.price
+          == serviceUnit(request.resource.data.service) * request.resource.data.quantity
+        && request.resource.data.currency == 'ر.س'
+        && request.resource.data.status == 'pending_review'
+        && request.resource.data.title is string
+        && request.resource.data.title.size() <= 100
+        && request.resource.data.description is string
+        && request.resource.data.description.size() >= 10
+        && request.resource.data.description.size() <= 1500
+        && request.resource.data.photos is list
+        && request.resource.data.photos.size() <= 6
+        && request.resource.data.receiptDriveId is string
+        && request.resource.data.receiptDriveId.size() > 0
+        && request.resource.data.receiptDriveId.size() <= 200
+        && request.resource.data.receiptDriveUrl is string
+        && request.resource.data.receiptDriveUrl.size() <= 700
+        && request.resource.data.receiptFileName is string
+        && request.resource.data.receiptFileName.size() <= 180
+        && request.resource.data.senderName is string
+        && request.resource.data.senderName.size() <= 100
+        && request.resource.data.ownershipConfirmed == true
+        && request.resource.data.policyAccepted == true
+        && request.resource.data.createdAt == request.time;
+
+      allow read: if isAdmin()
+        || (signedIn() && resource.data.uid == request.auth.uid);
+
+      allow update: if isAdmin()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['status', 'deliveryUrl', 'completedAt'])
+        && request.resource.data.status in ['pending_review', 'preparing', 'completed', 'rejected'];
+
+      allow delete: if isSuper();
     }
   }
 }

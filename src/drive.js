@@ -193,7 +193,7 @@ export async function uploadReceipt(file, meta, onProgress) {
 
   const res = await driveCall(
     "upload",
-    { key: publicKey, orderId: meta.orderId || "", name: prepared.name, mimeType: prepared.mime, data },
+    { key: publicKey, kind: meta.kind || "", orderId: meta.orderId || "", name: prepared.name, mimeType: prepared.mime, data },
     { onProgress, timeout: 120000 }
   );
 
@@ -237,12 +237,12 @@ export function saveBlobToDevice(blob, filename) {
 
 
 /* ---------- تسليم الملفات من Drive بعد التحقق من الدفع ---------- */
-export async function deliveryList(idToken, bundleId) {
-  return driveCall("deliveryList", { idToken, bundleId }, { timeout: 45000 });
+export async function deliveryList(idToken, bundleId, requestId = "") {
+  return driveCall("deliveryList", { idToken, bundleId, requestId }, { timeout: 45000 });
 }
 
-export async function deliveryFile(idToken, bundleId, fileId) {
-  const res = await driveCall("deliveryFile", { idToken, bundleId, fileId }, { timeout: 120000 });
+export async function deliveryFile(idToken, bundleId, fileId, requestId = "") {
+  const res = await driveCall("deliveryFile", { idToken, bundleId, fileId, requestId }, { timeout: 120000 });
   if (res.mode === "share") return { mode: "share", url: res.url, name: res.name };
   const bytes = base64ToBytes(res.data);
   return { mode: "direct", name: res.name, blob: new Blob([bytes], { type: res.mimeType || "application/octet-stream" }) };
@@ -250,4 +250,13 @@ export async function deliveryFile(idToken, bundleId, fileId) {
 
 export async function setupDeliveryFolders(adminKey) {
   return driveCall("setupDelivery", { adminKey }, { timeout: 60000 });
+}
+
+export async function requestFolderUrl(requestId, adminKey) {
+  return driveCall("requestFolder", { requestId, adminKey }, { timeout: 45000 });
+}
+
+export async function notifyNewRequest(info) {
+  const { publicKey } = getDriveConfig();
+  try { await driveCall("notify", { key: publicKey, ...info }, { timeout: 20000 }); } catch { /* اختياري */ }
 }
