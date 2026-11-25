@@ -28,6 +28,7 @@ export default function App() {
   if (hash === "#creative") return <CreativeStudio />;
   if (hash === "#terms") return <LegalPage kind="terms" />;
   if (hash === "#privacy") return <LegalPage kind="privacy" />;
+  if (hash === "#refund") return <LegalPage kind="refund" />;
   const bm = /^#bundle-([a-z-]+)$/.exec(hash);
   if (bm) return <BundlePage id={bm[1]} />;
   const m = /^#service-([1-6])$/.exec(hash);

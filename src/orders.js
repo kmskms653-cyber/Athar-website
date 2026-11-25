@@ -35,7 +35,7 @@ export async function createOrder(user, bundle, extra = {}) {
 
 export const ORDER_STATUS = {
   pending_review: "قيد التحقق من الحوالة",
-  completed: "مكتمل — الملفات متاحة",
+  completed: "تم تأكيد الدفع — الملفات متاحة",
   rejected: "مرفوض",
 };
 

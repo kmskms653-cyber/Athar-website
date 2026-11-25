@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { PRIVACY, TERMS } from "./legalText";
+import { PRIVACY, REFUND, TERMS } from "./legalText";
 import { ATHAR_CONFIG } from "./atharConfig";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -242,7 +242,7 @@ export default function AuthModal({
 }
 
 function LegalSheet({ kind, onBack }) {
-  const doc = kind === "privacy" ? PRIVACY : TERMS;
+  const doc = kind === "privacy" ? PRIVACY : kind === "refund" ? REFUND : TERMS;
   return (
     <div className="am-legal">
       <div className="am-legal-head">

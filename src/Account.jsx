@@ -43,7 +43,7 @@ function Delivery({ order }) {
 }
 
 export default function Account() {
-  const { user, isAdmin, openAuth, signOutUser, loading } = useSession();
+  const { user, isAdmin, openAuth, signOutUser, loading, consented } = useSession();
   const [error, setError] = useState("");
   const [orders, setOrders] = useState([]);
   const [ordersError, setOrdersError] = useState("");
@@ -89,7 +89,7 @@ export default function Account() {
 
   if (loading) return <div className="fatal"><p>جارٍ التحميل…</p></div>;
 
-  if (!user) {
+  if (!user || !consented) {
     return (
       <div className="fatal">
         <img src="/logo.png" alt="أثر" style={{ height: 72 }} />
@@ -136,7 +136,7 @@ export default function Account() {
             {o.status === "pending_review" && (
               <div className="amber">
                 <div>
-                  <h4>تم استلام إيصال التحويل — جارٍ التحقق</h4>
+                  <h4>استلمنا إيصالك — الحوالة قيد التحقق</h4>
                   <p>سيتم تفعيل أزرار تحميل جميع ملفات الحزمة هنا تلقائياً فور تأكيد وصول الحوالة لحساب urPay.</p>
                 </div>
                 {o.receiptDriveId || o.receiptPath ? (
@@ -147,6 +147,9 @@ export default function Account() {
               </div>
             )}
 
+            {o.status === "completed" && (
+              <p className="rcpt-ok" style={{ margin: "6px 0" }}>✓ تم تأكيد استلام الحوالة — ملفاتك جاهزة. <a href="#refund">سياسة الاسترجاع</a></p>
+            )}
             {o.status === "completed" && <Delivery order={o} />}
 
             {o.status === "rejected" && (

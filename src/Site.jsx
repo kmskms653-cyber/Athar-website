@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "./firebase";
+import { auth, db } from "./firebase";
 import { useContent } from "./useContent";
 import { BUNDLES } from "./bundles";
 import "./home.css";
 import { useReveal } from "./useReveal";
+import { useSession } from "./AuthContext.jsx";
 
 function scrollToId(id) {
   const el = document.getElementById(id);
@@ -33,11 +34,17 @@ function ContactForm({ services, pick }) {
   const empty = { name: "", contact: "", service: "", message: "", website: "" };
   const [form, setForm] = useState(empty);
   const [state, setState] = useState({ status: "idle", error: "" });
+  const { user, requireAuth } = useSession();
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   useEffect(() => { if (pick.v) setForm((f) => ({ ...f, service: pick.v, message: pick.msg || f.message })); }, [pick]);
 
-  async function submit(e) {
+  function submit(e) {
     e.preventDefault();
+    if (form.website) { setForm(empty); setState({ status: "done", error: "" }); return; }
+    requireAuth(() => send(), { label: "إرسال الطلب" });
+  }
+
+  async function send() {
     if (form.website) { setForm(empty); setState({ status: "done", error: "" }); return; } // فخ للروبوتات
     try {
       if (Date.now() - Number(sessionStorage.getItem("athar:last") || 0) < 60000) {
@@ -56,7 +63,8 @@ function ContactForm({ services, pick }) {
     }
     setState({ status: "sending", error: "" });
     try {
-      const payload = { ...data, status: "new", createdAt: serverTimestamp() };
+      const u = auth.currentUser;
+      const payload = { ...data, uid: u.uid, email: (u.email || "").toLowerCase(), status: "new", createdAt: serverTimestamp() };
       if (form.service) payload.service = form.service;
       await addDoc(collection(db, "requests"), payload);
       try { sessionStorage.setItem("athar:last", String(Date.now())); } catch { /* ignore */ }
@@ -68,7 +76,7 @@ function ContactForm({ services, pick }) {
       setState({
         status: "error",
         error: denied
-          ? "تعذر الإرسال: قواعد Firestore غير منشورة أو لا تسمح بالإرسال."
+          ? "تعذر الإرسال: سجّل الدخول ووافق على الشروط، أو قواعد Firestore غير منشورة."
           : "تعذر إرسال الطلب، تحقق من الاتصال وحاول مجدداً.",
       });
     }
@@ -307,6 +315,7 @@ export default function Site() {
         <span className="hm-fl"><img src="/logo.png" alt="أثر" /></span>
         <nav>
           <a href="#terms">الشروط والأحكام</a>
+          <a href="#refund">سياسة الدفع والاسترجاع</a>
           <a href="#privacy">سياسة الخصوصية</a>
         </nav>
         <span>© {c.footerYear} أثر — جميع الحقوق محفوظة</span>

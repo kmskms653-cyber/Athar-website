@@ -17,6 +17,7 @@ export default function BankTransfer({ bundle, user, onClose, onDone }) {
   const [progress, setProgress] = useState(0);
   const [stage, setStage] = useState("");
   const [error, setError] = useState("");
+  const [agree, setAgree] = useState(false);
 
   const copy = async (text, key) => {
     try { await navigator.clipboard.writeText(text); setCopied(key); setTimeout(() => setCopied(""), 2000); } catch { setError("تعذر النسخ، انسخ الرقم يدوياً."); }
@@ -34,6 +35,7 @@ export default function BankTransfer({ bundle, user, onClose, onDone }) {
 
   async function submit(e) {
     e.preventDefault();
+    if (!agree) { setError("يرجى الموافقة على سياسة الدفع والاسترجاع أولاً."); return; }
     if (!file) { setError("يرجى إرفاق صورة أو ملف إيصال التحويل أولاً."); return; }
     setBusy(true); setError(""); setProgress(0);
 
@@ -101,6 +103,13 @@ export default function BankTransfer({ bundle, user, onClose, onDone }) {
         <h3>{bundle.title}</h3>
         <p className="note">المبلغ المطلوب تحويله: <b className="gold">{bundle.price} {bundle.currency}</b></p>
 
+        <ol className="note" style={{ paddingInlineStart: 20, lineHeight: 1.9 }}>
+          <li>حوّل المبلغ أعلاه إلى الحساب التالي.</li>
+          <li>ارفع صورة أو PDF للإيصال من هنا.</li>
+          <li>نتحقق من وصول الحوالة، وتظهر حالة طلبك «قيد التحقق» في حسابك.</li>
+          <li>عند تأكيد الدفع تظهر ملفاتك للتنزيل. لا تُسلَّم الملفات قبل ذلك.</li>
+        </ol>
+
         <div className="bank">
           <div className="bank-row"><span>وسيلة التحويل</span><b>{PAYMENT.bankName}</b></div>
           <div className="bank-row">
@@ -148,7 +157,11 @@ export default function BankTransfer({ bundle, user, onClose, onDone }) {
             )}{" "}
             تظهر ملفات الحزمة في حسابك فور تأكيد الحوالة.
           </p>
-          <button className="btn bd-buy" disabled={busy}>{busy ? "جارٍ الإرسال…" : "إرسال الإيصال وتأكيد الطلب"}</button>
+          <label className="note" style={{ display: "flex", gap: 8, alignItems: "flex-start", cursor: "pointer" }}>
+            <input type="checkbox" checked={agree} onChange={(e) => setAgree(e.target.checked)} disabled={busy} style={{ marginTop: 5 }} />
+            <span>اطلعت على <a href="#refund" target="_blank" rel="noreferrer">سياسة الدفع والاسترجاع</a> وأوافق عليها.</span>
+          </label>
+          <button className="btn bd-buy" disabled={busy || !agree}>{busy ? "جارٍ الإرسال…" : "إرسال الإيصال وتأكيد الطلب"}</button>
         </form>
       </div>
     </div>

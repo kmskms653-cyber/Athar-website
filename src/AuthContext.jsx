@@ -38,6 +38,7 @@ export function AuthProvider({ children }) {
   const [modal, setModal] = useState(false);
   const [notice, setNotice] = useState("");
   const pendingRef = useRef(null);
+  const consentedRef = useRef(false);
   const resumedRef = useRef(false);
 
   /* ---------- تسجيل الموافقة القانونية ---------- */
@@ -58,10 +59,25 @@ export function AuthProvider({ children }) {
         },
         { merge: true }
       );
+      // سجل تاريخي لكل موافقة (نسخة الوثائق + التاريخ) لا يُستبدل
+      try {
+        await setDoc(doc(db, "consents", u.uid, "log", `${ATHAR_CONFIG.legal.termsVersion}_${Date.now()}`), {
+          uid: u.uid,
+          email: (u.email || "").toLowerCase(),
+          termsVersion: ATHAR_CONFIG.legal.termsVersion,
+          privacyVersion: ATHAR_CONFIG.legal.privacyVersion,
+          acceptedAt: serverTimestamp(),
+        });
+      } catch (e) { console.warn("consent log:", e && e.code); }
+      consentedRef.current = true;
       setConsented(true);
     } catch (e) {
+      // فشل تسجيل الموافقة لا يفتح الخدمات: تبقى مقفلة حتى ينجح الحفظ
       console.warn("consent write:", e && e.code);
-      setConsented(true); // لا نمنع الاستخدام بسبب تعذّر السجل؛ القواعد ستوضّح في الإدارة
+      consentedRef.current = false;
+      setConsented(false);
+      setNotice("تعذر حفظ موافقتك على الشروط. تحقق من الاتصال وأعد المحاولة؛ لا يمكن استخدام الخدمات قبل تسجيلها.");
+      throw e;
     } finally {
       try { localStorage.removeItem(SS_CONSENT); } catch { /* ignore */ }
     }
@@ -125,7 +141,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
-      if (!u) { setRole("guest"); setConsented(false); return; }
+      if (!u) { setRole("guest"); consentedRef.current = false; setConsented(false); return; }
       const r = await resolveRole(u);
 
       // هل الموافقة الحالية مطابقة لإصدار الشروط؟
@@ -136,6 +152,7 @@ export function AuthProvider({ children }) {
           && snap.data().termsVersion === ATHAR_CONFIG.legal.termsVersion
           && snap.data().privacyVersion === ATHAR_CONFIG.legal.privacyVersion;
       } catch { current = false; }
+      consentedRef.current = current;
       setConsented(current);
       if (!current) setModal(true);
       void r;
@@ -147,7 +164,7 @@ export function AuthProvider({ children }) {
         if (pending && pending.hash && pending.hash !== window.location.hash) {
           window.location.hash = pending.hash;
         }
-        if (pendingRef.current) {
+        if (pendingRef.current && current) {
           const fn = pendingRef.current;
           pendingRef.current = null;
           setTimeout(() => { try { fn(); } catch (e) { console.warn(e); } }, 60);
@@ -195,7 +212,7 @@ export function AuthProvider({ children }) {
 
   /* ---------- بوابة الاستخدام ---------- */
   const requireAuth = useCallback((fn, meta = {}) => {
-    if (auth.currentUser) { fn && fn(); return true; }
+    if (auth.currentUser && consentedRef.current) { fn && fn(); return true; }
     pendingRef.current = fn || null;
     try {
       sessionStorage.setItem(
@@ -236,7 +253,13 @@ export function AuthProvider({ children }) {
         locked={Boolean(user) && !consented}
         onConsentOnly={async () => {
           if (user) await recordConsent(user);
+          setNotice("");
           setModal(false);
+          if (pendingRef.current) {
+            const fn = pendingRef.current;
+            pendingRef.current = null;
+            setTimeout(() => { try { fn(); } catch (e) { console.warn(e); } }, 60);
+          }
         }}
       />
     </AuthCtx.Provider>

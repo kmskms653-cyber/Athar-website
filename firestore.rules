@@ -15,6 +15,15 @@ service cloud.firestore {
       return signedIn() && request.auth.token.email_verified == true;
     }
 
+    /* موافقة سارية على النسخة الحالية من الشروط والخصوصية.
+       عند تحديث الوثائق غيّر التاريخ هنا وفي src/atharConfig.js معاً. */
+    function hasConsent() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/consents/$(request.auth.uid))
+        && get(/databases/$(database)/documents/consents/$(request.auth.uid)).data.termsVersion == '2026-11-25'
+        && get(/databases/$(database)/documents/consents/$(request.auth.uid)).data.privacyVersion == '2026-11-25';
+    }
+
     function email() {
       return request.auth.token.email.lower();
     }
@@ -135,6 +144,16 @@ service cloud.firestore {
     /* سجل الموافقات القانونية                                            */
     /* ------------------------------------------------------------------ */
 
+    match /consents/{uid}/log/{entry} {
+      allow create: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.uid == uid
+        && request.resource.data.email == email()
+        && request.resource.data.acceptedAt is timestamp;
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+      allow update, delete: if false;
+    }
+
     match /consents/{uid} {
       allow create, update: if signedIn()
         && request.auth.uid == uid
@@ -146,7 +165,7 @@ service cloud.firestore {
         && request.resource.data.privacyVersion.size() <= 20
         && request.resource.data.acceptedAt is timestamp;
 
-      allow read: if isAdmin();
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
       // لا حذف لسجلات الموافقة إلا من المدير العام (ولا يُنصح به)
       allow delete: if isSuper();
     }
@@ -159,11 +178,11 @@ service cloud.firestore {
       allow read, update, delete: if signedIn()
         && resource.data.uid == request.auth.uid;
 
-      allow create: if signedIn()
+      allow create: if hasConsent()
         && request.resource.data.uid == request.auth.uid
         && projectId.size() > request.auth.uid.size()
         && projectId.matches(request.auth.uid + '_.*')
-        && request.resource.data.mode in ['identity', 'signature', 'mark']
+        && request.resource.data.mode in ['identity', 'personal', 'corporate', 'signature', 'mark']
         && request.resource.data.ink is string
         && request.resource.data.ink.size() <= 9
         && request.resource.data.paper is string
@@ -182,7 +201,7 @@ service cloud.firestore {
           && resource.data.uid == request.auth.uid
         );
 
-      allow create: if request.auth != null
+      allow create: if hasConsent()
         && request.resource.data.keys().hasOnly(orderKeys())
         && request.resource.data.keys().hasAll([
           'uid',
@@ -282,8 +301,12 @@ service cloud.firestore {
 
     match /requests/{requestId} {
 
-      allow create: if
-        request.resource.data.keys().hasOnly([
+      allow create: if hasConsent()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == email()
+        && request.resource.data.keys().hasOnly([
+          'uid',
+          'email',
           'name',
           'contact',
           'service',
@@ -292,6 +315,8 @@ service cloud.firestore {
           'createdAt'
         ])
         && request.resource.data.keys().hasAll([
+          'uid',
+          'email',
           'name',
           'contact',
           'message',
