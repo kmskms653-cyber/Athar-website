@@ -16,7 +16,7 @@ function download(blob, filename) {
 
 export default function CreativeStudio() {
   const { user, requireAuth } = useSession();
-  const [mode, setMode] = useState(() => { const m = /^#creative-(personal|corporate|signature|mark)$/.exec(window.location.hash); return m ? m[1] : "personal"; });
+  const [mode, setMode] = useState(() => { const m = /^#creative-(personal|corporate|signature|mark)$/.exec(window.location.hash); return m ? m[1] : "mark"; });
   const [name, setName] = useState("أثر");
   const [subtitle, setSubtitle] = useState("فخامة الإبداع العربي");
   const [style, setStyle] = useState("heritage");
@@ -141,7 +141,7 @@ export default function CreativeStudio() {
         <section className="cs-panel">
           <div className="cs-tabs" role="tablist">
             {MODES.map((m) => (
-              <button key={m.id} role="tab" aria-selected={mode === m.id} className={`cs-tab ${mode === m.id ? "on" : ""}`} onClick={() => setMode(m.id)}>{m.label}</button>
+              <button key={m.id} role="tab" aria-selected={mode === m.id} className={`cs-tab ${mode === m.id ? "on" : ""}`} onClick={() => (m.id === "mark" ? setMode(m.id) : (window.location.hash = "#creative-" + m.id))}>{m.label}</button>
             ))}
           </div>
 
