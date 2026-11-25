@@ -427,9 +427,11 @@ section[id] { scroll-margin-top: 90px; }
 .cs-preview-head h2 { font-family: "Tajawal", sans-serif; font-size: 1.05rem; font-weight: 600; }
 .cs-live { font-size: .7rem; color: var(--gold); border: 1px solid rgba(148,131,105,.45); border-radius: 20px; padding: 4px 10px; }
 .cs-stage { display: grid; place-items: center; min-height: 330px; padding: 18px; border-radius: 15px; border: 1px dashed rgba(148,131,105,.4); background: linear-gradient(135deg, rgba(248,246,242,.05), rgba(5,4,2,.4)); }
-.cs-art { width: 100%; max-width: 470px; min-height: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px; border-radius: 12px; box-shadow: 0 18px 44px rgba(0,0,0,.45); text-align: center; }
-.cs-svg svg { width: 180px; height: 180px; max-width: 62%; display: block; }
-.cs-art.signature .cs-svg svg { width: 92%; height: 120px; max-width: 420px; }
+.cs-art { width: 100%; max-width: 760px; min-height: 220px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px; border-radius: 12px; box-shadow: 0 18px 44px rgba(0,0,0,.45); text-align: center; }
+.cs-svg { width: 100%; }
+.cs-svg svg { width: 100%; height: auto; max-height: 520px; display: block; }
+.cs-art.mark .cs-svg svg { max-width: 420px; margin: 0 auto; }
+
 .cs-name { font-size: 1.5rem; font-weight: 700; letter-spacing: .04em; }
 .cs-sub { font-size: .78rem; opacity: .72; letter-spacing: .16em; }
 .cs-note { margin-top: 12px; font-size: .76rem; color: var(--muted); line-height: 1.8; }
