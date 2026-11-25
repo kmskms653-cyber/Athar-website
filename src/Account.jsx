@@ -6,6 +6,7 @@ import { useSession } from "./AuthContext.jsx";
 import { BUNDLES } from "./bundles";
 import { ORDER_STATUS } from "./orders";
 import BankTransfer from "./BankTransfer.jsx";
+import MyRequests from "./MyRequests.jsx";
 
 // Google يمنع تسجيل الدخول داخل متصفحات التطبيقات (إنستغرام وسناب وتيك توك...)
 const IN_APP = /Instagram|FBAN|FBAV|Snapchat|TikTok|musical_ly|Line\//i.test(typeof navigator !== "undefined" ? navigator.userAgent : "");
@@ -207,6 +208,8 @@ export default function Account() {
           </article>
         ))}
       </div>
+
+      <MyRequests user={user} />
 
       {intent && <BankTransfer bundle={intent} user={user} onClose={cancelIntent} onDone={done} />}
     </div>

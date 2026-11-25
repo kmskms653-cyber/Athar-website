@@ -13,6 +13,7 @@
 var CFG = {
   ROOT_FOLDER: 'Athar',
   SUB_FOLDER: 'Customer Receipts',
+  PHOTO_FOLDER: 'Customer Uploads',
   // كلمة مرور لوحة الإدارة لهذا الجسر — غيّرها قبل النشر.
   // يمكن أيضاً وضعها في Project Settings ← Script properties باسم ADMIN_KEY
   ADMIN_KEY: 'ATHAR-2026-change-me',
@@ -69,6 +70,11 @@ function doPost(e) {
         return json(deliveryList(body));
       case 'deliveryFile':
         return json(deliveryFile(body));
+      case 'notify':
+        return json(notifyRequest(body));
+      case 'requestFolder':
+        requireAdmin(body);
+        return json(requestFolder(body));
       case 'setupDelivery':
         requireAdmin(body);
         return json(setupDelivery());
@@ -105,12 +111,13 @@ function ping() {
 function uploadReceipt(body) {
   if (body.key !== publicKey()) throw new Error('مفتاح الرفع غير صحيح');
 
+  var isPhoto = String(body.kind || '') === 'photo';
   var orderId = clean(String(body.orderId || ''), 40) || 'ATHAR-ORDER';
   var name = clean(String(body.name || 'receipt'), 120) || 'receipt';
   var mime = String(body.mimeType || '').toLowerCase();
   var data = String(body.data || '');
 
-  if (CFG.ALLOWED.indexOf(mime) === -1) throw new Error('نوع الملف غير مدعوم: ' + mime);
+  if (CFG.ALLOWED.indexOf(mime) === -1 || (isPhoto && mime === 'application/pdf')) throw new Error('نوع الملف غير مدعوم: ' + mime);
   if (!data) throw new Error('لم يصل محتوى الملف');
   if (data.length > CFG.MAX_BYTES * 1.4) throw new Error('حجم الملف أكبر من المسموح');
 
@@ -125,15 +132,16 @@ function uploadReceipt(body) {
   lock.waitLock(30000);
   var file;
   try {
-    var folder = targetFolder();
+    var folder = isPhoto ? photoFolder() : targetFolder();
     var blob = Utilities.newBlob(bytes, mime, safeName);
     file = folder.createFile(blob);
-    file.setDescription('إيصال تحويل — الطلب ' + orderId);
+    file.setDescription((isPhoto ? 'صورة عميل — الطلب ' : 'إيصال تحويل — الطلب ') + orderId);
   } finally {
     lock.releaseLock();
   }
 
   try {
+    if (isPhoto) throw new Error('skip');
     MailApp.sendEmail({
       to: CFG.NOTIFY_EMAIL,
       subject: 'إيصال جديد — ' + orderId,
@@ -243,6 +251,12 @@ function targetFolder() {
   return it.hasNext() ? it.next() : root.createFolder(CFG.SUB_FOLDER);
 }
 
+function photoFolder() {
+  var root = rootFolder();
+  var it = root.getFoldersByName(CFG.PHOTO_FOLDER);
+  return it.hasNext() ? it.next() : root.createFolder(CFG.PHOTO_FOLDER);
+}
+
 function folderInfo() {
   var f = targetFolder();
   return {
@@ -286,8 +300,13 @@ function escape_(s) {
 
 /** يتحقق من هوية المشتري (Firebase ID token) ومن أن طلبه بحالة completed */
 function verifyBuyer(body) {
+  var requestId = String(body.requestId || '');
   var bundleId = String(body.bundleId || '');
-  if (CFG.BUNDLES.indexOf(bundleId) === -1) throw new Error('حزمة غير معروفة');
+  if (requestId) {
+    if (!/^[A-Za-z0-9]{10,40}$/.test(requestId)) throw new Error('رقم الطلب غير صحيح');
+  } else if (CFG.BUNDLES.indexOf(bundleId) === -1) {
+    throw new Error('حزمة غير معروفة');
+  }
   var idToken = String(body.idToken || '');
   if (!idToken) throw new Error('سجّل الدخول أولاً');
 
@@ -300,17 +319,20 @@ function verifyBuyer(body) {
   if (!user || !user.localId) throw new Error('جلسة الدخول غير صالحة');
 
   // قراءة الطلب بصلاحية المشتري نفسه: قواعد Firestore تسمح له بقراءة طلبه فقط
+  var docPath = requestId
+    ? 'serviceRequests/' + requestId
+    : 'orders/' + encodeURIComponent(user.localId + '_' + bundleId);
   var url = 'https://firestore.googleapis.com/v1/projects/' + CFG.FIREBASE_PROJECT +
-    '/databases/(default)/documents/orders/' + encodeURIComponent(user.localId + '_' + bundleId);
+    '/databases/(default)/documents/' + docPath;
   var od = UrlFetchApp.fetch(url, { headers: { Authorization: 'Bearer ' + idToken }, muteHttpExceptions: true });
-  if (od.getResponseCode() !== 200) throw new Error('لا يوجد طلب لهذه الحزمة');
+  if (od.getResponseCode() !== 200) throw new Error('لا يوجد طلب مطابق');
   var f = JSON.parse(od.getContentText()).fields || {};
   var status = f.status && f.status.stringValue;
   var owner = f.uid && f.uid.stringValue;
   if (owner !== user.localId || status !== 'completed') {
     throw new Error('لم يتم تأكيد الدفع بعد؛ لا تُسلَّم الملفات قبل ذلك');
   }
-  return { uid: user.localId, email: String(user.email || '').toLowerCase(), bundleId: bundleId };
+  return { uid: user.localId, email: String(user.email || '').toLowerCase(), bundleId: bundleId, requestId: requestId };
 }
 
 function deliveryRoot_() {
@@ -319,8 +341,13 @@ function deliveryRoot_() {
   return it.hasNext() ? it.next() : root.createFolder(CFG.DELIVERY_FOLDER);
 }
 
-function bundleFolder_(bundleId, create) {
+function bundleFolder_(bundleId, create, requestId) {
   var parent = deliveryRoot_();
+  if (requestId) {
+    var rp = parent.getFoldersByName('requests');
+    parent = rp.hasNext() ? rp.next() : parent.createFolder('requests');
+    bundleId = requestId;
+  }
   var it = parent.getFoldersByName(bundleId);
   if (it.hasNext()) return it.next();
   if (create) return parent.createFolder(bundleId);
@@ -329,7 +356,7 @@ function bundleFolder_(bundleId, create) {
 
 function deliveryList(body) {
   var buyer = verifyBuyer(body);
-  var folder = bundleFolder_(buyer.bundleId, false);
+  var folder = bundleFolder_(buyer.bundleId, false, buyer.requestId);
   var files = [];
   if (folder) {
     var it = folder.getFiles();
@@ -345,7 +372,7 @@ function deliveryList(body) {
 function deliveryFile(body) {
   var buyer = verifyBuyer(body);
   var id = String(body.fileId || '');
-  var folder = bundleFolder_(buyer.bundleId, false);
+  var folder = bundleFolder_(buyer.bundleId, false, buyer.requestId);
   if (!folder || !id) throw new Error('الملف غير موجود');
   var it = folder.getFiles();
   var file = null;
@@ -373,4 +400,27 @@ function setupDelivery() {
     out.push({ bundleId: id, url: f.getUrl(), files: (function () { var n = 0, it = f.getFiles(); while (it.hasNext()) { it.next(); n++; } return n; })() });
   });
   return { ok: true, root: deliveryRoot_().getUrl(), folders: out };
+}
+
+/** مجلد تسليم طلب خدمة (للمدير): ضع فيه الملف النهائي */
+function requestFolder(body) {
+  var id = String(body.requestId || '');
+  if (!/^[A-Za-z0-9]{10,40}$/.test(id)) throw new Error('رقم الطلب غير صحيح');
+  var f = bundleFolder_('', true, id);
+  return { ok: true, url: f.getUrl() };
+}
+
+/** إشعار بريدي بطلب خدمة جديد (مفتاح الرفع العام) */
+function notifyRequest(body) {
+  if (body.key !== publicKey()) throw new Error('مفتاح الرفع غير صحيح');
+  var t = function (v, n) { return escape_(clean(String(v || ''), n)); };
+  MailApp.sendEmail({
+    to: CFG.NOTIFY_EMAIL,
+    subject: 'طلب خدمة جديد — ' + clean(String(body.title || ''), 60),
+    htmlBody: '<div dir="rtl" style="font-family:Tahoma,Arial,sans-serif;line-height:1.9">' +
+      '<p><b>وصل طلب خدمة جديد بانتظار التحقق من الحوالة.</b></p>' +
+      '<p>الخدمة: ' + t(body.title, 80) + '<br>السعر: ' + t(body.price, 10) + ' ريال<br>' +
+      'العميل: ' + t(body.email, 120) + '<br>رقم الطلب: ' + t(body.requestId, 40) + '</p></div>'
+  });
+  return { ok: true };
 }
