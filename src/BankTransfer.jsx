@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { ref, uploadBytes } from "firebase/storage";
-import { storage } from "./firebase";
 import { PAYMENT } from "./payment";
 import { createOrder, orderIdFor } from "./orders";
 import { DRIVE_FOLDER_LABEL, driveReady, formatBytes, uploadReceipt } from "./drive";
@@ -40,38 +38,32 @@ export default function BankTransfer({ bundle, user, onClose, onDone }) {
     setBusy(true); setError(""); setProgress(0);
 
     const orderId = orderIdFor(user.uid, bundle.id);
-    let receiptPath = "";
+    const receiptPath = "";
     let receiptFileName = file.name;
     let drive = { fileId: "", url: "", mimeType: file.type, size: file.size };
-    let receiptFailed = false;
 
-    // 1) الرفع إلى Google Drive الخاص بأثر
-    if (driveReady()) {
-      setStage(`جارٍ رفع الإيصال إلى ${DRIVE_FOLDER_LABEL}`);
-      try {
-        drive = await uploadReceipt(file, { orderId }, setProgress);
-        receiptFileName = drive.name || file.name;
-      } catch (err) {
-        console.warn("Drive upload failed:", err);
-        setError(`تعذر الحفظ في Google Drive (${err.message}) — سنحفظ الإيصال في مساحة المنصة كخطة بديلة.`);
-        drive = { fileId: "", url: "", mimeType: file.type, size: file.size };
-      }
+    // الإيصال يُحفظ في Google Drive فقط (Athar / Customer Receipts)
+    if (!driveReady()) {
+      setError("خدمة حفظ الإيصالات غير مهيأة حالياً. تواصل معنا على atharstudio653@gmail.com.");
+      setBusy(false);
+      return;
     }
-
-    // 2) خطة بديلة: مساحة Firebase
+    setStage(`جارٍ رفع الإيصال إلى ${DRIVE_FOLDER_LABEL}`);
+    try {
+      drive = await uploadReceipt(file, { orderId }, setProgress);
+      receiptFileName = drive.name || file.name;
+    } catch (err) {
+      console.warn("Drive upload failed:", err);
+      setError(`تعذر رفع الإيصال (${err.message}). لم يُنشأ الطلب؛ حاول مرة أخرى أو راسلنا.`);
+      setBusy(false);
+      setStage("");
+      return;
+    }
     if (!drive.fileId) {
-      setStage("جارٍ حفظ الإيصال في مساحة المنصة");
-      try {
-        const safe = `${Date.now()}_${file.name.replace(/[^\w.\-]+/g, "_")}`;
-        const r = ref(storage, `receipts/${user.uid}/${safe}`);
-        await uploadBytes(r, file, { contentType: file.type });
-        receiptPath = r.fullPath;
-        receiptFileName = file.name;
-        setProgress(100);
-      } catch (err) {
-        console.warn("Storage upload failed:", err.code || err.message);
-        receiptFailed = true;
-      }
+      setError("لم يؤكد Drive حفظ الإيصال. لم يُنشأ الطلب؛ حاول مرة أخرى.");
+      setBusy(false);
+      setStage("");
+      return;
     }
 
     // 3) تسجيل الطلب
@@ -86,7 +78,7 @@ export default function BankTransfer({ bundle, user, onClose, onDone }) {
         receiptMime: drive.mimeType,
         receiptSize: drive.size,
       });
-      onDone({ ...res, receiptFailed, via: drive.fileId ? "drive" : receiptPath ? "storage" : "none" });
+      onDone({ ...res, receiptFailed: false, via: "drive" });
     } catch (err) {
       console.error(err);
       setError(err.code === "permission-denied" ? "تعذر حفظ الطلب: قواعد Firestore غير منشورة." : "حدث خطأ أثناء إرسال الطلب، حاول مرة أخرى.");
@@ -150,11 +142,7 @@ export default function BankTransfer({ bundle, user, onClose, onDone }) {
 
           {error && <p className="err" dir="auto">{error}</p>}
           <p className="note">
-            {driveReady() ? (
-              <>يُحفظ الإيصال في مجلد <b>{DRIVE_FOLDER_LABEL}</b> الخاص بأثر، ويظهر في لوحة الإدارة للمراجعة.</>
-            ) : (
-              <>يُحفظ الإيصال داخل المنصة بشكل آمن، ويظهر في لوحة الإدارة للمراجعة.</>
-            )}{" "}
+            يُحفظ الإيصال في مجلد <b>{DRIVE_FOLDER_LABEL}</b> الخاص بأثر على Google Drive، ويظهر في لوحة الإدارة للمراجعة.{" "}
             تظهر ملفات الحزمة في حسابك فور تأكيد الحوالة.
           </p>
           <label className="note" style={{ display: "flex", gap: 8, alignItems: "flex-start", cursor: "pointer" }}>
