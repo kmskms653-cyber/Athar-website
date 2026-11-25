@@ -14,9 +14,14 @@ export const DEFAULT_CONTENT = {
     { title: "صناعة المحتوى", text: "نحوّل الأفكار والمنتجات إلى محتوى بصري يحكي قصتك بوضوح." },
     { title: "التصميم الرقمي", text: "تصاميم وتجارب رقمية تجمع بين الجمال وسهولة الاستخدام." },
     { title: "التصميم الإبداعي", text: "حلول تصميمية مرنة للحملات والمطبوعات والمواد التسويقية." },
+    { title: "البصمة والهوية", text: "أسمِ بصمات الخط والتوقيع بأسلوب مميّز يعبّر عنك." },
+    { title: "المنتجات", text: "عبوات وتغليف ومنتجات تحمل هويتك بتفاصيل فاخرة." },
   ],
+  // ترتيب عرض الخدمات في الصفحة الرئيسية (فهارس القائمة أعلاه) وصورها الافتراضية وسعر «من»
+  serviceOrder: [4, 3, 5, 0, 1, 2],
+  serviceImages: ["/img/svc-identity.jpg", "/img/svc-content.jpg", "/img/svc-digital.jpg", "/img/svc-creative.jpg", "/img/svc-calligraphy.jpg", "/img/svc-products.jpg"],
   // أسعار الباقات الثلاث لكل خدمة؛ الفارغ يظهر «حسب نطاق المشروع». تُعدَّل من لوحة الإدارة.
-  price: [["", "", ""], ["", "", ""], ["", "", ""], ["", "", ""]],
+  price: [["", "", ""], ["", "", ""], ["", "", ""], ["", "", ""], ["", "", ""], ["", "", ""]],
   works: [
     { title: "حكاية منتج", category: "عطر", image: "/works/work-1.jpg", video: "", pos: "60% 50%" },
     { title: "التفاصيل تصنع الفارق", category: "قلم وسبحة", image: "/works/work-2.jpg", video: "", pos: "45% 50%" },
@@ -41,8 +46,9 @@ export function mergeContent(remote) {
   return {
     hero: { ...d.hero, ...(remote.hero || {}) },
     about: { ...d.about, ...(remote.about || {}) },
-    services: list(remote.services, d.services),
-    price: Array.isArray(remote.price) && remote.price.length === 4 ? remote.price : d.price,
+    // نكمل الخدمات الافتراضية الجديدة إن كان المحتوى المحفوظ أقدم منها
+    services: (() => { const r = list(remote.services, d.services); return r.length < d.services.length && r.length === 4 ? [...r, ...d.services.slice(r.length)] : r; })(),
+    price: Array.isArray(remote.price) && remote.price.length >= 4 ? [...remote.price, ...d.price.slice(remote.price.length)] : d.price,
     // العناوين والتصنيفات من الإدارة، أما الصور والفيديو والموضع فمن الكود حتى لا يخفيها محتوى قديم محفوظ
     works: Array.isArray(remote.works) && remote.works.length
       ? d.works.map((w, i) => ({ ...w, title: remote.works[i]?.title || w.title, category: remote.works[i]?.category || w.category }))

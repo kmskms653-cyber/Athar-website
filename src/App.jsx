@@ -30,7 +30,7 @@ export default function App() {
   if (hash === "#privacy") return <LegalPage kind="privacy" />;
   const bm = /^#bundle-([a-z-]+)$/.exec(hash);
   if (bm) return <BundlePage id={bm[1]} />;
-  const m = /^#service-([1-4])$/.exec(hash);
+  const m = /^#service-([1-6])$/.exec(hash);
   if (m) return <ServicePage index={Number(m[1]) - 1} />;
   return <Site />;
 }

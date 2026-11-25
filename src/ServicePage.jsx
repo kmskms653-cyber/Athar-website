@@ -49,7 +49,7 @@ export default function ServicePage({ index }) {
       </header>
       <main className="sv">
         <div className="svh">
-          <span className="ic"><ServiceIcon i={index} /></span>
+          <span className="ic">{(S.iconUrl || c.serviceImages?.[index]) ? <img className="ic-img" src={S.iconUrl || c.serviceImages[index]} alt="" /> : <ServiceIcon i={index} />}</span>
           <small>{String(index + 1).padStart(2, "0")}</small>
           <h1>{S.title}</h1>
           <p className="l">{S.text}</p>
