@@ -233,6 +233,7 @@ service cloud.firestore {
         && request.resource.data.receiptFileName is string
         && request.resource.data.receiptFileName.size() <= 200
         && request.resource.data.receiptDriveId is string
+        && request.resource.data.receiptDriveId.size() > 0
         && request.resource.data.receiptDriveId.size() <= 120
         && request.resource.data.receiptDriveUrl is string
         && request.resource.data.receiptDriveUrl.size() <= 600
