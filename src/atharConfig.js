@@ -1,32 +1,42 @@
-// إعدادات منصة أثر المركزية — لا تُخزَّن أي صلاحية في localStorage؛
-// المدير العام يُحدَّد من هذه القائمة، والمديرون المساعدون من مجموعة admins في Firestore
-// (وقواعد الأمان تتحقق من البريد الموثّق من جهة الخادم).
+// إعدادات منصة أثر المركزية
+// لا تُخزَّن صلاحيات الإدارة في localStorage
 
 export const ATHAR_CONFIG = {
   brand: "أثر",
-  // المدير العام (صلاحيات كاملة)
-  superAdmins: ["atharstudio653@gmail.com"],
-  // حد المديرين المساعدين
+
+  // المدير العام
+  superAdmins: [
+    "atharstudio653@gmail.com"
+  ],
+
+  // الحد الأقصى للمديرين المساعدين
   maxSubAdmins: 3,
-  // إصدارات الشروط والسياسات — تُحفظ مع كل موافقة
+
+  // إصدارات الشروط والسياسات
   legal: {
     termsVersion: "2026-11-25",
     privacyVersion: "2026-11-25",
     effectiveDate: "25 نوفمبر 2026",
   },
-  // جسر الإيصالات والتسليم مع Google Drive (بدون ADMIN_KEY لحماية لوحة الإدارة)
+
+  // جسر الإيصالات والتسليم مع Google Drive
   receiptBridge: {
-    url: "https://script.google.com/macros/s/AKfycbxk3QBSZccmYXJnNDEmkr0uzpRrglNf4L--yPuWAfgOM8fjG7ggYY5lsgwgVArfThan/exec
-",
+    url: "https://script.google.com/macros/s/AKfycbxk3QBSZccmYXJnNDEmkr0uzpRrglNf4L--yPuWAfgOM8fjG7ggYY5lsgwgVArfThan/exec",
     publicKey: "athar-upload-2026",
   },
-  // مسار القوالب العامة (قراءة للزوار) — يُستخدم كنسخة احتياطية إن تعذّر Firestore
+
+  // مسار القوالب العامة
   templatesUrl: "/content/templates.json",
-  // فحص الإدارة الموحّد: super أو sub فقط
-  adminCheck: (role) => role === "super" || role === "sub",
+
+  // التحقق من صلاحيات الإدارة
+  adminCheck: (role) =>
+    role === "super" || role === "sub",
+
+  // البريد الرسمي للمنصة
   contactEmail: "atharstudio653@gmail.com",
 };
 
+// تسميات الصلاحيات
 export const ROLE_LABEL = {
   super: "المدير العام",
   sub: "مدير مساعد",
@@ -34,5 +44,8 @@ export const ROLE_LABEL = {
   guest: "زائر",
 };
 
+// التحقق من البريد الإلكتروني للمدير العام
 export const isSuperEmail = (email) =>
-  ATHAR_CONFIG.superAdmins.includes(String(email || "").toLowerCase());
+  ATHAR_CONFIG.superAdmins.includes(
+    String(email || "").trim().toLowerCase()
+  );
