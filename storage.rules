@@ -1,17 +1,44 @@
 rules_version = '2';
+
 service firebase.storage {
   match /b/{bucket}/o {
-    // إيصالات التحويل: العميل يرفع داخل مجلده فقط (صور/PDF حتى 10MB)، ويقرؤها هو والمدير
+
+    function verified() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function superEmail() {
+      return verified() && request.auth.token.email.lower() == 'atharstudio653@gmail.com';
+    }
+
+    function adminRef() {
+      return /databases/(default)/documents/admins/$(request.auth.token.email.lower());
+    }
+
+    function isAdmin() {
+      return superEmail()
+        || (verified() && firestore.exists(adminRef())
+            && firestore.get(adminRef()).data.role == 'sub');
+    }
+
+    // إيصالات التحويل: العميل يرفع داخل مجلده فقط (صور/PDF حتى 10MB)، ويقرؤها هو والإدارة
     match /receipts/{uid}/{file} {
       allow create: if request.auth != null
         && request.auth.uid == uid
         && request.resource.size < 10 * 1024 * 1024
         && request.resource.contentType.matches('image/(jpeg|png|webp)|application/pdf');
-      allow delete: if request.auth != null
-        && request.auth.token.email == 'kmskms653@gmail.com' && request.auth.token.email_verified == true;
+      allow delete: if isAdmin();
       allow read: if request.auth != null
-        && (request.auth.uid == uid
-            || (request.auth.token.email == 'kmskms653@gmail.com' && request.auth.token.email_verified == true));
+        && (request.auth.uid == uid || isAdmin());
+    }
+
+    // أيقونات الخدمات والأقسام: قراءة عامة للزوار، ورفع/حذف للمدير العام فقط
+    match /site/icons/{file} {
+      allow read: if true;
+      allow create, update: if superEmail()
+        && request.resource.size < 4 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow delete: if superEmail();
     }
   }
 }

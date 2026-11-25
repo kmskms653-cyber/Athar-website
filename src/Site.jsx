@@ -139,6 +139,8 @@ export default function Site() {
           <button onClick={() => go("works")}>الأعمال</button>
           <button onClick={() => go("store")}>المتجر</button>
           <button onClick={() => go("contact")}>التواصل</button>
+          <button onClick={() => { setMenu(false); window.location.hash = "#creative"; }}>صانع الهوية</button>
+          <button onClick={() => { setMenu(false); window.location.hash = "#studio"; }}>استديو القوالب</button>
         </nav>
       </header>
 
@@ -169,11 +171,11 @@ export default function Site() {
         <section className="section alt" id="services">
           <h2 className="rv">الخدمات</h2>
           <div className="grid">
-            {c.services.map((s, i) => (
-              <a className="card rv" style={{ "--d": `${i * 90}ms` }} key={i} href={`#service-${i + 1}`} aria-label={s.title}>
+            {c.services.map((s, i) => ({ s, i })).filter(({ s }) => s.visible !== false).map(({ s, i }, n) => (
+              <a className="card rv" style={{ "--d": `${n * 90}ms` }} key={i} href={`#service-${i + 1}`} aria-label={s.title}>
                 <div className="ct1">
                   <span className="num">{String(i + 1).padStart(2, "0")}</span>
-                  <span className="ic"><ServiceIcon i={i % 4} /></span>
+                  <span className="ic">{s.iconUrl ? <img className="ic-img" src={s.iconUrl} alt="" loading="lazy" /> : <ServiceIcon i={i % 4} />}</span>
                 </div>
                 <h3>{s.title}</h3>
                 <p>{s.text}</p>
@@ -208,7 +210,12 @@ export default function Site() {
 
       <footer className="footer">
         <span>© {c.footerYear} أثر — ATHAR STUDIO · لكل حكاية أثر</span>
-        <a href="#studio">استديو القوالب</a>
+        <nav className="foot-links">
+          <a href="#creative">صانع الهوية</a>
+          <a href="#studio">استديو القوالب</a>
+          <a href="#terms">شروط الاستخدام</a>
+          <a href="#privacy">سياسة الخصوصية</a>
+        </nav>
       </footer>
     </>
   );

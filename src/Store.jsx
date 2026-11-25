@@ -1,5 +1,5 @@
 import { BUNDLES } from "./bundles";
-import { useAuth } from "./useAuth";
+import { useSession } from "./AuthContext.jsx";
 
 function Check() {
   return (
@@ -10,11 +10,13 @@ function Check() {
 }
 
 export default function Store({ title, subtitle }) {
-  const user = useAuth();
+  const { requireAuth } = useSession();
 
   const buy = (bundle) => {
+    // نحفظ الحزمة قبل الدخول ليُكملها العميل بعد الرجوع من رابط البريد
     try { sessionStorage.setItem("athar:buy", bundle.id); } catch { /* ignore */ }
-    window.location.hash = "#account";
+    requireAuth(() => { window.location.hash = "#account"; },
+      { hash: "#account", label: `طلب ${bundle.title}` });
   };
 
   return (
@@ -39,8 +41,8 @@ export default function Store({ title, subtitle }) {
             <div>
               <div className="bd-fmt">{b.formats.map((f) => <span key={f}>{f}</span>)}</div>
               <a className="bd-more" href={`#bundle-${b.id}`}>التفاصيل ما ستستلمه</a>
-              <button type="button" className="btn bd-buy" disabled={user === undefined} onClick={() => buy(b)}>
-                {user ? "اطلب الحزمة" : "سجّل الدخول للشراء"}
+              <button type="button" className="btn bd-buy" onClick={() => buy(b)}>
+                اطلب الحزمة
               </button>
             </div>
           </article>

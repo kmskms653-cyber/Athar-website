@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useContent } from "./useContent";
 import { DET, ICON_PATHS } from "./serviceDetails";
+import { useSession } from "./AuthContext.jsx";
 
 export function ServiceIcon({ i, size = 30 }) {
   return (
@@ -16,6 +17,7 @@ function Media({ m, title }) {
 }
 
 export default function ServicePage({ index }) {
+  const { requireAuth } = useSession();
   const c = useContent();
   const S = c.services[index];
   const D = DET[index];
@@ -29,7 +31,7 @@ export default function ServicePage({ index }) {
       ? `أرغب بطلب خدمة: ${S.title}\n`
       : `أرغب بطلب: ${S.title} — باقة ${D.pk[j][0]} (${price(j)})\n`;
     try { sessionStorage.setItem("athar:order", JSON.stringify({ v: S.title, msg, go: "contact", n: Date.now() })); } catch { /* ignore */ }
-    window.location.hash = "";
+    requireAuth(() => { window.location.hash = ""; }, { hash: "", label: `طلب ${S.title}` });
   };
 
   const back = () => {

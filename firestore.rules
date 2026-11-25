@@ -1,14 +1,46 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // التحقق من حساب المدير
+    /* ------------------------------------------------------------------ */
+    /* الصلاحيات — تُتحقق من جهة الخادم فقط                                */
+    /* ------------------------------------------------------------------ */
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function verified() {
+      return signedIn() && request.auth.token.email_verified == true;
+    }
+
+    function email() {
+      return request.auth.token.email.lower();
+    }
+
+    // المدير العام: البريد المعتمد في ATHAR_CONFIG.superAdmins
+    function isSuper() {
+      return verified() && email() == 'atharstudio653@gmail.com';
+    }
+
+    function adminRef() {
+      return /databases/$(database)/documents/admins/$(email());
+    }
+
+    function adminData() {
+      return get(adminRef()).data;
+    }
+
+    // المدير المساعد: موجود في مجموعة admins بدور sub
+    function isSub() {
+      return verified()
+        && exists(adminRef())
+        && adminData().role == 'sub';
+    }
+
     function isAdmin() {
-      return request.auth != null
-        && request.auth.token.email == 'kmskms653@gmail.com'
-        && request.auth.token.email_verified == true;
+      return isSuper() || isSub();
     }
 
     // التحقق من سعر الباقة
@@ -27,12 +59,6 @@ service cloud.firestore {
           path == ''
           || path.matches('receipts/' + request.auth.uid + '/.*')
         );
-    }
-
-    // محتوى الموقع
-    match /site/{docId} {
-      allow read: if true;
-      allow write: if isAdmin();
     }
 
     // الحقول المسموح بها في الطلبات
@@ -59,17 +85,103 @@ service cloud.firestore {
       ];
     }
 
-    // طلبات شراء الباقات
+    /* ------------------------------------------------------------------ */
+    /* محتوى الموقع والخدمات (قراءة عامة للزوار)                          */
+    /* ------------------------------------------------------------------ */
+
+    match /site/{docId} {
+      allow read: if true;
+
+      // المدير العام يكتب كل المحتوى (النصوص، الأيقونات، الأسعار)
+      allow create, delete: if isSuper();
+
+      // المدير المساعد يعدّل الخدمات فقط (إضافة/إخفاء/نصوص) دون الأيقونات أو بقية المحتوى
+      allow update: if isSuper()
+        || (
+          isSub()
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['services'])
+          && request.resource.data.services.size() <= 12
+        );
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* القوالب (قراءة عامة، كتابة بحسب الدور)                             */
+    /* ------------------------------------------------------------------ */
+
+    match /templates/{templateId} {
+      allow read: if true;
+      allow create, update: if isAdmin();
+      allow delete: if isSuper();
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* المديرون المساعدون (حد أقصى يُدار من الواجهة)                       */
+    /* ------------------------------------------------------------------ */
+
+    match /admins/{emailId} {
+      // كل مستخدم يقرأ سجله فقط (لمعرفة دوره)، والمدير العام يقرأ الجميع
+      allow get: if isSuper() || (verified() && email() == emailId);
+      allow list: if isSuper();
+
+      allow create, update: if isSuper()
+        && request.resource.data.email == emailId
+        && request.resource.data.role == 'sub'
+        && emailId != 'atharstudio653@gmail.com';
+
+      allow delete: if isSuper();
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* سجل الموافقات القانونية                                            */
+    /* ------------------------------------------------------------------ */
+
+    match /consents/{uid} {
+      allow create, update: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.uid == uid
+        && request.resource.data.email == email()
+        && request.resource.data.termsVersion is string
+        && request.resource.data.termsVersion.size() <= 20
+        && request.resource.data.privacyVersion is string
+        && request.resource.data.privacyVersion.size() <= 20
+        && request.resource.data.acceptedAt is timestamp;
+
+      allow read: if isAdmin();
+      // لا حذف لسجلات الموافقة إلا من المدير العام (ولا يُنصح به)
+      allow delete: if isSuper();
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* مشاريع صانع الهوية                                                 */
+    /* ------------------------------------------------------------------ */
+
+    match /creativeProjects/{projectId} {
+      allow read, update, delete: if signedIn()
+        && resource.data.uid == request.auth.uid;
+
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && projectId.size() > request.auth.uid.size()
+        && projectId.matches(request.auth.uid + '_.*')
+        && request.resource.data.mode in ['identity', 'signature', 'mark']
+        && request.resource.data.ink is string
+        && request.resource.data.ink.size() <= 9
+        && request.resource.data.paper is string
+        && request.resource.data.paper.size() <= 9;
+    }
+
+    /* ------------------------------------------------------------------ */
+    /* طلبات شراء الباقات                                                 */
+    /* ------------------------------------------------------------------ */
+
     match /orders/{orderId} {
 
-      // قراءة الطلب للمدير وصاحب الطلب
       allow read: if isAdmin()
         || (
           request.auth != null
           && resource.data.uid == request.auth.uid
         );
 
-      // إنشاء طلب جديد
       allow create: if request.auth != null
         && request.resource.data.keys().hasOnly(orderKeys())
         && request.resource.data.keys().hasAll([
@@ -113,7 +225,7 @@ service cloud.firestore {
         && request.resource.data.receiptDeletedAt == null
         && request.resource.data.createdAt == request.time;
 
-      // تعديل الطلب من المدير أو إعادة الإرسال بعد الرفض
+      // تعديل الطلب من الإدارة أو إعادة الإرسال بعد الرفض
       allow update: if isAdmin()
         || (
           request.auth != null
@@ -144,7 +256,10 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // ملفات تسليم الباقات
+    /* ------------------------------------------------------------------ */
+    /* ملفات تسليم الباقات                                                */
+    /* ------------------------------------------------------------------ */
+
     match /deliveries/{bundleId} {
 
       allow read: if isAdmin()
@@ -161,7 +276,10 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // طلبات التواصل والخدمات
+    /* ------------------------------------------------------------------ */
+    /* طلبات التواصل والخدمات                                             */
+    /* ------------------------------------------------------------------ */
+
     match /requests/{requestId} {
 
       allow create: if

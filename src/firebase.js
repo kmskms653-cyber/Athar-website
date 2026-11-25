@@ -13,8 +13,6 @@ const firebaseConfig = {
   appId: "1:293559751500:web:ce1e3c7d590d3532f4b5e9",
 };
 
-export const ADMIN_EMAIL = "kmskms653@gmail.com";
-
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);

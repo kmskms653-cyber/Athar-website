@@ -1,5 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "./firebase";
 import html2canvas from "html2canvas";
+import { useSession } from "./AuthContext.jsx";
 
 export const TAG_TEXT = "لكلِّ منتجٍ حكاية، ولكلِّ حكايةٍ أثر";
 
@@ -46,14 +49,30 @@ const dbPut = (s, v) => tx(s, "readwrite", (o) => o.put(v));
 const dbDel = (s, k) => tx(s, "readwrite", (o) => o.delete(k));
 
 export default function Studio() {
+  const { requireAuth } = useSession();
   const [tplId, setTplId] = useState("g1");
   const [title, setTitle] = useState(TAG_TEXT);
   const [subtitle, setSubtitle] = useState("ATHAR STUDIO");
   const [handle, setHandle] = useState("@atharstudio24");
   const [saved, setSaved] = useState([]);
+  const [customTpls, setCustomTpls] = useState([]);
   const [msg, setMsg] = useState("");
   const ref = useRef(null);
-  const tpl = TEMPLATES.find((t) => t.id === tplId) || TEMPLATES[0];
+  useEffect(() => onSnapshot(collection(db, "templates"), (snap) => {
+    setCustomTpls(snap.docs.map((d) => ({
+      id: d.id,
+      name: d.data().name || "قالب",
+      bg: d.data().bg || "#050402",
+      fg: d.data().fg || "#F8F6F2",
+      ac: d.data().ac || "#948369",
+      align: "center",
+      frame: true,
+      hidden: d.data().hidden === true,
+    })).filter((t) => !t.hidden));
+  }, () => setCustomTpls([])), []);
+
+  const list = useMemo(() => [...TEMPLATES, ...customTpls], [customTpls]);
+  const tpl = list.find((t) => t.id === tplId) || list[0];
   const cut = title.indexOf("،");
   const tagLines = cut > -1 ? [title.slice(0, cut + 1), title.slice(cut + 1).trim()] : [title, ""];
 
@@ -117,7 +136,7 @@ export default function Studio() {
     <div className="studio">
       <header className="admin-bar">
         <strong>استديو القوالب</strong>
-        <div><a className="tab" href="#">← الموقع</a></div>
+        <div><a className="tab" href="#creative">صانع الهوية</a><a className="tab" href="#">← الموقع</a></div>
       </header>
 
       <div className="studio-body">
@@ -151,7 +170,7 @@ export default function Studio() {
             <input value={handle} onChange={(e) => setHandle(e.target.value)} maxLength={40} dir="ltr" /></label>
 
           <div className="tpl-list">
-            {TEMPLATES.map((t) => (
+            {list.map((t) => (
               <button key={t.id} className={t.id === tplId ? "swatch on" : "swatch"} onClick={() => choose(t)}
                 style={{ background: t.bg, color: t.fg, borderColor: t.ac }} title={t.name}>
                 {t.name}
@@ -160,8 +179,8 @@ export default function Studio() {
           </div>
 
           <div className="row">
-            <button className="btn" onClick={exportPng}>تصدير PNG</button>
-            <button className="btn ghost" onClick={save}>حفظ التصميم</button>
+            <button className="btn" onClick={() => requireAuth(exportPng, { label: "تصدير PNG" })}>تصدير PNG</button>
+            <button className="btn ghost" onClick={() => requireAuth(save, { label: "حفظ التصميم" })}>حفظ التصميم</button>
           </div>
           {msg && <p className="note">{msg}</p>}
 

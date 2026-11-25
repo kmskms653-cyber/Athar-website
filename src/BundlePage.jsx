@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { BUNDLES, DELIVERY_NOTE } from "./bundles";
 import { BUNDLE_DETAILS } from "./bundleDetails";
+import { useSession } from "./AuthContext.jsx";
 
 export default function BundlePage({ id }) {
+  const { requireAuth } = useSession();
   const b = BUNDLES.find((x) => x.id === id);
   const d = BUNDLE_DETAILS[id];
   useEffect(() => { window.scrollTo({ top: 0, behavior: "instant" }); }, [id]);
@@ -10,7 +12,8 @@ export default function BundlePage({ id }) {
 
   const order = () => {
     try { sessionStorage.setItem("athar:buy", b.id); } catch { /* ignore */ }
-    window.location.hash = "#account";
+    requireAuth(() => { window.location.hash = "#account"; },
+      { hash: "#account", label: `طلب ${b.title}` });
   };
   const back = () => {
     try { sessionStorage.setItem("athar:order", JSON.stringify({ v: "", msg: "", go: "store", n: Date.now() })); } catch { /* ignore */ }

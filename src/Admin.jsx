@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
-import { collection, doc, getDocs, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
-import { deleteObject, ref as storageRef } from "firebase/storage";
-import { ADMIN_EMAIL, auth, db, googleProvider, storage } from "./firebase";
+import { collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore";
+import { deleteObject, getDownloadURL, ref as storageRef, uploadBytes } from "firebase/storage";
+import { db, storage } from "./firebase";
+import { useSession } from "./AuthContext.jsx";
+import { ATHAR_CONFIG, ROLE_LABEL, isSuperEmail } from "./atharConfig";
 import { DEFAULT_CONTENT, mergeContent } from "./defaultContent";
 import { DET } from "./serviceDetails";
 import { BUNDLES } from "./bundles";
@@ -21,22 +22,6 @@ import Receipt from "./Receipt.jsx";
 import DriveReceipt from "./DriveReceipt.jsx";
 
 const STATUS = { new: "جديد", in_progress: "قيد المتابعة", completed: "مكتمل" };
-
-function authMessage(err) {
-  switch (err && err.code) {
-    case "auth/unauthorized-domain":
-      return `النطاق ${location.hostname} غير مضاف في Firebase ← Authentication ← Settings ← Authorized domains.`;
-    case "auth/operation-not-allowed":
-      return "مزوّد Google غير مفعّل في Firebase Authentication.";
-    case "auth/popup-blocked":
-      return "المتصفح حجب النافذة المنبثقة، اسمح بها وحاول مجدداً.";
-    case "auth/popup-closed-by-user":
-    case "auth/cancelled-popup-request":
-      return "أُغلقت نافذة تسجيل الدخول قبل الإكمال.";
-    default:
-      return "تعذر تسجيل الدخول، حاول مجدداً.";
-  }
-}
 
 function Field({ label, value, onChange, area }) {
   const Tag = area ? "textarea" : "input";
@@ -538,14 +523,313 @@ function Deliveries() {
   );
 }
 
-export default function Admin() {
-  const [user, setUser] = useState(undefined);
+
+/* ------------------------------------------------------------------ */
+/* الفريق والصلاحيات                                                  */
+/* ------------------------------------------------------------------ */
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+function TeamPanel({ currentEmail }) {
+  const [rows, setRows] = useState([]);
+  const [email, setEmail] = useState("");
+  const [msg, setMsg] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => onSnapshot(
+    collection(db, "admins"),
+    (snap) => setRows(snap.docs.map((d) => ({ id: d.id, ...d.data() })).sort((a, b) => (a.role === "sub" ? 0 : -1))),
+    (e) => setMsg(e.code === "permission-denied" ? "لا توجد صلاحية: انشر firestore.rules المحدّثة." : "تعذر تحميل الفريق.")
+  ), []);
+
+  const subs = rows.filter((r) => r.role === "sub");
+  const full = subs.length >= ATHAR_CONFIG.maxSubAdmins;
+
+  async function add() {
+    setMsg("");
+    const clean = email.trim().toLowerCase();
+    if (!EMAIL_RE.test(clean)) { setMsg("أدخل بريداً إلكترونياً صحيحاً."); return; }
+    if (isSuperEmail(clean)) { setMsg("هذا بريد المدير العام، ولا يُضاف كمدير مساعد."); return; }
+    if (full) { setMsg(`الحد الأقصى ${ATHAR_CONFIG.maxSubAdmins} مديرين مساعدين. أزل أحدهم أولاً.`); return; }
+    if (subs.some((r) => r.id === clean)) { setMsg("هذا البريد مدير مساعد بالفعل."); return; }
+    setBusy(true);
+    try {
+      await setDoc(doc(db, "admins", clean), {
+        email: clean,
+        role: "sub",
+        addedAt: serverTimestamp(),
+        addedBy: currentEmail || "",
+      });
+      setEmail("");
+      setMsg("أُضيف المدير المساعد ✓ يستطيع الدخول برابط سحري إلى نفس البريد.");
+    } catch (e) {
+      console.error(e);
+      setMsg(e.code === "permission-denied" ? "رُفض الطلب: قواعد Firestore تسمح للمدير العام فقط." : "تعذر الإضافة.");
+    } finally { setBusy(false); }
+  }
+
+  async function remove(id) {
+    setBusy(true);
+    try {
+      await deleteDoc(doc(db, "admins", id));
+      setMsg("أُزيل الحساب ✓");
+    } catch (e) {
+      console.error(e);
+      setMsg("تعذر الإزالة.");
+    } finally { setBusy(false); }
+  }
+
+  return (
+    <div className="panel wide">
+      <h3>المديرون والصلاحيات</h3>
+      <p className="note">
+        المدير العام: <b dir="ltr">{ATHAR_CONFIG.superAdmins.join(" · ")}</b> — يملك كل الصلاحيات.
+        المدير المساعد يضيف ويخفي الخدمات والقوالب، ويتابع الطلبات والتسليم فقط، ولا يغيّر الأيقونات ولا الصلاحيات.
+      </p>
+
+      <div className="team-list">
+        {ATHAR_CONFIG.superAdmins.map((m) => (
+          <div className="team-row" key={m}>
+            <div><b dir="ltr">{m}</b><small>المدير العام — كل الصلاحيات</small></div>
+            <span className="role-pill super">المدير العام</span>
+          </div>
+        ))}
+        {subs.map((r) => (
+          <div className="team-row" key={r.id}>
+            <div><b dir="ltr">{r.email || r.id}</b><small>أُضيف {when(r.addedAt)}</small></div>
+            <span className="role-pill sub">مدير مساعد</span>
+            <button className="btn sm danger" disabled={busy} onClick={() => remove(r.id)}>إزالة</button>
+          </div>
+        ))}
+        {subs.length === 0 && <p className="note small">لا يوجد مديرون مساعدون بعد.</p>}
+      </div>
+
+      <div className="sub">
+        <Field label={`إضافة مدير مساعد (${subs.length}/${ATHAR_CONFIG.maxSubAdmins})`} value={email} onChange={setEmail} />
+        <button className="btn" onClick={add} disabled={busy || full}>إضافة مدير مساعد</button>
+        {full && <p className="note small">وصلت للحد الأقصى — أزل أحد المديرين لإضافة غيره.</p>}
+      </div>
+      {msg && <p className="note">{msg}</p>}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* سجل الموافقات                                                      */
+/* ------------------------------------------------------------------ */
+
+function ConsentsPanel() {
+  const [rows, setRows] = useState([]);
   const [error, setError] = useState("");
+
+  useEffect(() => onSnapshot(
+    query(collection(db, "consents"), orderBy("acceptedAt", "desc")),
+    (snap) => { setError(""); setRows(snap.docs.map((d) => ({ id: d.id, ...d.data() }))); },
+    (e) => setError(e.code === "permission-denied" ? "لا توجد صلاحية: سجل الموافقات للمدير العام فقط." : "تعذر تحميل السجل.")
+  ), []);
+
+  return (
+    <div className="panel wide">
+      <h3>سجل الموافقات القانونية ({rows.length})</h3>
+      <p className="note">
+        يُسجَّل تلقائياً عند كل دخول: البريد، التاريخ، إصدار الشروط وسياسة الخصوصية، ونوع المتصفح.
+        السجل للقراءة فقط ولا يُحذف من الواجهة.
+      </p>
+      {error && <p className="err">{error}</p>}
+      {!error && rows.length === 0 && <p className="note">لا توجد موافقات مسجلة بعد.</p>}
+      {rows.map((r) => (
+        <article className="req" key={r.id}>
+          <header>
+            <strong dir="ltr">{r.email}</strong>
+            <small>{when(r.acceptedAt)}</small>
+          </header>
+          <p className="note small">
+            الشروط: {r.termsVersion || "—"} · الخصوصية: {r.privacyVersion || "—"} · الوسيلة: {r.provider === "google" ? "Google" : "رابط سحري"}
+          </p>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* الخدمات والأيقونات والقوالب                                        */
+/* ------------------------------------------------------------------ */
+
+function CatalogPanel({ isSuper }) {
+  const [c, setC] = useState(null);
+  const [msg, setMsg] = useState("");
+  const [busy, setBusy] = useState("");
+  const [first, setFirst] = useState(true);
+
+  useEffect(() => {
+    const unsub = onSnapshot(doc(db, "site", "content"), (snap) => {
+      if (first) { setFirst(false); setC(mergeContent(snap.exists() ? snap.data() : null)); }
+    }, (e) => {
+      if (first) { setFirst(false); setC(mergeContent(null)); }
+      setMsg(e.code === "permission-denied" ? "قراءة المحتوى عامة؛ إن ظهرت هذه الرسالة راجع قواعد Firestore." : "تعذر تحميل المحتوى، عُرضت النسخة الافتراضية.");
+    });
+    return unsub;
+    // eslint-disable-next-line
+  }, []);
+
+  const setSvc = (i, key) => (v) => setC((s) => ({ ...s, services: s.services.map((x, j) => (j === i ? { ...x, [key]: v } : x)) }));
+
+  const addService = () => setC((s) => ({
+    ...s,
+    services: [...s.services, { title: `خدمة ${s.services.length + 1}`, text: "", visible: true, iconUrl: "" }],
+  }));
+
+  const removeService = (i) => setC((s) => ({ ...s, services: s.services.filter((_, j) => j !== i) }));
+
+  async function saveServices() {
+    setBusy("svc"); setMsg("");
+    try {
+      if (isSuper) await setDoc(doc(db, "site", "content"), c);
+      else await updateDoc(doc(db, "site", "content"), { services: c.services });
+      setMsg("تم حفظ الخدمات ✓ وتظهر للزوار فوراً.");
+    } catch (e) {
+      console.error(e);
+      setMsg(e.code === "permission-denied" ? "رُفض الحفظ: راجع firestore.rules وصلاحية حسابك." : "تعذر الحفظ.");
+    } finally { setBusy(""); }
+  }
+
+  async function uploadIcon(i, file) {
+    if (!file) return;
+    setBusy(`ic${i}`); setMsg("");
+    try {
+      const clean = file.name.replace(/[^\w.\-]+/g, "-").slice(-40);
+      const path = `site/icons/${Date.now()}-${clean}`;
+      const snap = await uploadBytes(storageRef(storage, path), file, { contentType: file.type || "image/png" });
+      const url = await getDownloadURL(snap.ref);
+      const next = { ...c, services: c.services.map((x, j) => (j === i ? { ...x, iconUrl: url } : x)) };
+      setC(next);
+      await setDoc(doc(db, "site", "content"), next);
+      setMsg("تم رفع الأيقونة وتحديثها ✓");
+    } catch (e) {
+      console.error(e);
+      setMsg(e.code === "storage/unauthorized" ? "رفض التخزين الرفع: انشر storage.rules المحدّثة." : "تعذر رفع الأيقونة.");
+    } finally { setBusy(""); }
+  }
+
+  if (!c) return <div className="panel wide"><p className="note">جارٍ التحميل…</p></div>;
+
+  return (
+    <div className="panel wide">
+      <h3>الخدمات والأيقونات</h3>
+      <p className="note">
+        {isSuper
+          ? "المدير العام: تعديل النصوص، إضافة/إخفاء خدمة، رفع أيقونة جديدة، وحفظ فوري لجميع الزوار."
+          : "المدير المساعد: إضافة خدمة أو إخفاء/إظهار خدمة حالية. رفع الأيقونات وتعديل المحتوى العام للمدير العام فقط."}
+      </p>
+
+      {c.services.map((s, i) => (
+        <div className="sub" key={i}>
+          <div className="svc-head">
+            <span className="svc-ic">
+              {s.iconUrl ? <img src={s.iconUrl} alt="" /> : <span className="note small">بدون أيقونة</span>}
+            </span>
+            <label className="switch">
+              <input type="checkbox" checked={s.visible !== false} onChange={(e) => setSvc(i, "visible")(e.target.checked)} />
+              <span>{s.visible !== false ? "ظاهرة للزوار" : "مخفية"}</span>
+            </label>
+          </div>
+          <Field label={`خدمة ${i + 1} — العنوان`} value={s.title} onChange={setSvc(i, "title")} />
+          <Field label="الوصف" value={s.text} onChange={setSvc(i, "text")} area />
+          {isSuper && (
+            <div className="code-actions">
+              <label className="btn sm ghost upload">
+                {busy === `ic${i}` ? "جارٍ الرفع…" : "رفع أيقونة"}
+                <input type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden
+                  onChange={(e) => { uploadIcon(i, e.target.files && e.target.files[0]); e.target.value = ""; }} />
+              </label>
+              {s.iconUrl && <button className="btn sm ghost" onClick={() => setSvc(i, "iconUrl")("")}>إزالة الأيقونة</button>}
+              <button className="btn sm danger" onClick={() => removeService(i)}>حذف الخدمة</button>
+            </div>
+          )}
+        </div>
+      ))}
+
+      <div className="code-actions">
+        <button className="btn ghost" onClick={addService}>+ إضافة خدمة</button>
+        <button className="btn" onClick={saveServices} disabled={busy === "svc"}>{busy === "svc" ? "جارٍ الحفظ…" : "حفظ الخدمات"}</button>
+      </div>
+      {msg && <p className="note">{msg}</p>}
+
+      <TemplatesPanel isSuper={isSuper} />
+    </div>
+  );
+}
+
+const TPL_EMPTY = { name: "قالب جديد", bg: "#050402", fg: "#F8F6F2", ac: "#948369", hidden: false };
+
+function TemplatesPanel({ isSuper }) {
+  const [rows, setRows] = useState([]);
+  const [msg, setMsg] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => onSnapshot(
+    collection(db, "templates"),
+    (snap) => setRows(snap.docs.map((d) => ({ id: d.id, ...d.data() }))),
+    (e) => setMsg(e.code === "permission-denied" ? "تعذر تحميل القوالب." : "")
+  ), []);
+
+  async function add() {
+    setBusy(true);
+    try {
+      const id = `tpl-${Date.now()}`;
+      await setDoc(doc(db, "templates", id), { ...TPL_EMPTY, order: rows.length + 1, createdAt: serverTimestamp() });
+      setMsg("أُضيف قالب جديد ✓");
+    } catch (e) { setMsg("تعذر الإضافة."); } finally { setBusy(false); }
+  }
+
+  const patch = (id, key, value) => setRows((r) => r.map((x) => (x.id === id ? { ...x, [key]: value } : x)));
+
+  async function save(row) {
+    const { id, ...data } = row;
+    try {
+      await setDoc(doc(db, "templates", id), { ...data, updatedAt: serverTimestamp() }, { merge: true });
+      setMsg("حُفظ القالب ✓");
+    } catch { setMsg("تعذر حفظ القالب."); }
+  }
+
+  async function remove(id) {
+    try { await deleteDoc(doc(db, "templates", id)); setMsg("حُذف القالب."); } catch { setMsg("تعذر الحذف."); }
+  }
+
+  return (
+    <div className="sub templates-admin">
+      <h3>قوالب الاستديو</h3>
+      <p className="note small">القوالب المضافة هنا تظهر بجانب قوالب المنصة الافتراضية. الإخفاء متاح للمدير المساعد، والحذف للمدير العام.</p>
+      {rows.map((t) => (
+        <div className="tpl-row" key={t.id}>
+          <input className="tpl-name" value={t.name || ""} onChange={(e) => patch(t.id, "name", e.target.value)} />
+          <input type="color" value={t.bg || "#050402"} onChange={(e) => patch(t.id, "bg", e.target.value)} title="الخلفية" />
+          <input type="color" value={t.fg || "#F8F6F2"} onChange={(e) => patch(t.id, "fg", e.target.value)} title="النص" />
+          <input type="color" value={t.ac || "#948369"} onChange={(e) => patch(t.id, "ac", e.target.value)} title="اللون المميز" />
+          <label className="switch">
+            <input type="checkbox" checked={t.hidden !== true} onChange={(e) => { patch(t.id, "hidden", !e.target.checked); save({ ...t, hidden: !e.target.checked }); }} />
+            <span>{t.hidden ? "مخفي" : "ظاهر"}</span>
+          </label>
+          <button className="btn sm" onClick={() => save(t)}>حفظ</button>
+          {isSuper && <button className="btn sm danger" onClick={() => remove(t.id)}>حذف</button>}
+        </div>
+      ))}
+      <button className="btn ghost" onClick={add} disabled={busy}>+ إضافة قالب</button>
+      {msg && <p className="note small">{msg}</p>}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* لوحة الإدارة                                                       */
+/* ------------------------------------------------------------------ */
+
+export default function Admin() {
+  const { user, role, isAdmin, isSuper, loading, openAuth, signOutUser } = useSession();
   const [tab, setTab] = useState("orders");
   const [adminKey, setAdminKey] = useState(() => getDriveConfig().adminKey);
   const [connected, setConnected] = useState(Boolean(getDriveConfig().url));
-
-  useEffect(() => onAuthStateChanged(auth, setUser), []);
 
   useEffect(() => {
     const on = () => setConnected(Boolean(getDriveConfig().url));
@@ -553,32 +837,30 @@ export default function Admin() {
     return () => window.removeEventListener("athar:drive-config", on);
   }, []);
 
-  const isAdmin = user && user.emailVerified && user.email === ADMIN_EMAIL;
+  useEffect(() => {
+    if (!isSuper && ["content", "team", "consents", "drive"].includes(tab)) setTab("orders");
+  }, [isSuper, tab]);
 
-  async function login() {
-    setError("");
-    try {
-      const res = await signInWithPopup(auth, googleProvider);
-      if (!(res.user.emailVerified && res.user.email === ADMIN_EMAIL)) {
-        await signOut(auth);
-        setError("هذا الحساب غير مصرح له بدخول لوحة الإدارة.");
-      }
-    } catch (e) {
-      console.error(e);
-      setError(authMessage(e));
-    }
+  if (loading) return <div className="fatal"><p>جارٍ التحميل…</p></div>;
+
+  if (!user) {
+    return (
+      <div className="fatal">
+        <h1>لوحة إدارة أثر</h1>
+        <p>سجّل الدخول بحساب معتمد. الدخول برابط سحري إلى بريدك أو عبر Google، بعد الموافقة على الشروط.</p>
+        <button className="btn" onClick={openAuth}>تسجيل الدخول</button>
+        <a className="back" href="#/">← العودة للموقع</a>
+      </div>
+    );
   }
-
-  if (user === undefined) return <div className="fatal"><p>جارٍ التحميل…</p></div>;
 
   if (!isAdmin) {
     return (
       <div className="fatal">
         <h1>لوحة إدارة أثر</h1>
-        <p>سجّل الدخول بحساب Google المصرح به.</p>
-        <button className="btn" onClick={login}>الدخول عبر Google</button>
-        {error && <p className="err">{error}</p>}
-        {user && !error && <p className="err">هذا الحساب غير مصرح له.</p>}
+        <p dir="ltr">{user.email}</p>
+        <p>هذا الحساب لا يملك صلاحية إدارية. صلاحية الإدارة تُمنح من المدير العام داخل لوحة الإدارة، وتُتحقق منها قواعد الخادم.</p>
+        <button className="btn ghost" onClick={signOutUser}>تسجيل الخروج</button>
         <a className="back" href="#/">← العودة للموقع</a>
       </div>
     );
@@ -588,19 +870,23 @@ export default function Admin() {
     <div className="admin">
       <header className="admin-bar">
         <strong>لوحة الإدارة</strong>
+        <span className={`role-pill ${isSuper ? "super" : "sub"}`}>{ROLE_LABEL[role]}</span>
         <div className="tabs">
           <button className={tab === "orders" ? "tab on" : "tab"} onClick={() => setTab("orders")}>الطلبات والإيصالات</button>
-          <button className={tab === "drive" ? "tab on" : "tab"} onClick={() => setTab("drive")}>ربط Drive</button>
+          <button className={tab === "catalog" ? "tab on" : "tab"} onClick={() => setTab("catalog")}>الخدمات والقوالب</button>
           <button className={tab === "requests" ? "tab on" : "tab"} onClick={() => setTab("requests")}>طلبات التواصل</button>
           <button className={tab === "delivery" ? "tab on" : "tab"} onClick={() => setTab("delivery")}>التسليم</button>
-          <button className={tab === "content" ? "tab on" : "tab"} onClick={() => setTab("content")}>المحتوى</button>
-          <a className="tab" href="#studio">الاستديو</a>
+          {isSuper && <button className={tab === "content" ? "tab on" : "tab"} onClick={() => setTab("content")}>المحتوى</button>}
+          {isSuper && <button className={tab === "team" ? "tab on" : "tab"} onClick={() => setTab("team")}>الفريق</button>}
+          {isSuper && <button className={tab === "consents" ? "tab on" : "tab"} onClick={() => setTab("consents")}>الموافقات</button>}
+          {isSuper && <button className={tab === "drive" ? "tab on" : "tab"} onClick={() => setTab("drive")}>ربط Drive</button>}
+          <a className="tab" href="#creative">صانع الهوية</a>
           <a className="tab" href="#/">الموقع</a>
-          <button className="tab" onClick={() => signOut(auth)}>خروج</button>
+          <button className="tab" onClick={signOutUser}>خروج</button>
         </div>
       </header>
 
-      {!connected && tab === "orders" && (
+      {!connected && isSuper && tab === "orders" && (
         <div className="panel wide">
           <div className="banner">
             <div>
@@ -613,10 +899,13 @@ export default function Admin() {
       )}
 
       {tab === "orders" && <ReceiptManager adminKey={adminKey} />}
-      {tab === "drive" && <DriveSetup adminKey={adminKey} setAdminKey={setAdminKey} />}
+      {tab === "catalog" && <CatalogPanel isSuper={isSuper} />}
+      {tab === "drive" && isSuper && <DriveSetup adminKey={adminKey} setAdminKey={setAdminKey} />}
       {tab === "requests" && <Requests />}
       {tab === "delivery" && <Deliveries />}
-      {tab === "content" && <ContentEditor />}
+      {tab === "content" && isSuper && <ContentEditor />}
+      {tab === "team" && isSuper && <TeamPanel currentEmail={user.email} />}
+      {tab === "consents" && isSuper && <ConsentsPanel />}
     </div>
   );
 }

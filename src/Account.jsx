@@ -1,25 +1,13 @@
 import { useEffect, useState } from "react";
-import { signInWithPopup, signOut } from "firebase/auth";
 import { collection, doc, getDoc, onSnapshot, query, where } from "firebase/firestore";
-import { ADMIN_EMAIL, auth, db, googleProvider } from "./firebase";
-import { useAuth } from "./useAuth";
+import { db } from "./firebase";
+import { useSession } from "./AuthContext.jsx";
 import { BUNDLES } from "./bundles";
 import { ORDER_STATUS } from "./orders";
 import BankTransfer from "./BankTransfer.jsx";
 
 // Google يمنع تسجيل الدخول داخل متصفحات التطبيقات (إنستغرام وسناب وتيك توك...)
 const IN_APP = /Instagram|FBAN|FBAV|Snapchat|TikTok|musical_ly|Line\//i.test(typeof navigator !== "undefined" ? navigator.userAgent : "");
-
-function authMessage(err) {
-  switch (err && err.code) {
-    case "auth/unauthorized-domain": return `النطاق ${location.hostname} غير مضاف في Firebase ← Authentication ← Settings ← Authorized domains.`;
-    case "auth/operation-not-allowed": return "مزوّد Google غير مفعّل في Firebase Authentication.";
-    case "auth/popup-blocked": return "المتصفح حجب النافذة المنبثقة، اسمح بها وحاول مجدداً.";
-    case "auth/popup-closed-by-user":
-    case "auth/cancelled-popup-request": return "أُغلقت نافذة تسجيل الدخول قبل الإكمال.";
-    default: return "تعذر تسجيل الدخول، حاول مجدداً.";
-  }
-}
 
 function readIntent() {
   try { return BUNDLES.find((b) => b.id === sessionStorage.getItem("athar:buy")) || null; } catch { return null; }
@@ -55,7 +43,7 @@ function Delivery({ order }) {
 }
 
 export default function Account() {
-  const user = useAuth();
+  const { user, isAdmin, openAuth, signOutUser, loading } = useSession();
   const [error, setError] = useState("");
   const [orders, setOrders] = useState([]);
   const [ordersError, setOrdersError] = useState("");
@@ -77,9 +65,9 @@ export default function Account() {
     );
   }, [user]);
 
-  async function login() {
+  function login() {
     setError("");
-    try { await signInWithPopup(auth, googleProvider); } catch (e) { console.error(e); setError(authMessage(e)); }
+    openAuth();
   }
 
   function done(res) {
@@ -99,7 +87,7 @@ export default function Account() {
     setIntent(b);
   }
 
-  if (user === undefined) return <div className="fatal"><p>جارٍ التحميل…</p></div>;
+  if (loading) return <div className="fatal"><p>جارٍ التحميل…</p></div>;
 
   if (!user) {
     return (
@@ -109,17 +97,15 @@ export default function Account() {
         <p>سجّل الدخول لشراء الحزم الرقمية واستلام ملفاتك.</p>
         {intent && <p className="note">الحزمة المختارة: {intent.title} — {intent.price} {intent.currency}</p>}
         {IN_APP && (
-          <p className="err">تسجيل Google لا يعمل داخل متصفح التطبيقات (إنستغرام/سناب/تيك توك). افتح هذا الرابط في Safari أو Chrome ثم سجّل الدخول.
+          <p className="note small">داخل متصفح التطبيقات (إنستغرام/سناب/تيك توك) استخدم الدخول برابط البريد، فهو يعمل هنا. إن تعذّر، انسخ الرابط وافتحه في Safari أو Chrome.
             {" "}<button type="button" className="cp" onClick={() => navigator.clipboard && navigator.clipboard.writeText(location.href)}>نسخ الرابط</button></p>
         )}
-        <button className="btn" onClick={login}>الدخول عبر Google</button>
+        <button className="btn" onClick={login}>تسجيل الدخول</button>
         {error && <p className="err">{error}</p>}
         <a className="back" href="#">← العودة للموقع</a>
       </div>
     );
   }
-
-  const isAdmin = user.emailVerified && user.email === ADMIN_EMAIL;
 
   return (
     <div className="admin">
@@ -128,7 +114,7 @@ export default function Account() {
         <div>
           {isAdmin && <a className="tab" href="#admin">لوحة الإدارة</a>}
           <a className="tab" href="#">الموقع</a>
-          <button className="tab" onClick={() => signOut(auth)}>خروج</button>
+          <button className="tab" onClick={signOutUser}>خروج</button>
         </div>
       </header>
 
