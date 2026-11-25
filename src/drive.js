@@ -234,3 +234,20 @@ export function saveBlobToDevice(blob, filename) {
   a.remove();
   setTimeout(() => URL.revokeObjectURL(url), 30000);
 }
+
+
+/* ---------- تسليم الملفات من Drive بعد التحقق من الدفع ---------- */
+export async function deliveryList(idToken, bundleId) {
+  return driveCall("deliveryList", { idToken, bundleId }, { timeout: 45000 });
+}
+
+export async function deliveryFile(idToken, bundleId, fileId) {
+  const res = await driveCall("deliveryFile", { idToken, bundleId, fileId }, { timeout: 120000 });
+  if (res.mode === "share") return { mode: "share", url: res.url, name: res.name };
+  const bytes = base64ToBytes(res.data);
+  return { mode: "direct", name: res.name, blob: new Blob([bytes], { type: res.mimeType || "application/octet-stream" }) };
+}
+
+export async function setupDeliveryFolders(adminKey) {
+  return driveCall("setupDelivery", { adminKey }, { timeout: 60000 });
+}

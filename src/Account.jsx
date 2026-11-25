@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { collection, doc, getDoc, onSnapshot, query, where } from "firebase/firestore";
-import { db } from "./firebase";
+import { auth, db } from "./firebase";
+import { deliveryFile, deliveryList, driveReady, formatBytes } from "./drive";
 import { useSession } from "./AuthContext.jsx";
 import { BUNDLES } from "./bundles";
 import { ORDER_STATUS } from "./orders";
@@ -16,27 +17,69 @@ const clearIntent = () => { try { sessionStorage.removeItem("athar:buy"); } catc
 
 // ملفات الحزمة بعد اكتمال الطلب: files = [{label, url}]
 function Delivery({ order }) {
-  const [state, setState] = useState({ loading: true, files: [], note: "", error: "" });
+  const [state, setState] = useState({ loading: true, files: [], links: [], note: "", error: "" });
+  const [busyId, setBusyId] = useState("");
+  const [dlErr, setDlErr] = useState("");
+
   useEffect(() => {
     let alive = true;
-    getDoc(doc(db, "deliveries", order.bundleId))
-      .then((snap) => {
-        if (!alive) return;
+    (async () => {
+      let files = [];
+      let driveErr = "";
+      // 1) ملفات Drive الأساسية (يتحقق الجسر من الدفع بنفسه)
+      if (driveReady()) {
+        try {
+          const token = await auth.currentUser.getIdToken();
+          files = (await deliveryList(token, order.bundleId)).files || [];
+        } catch (e) { driveErr = e.message || ""; }
+      }
+      // 2) روابط احتياطية يضعها المدير في Firestore
+      let links = [];
+      let note = "";
+      try {
+        const snap = await getDoc(doc(db, "deliveries", order.bundleId));
         const d = snap.exists() ? snap.data() : {};
-        const files = Array.isArray(d.files) && d.files.length ? d.files : d.url ? [{ label: "تحميل / فتح الملفات", url: d.url }] : [];
-        setState({ loading: false, files, note: d.note || "", error: files.length ? "" : "روابط الحزمة لم تُرفع بعد، سنوافيك بها قريباً." });
-      })
-      .catch((e) => { console.error(e); if (alive) setState({ loading: false, files: [], note: "", error: "تعذر جلب الروابط، حاول لاحقاً." }); });
+        links = Array.isArray(d.files) && d.files.length ? d.files : d.url ? [{ label: "تحميل / فتح الملفات", url: d.url }] : [];
+        note = d.note || "";
+      } catch { /* ignore */ }
+      if (!alive) return;
+      setState({
+        loading: false, files, links, note,
+        error: files.length || links.length ? "" : (driveErr || "ملفات الحزمة لم تُرفع بعد، سنوافيك بها قريباً."),
+      });
+    })();
     return () => { alive = false; };
   }, [order.bundleId]);
+
+  async function get(f) {
+    setDlErr(""); setBusyId(f.id);
+    try {
+      const token = await auth.currentUser.getIdToken();
+      const r = await deliveryFile(token, order.bundleId, f.id);
+      if (r.mode === "share") { window.open(r.url, "_blank", "noopener"); }
+      else {
+        const url = URL.createObjectURL(r.blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = r.name; a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+      }
+    } catch (e) { setDlErr(e.message || "تعذر تنزيل الملف."); }
+    finally { setBusyId(""); }
+  }
 
   if (state.loading) return <p className="note">جارٍ تحميل الملفات…</p>;
   return (
     <div className="deliv">
       <div className="files">
-        {state.files.map((f) => <a className="btn" key={f.url} href={f.url} target="_blank" rel="noreferrer">{f.label}</a>)}
+        {state.files.map((f) => (
+          <button className="btn" key={f.id} onClick={() => get(f)} disabled={busyId === f.id}>
+            {busyId === f.id ? "جارٍ التحضير…" : `${f.name} (${formatBytes(f.size)})`}
+          </button>
+        ))}
+        {state.links.map((f) => <a className="btn" key={f.url} href={f.url} target="_blank" rel="noreferrer">{f.label}</a>)}
       </div>
       {state.note && <p className="note">{state.note}</p>}
+      {dlErr && <p className="err">{dlErr}</p>}
       {state.error && <p className="err">{state.error}</p>}
     </div>
   );
