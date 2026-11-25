@@ -14,6 +14,11 @@ export const ATHAR_CONFIG = {
     privacyVersion: "2026-11-25",
     effectiveDate: "25 نوفمبر 2026",
   },
+  // جسر الإيصالات والتسليم مع Google Drive (بدون ADMIN_KEY لحماية لوحة الإدارة)
+  receiptBridge: {
+    url: "https://script.google.com/macros/s/AKfycbxFc3qUiBK7ZtmwBQBK_oQjq-B1t07gAIjJB6DCKLbti1GpskKcvvbWi3wA29OjMiGg/exec",
+    publicKey: "athar-upload-2026",
+  },
   // مسار القوالب العامة (قراءة للزوار) — يُستخدم كنسخة احتياطية إن تعذّر Firestore
   templatesUrl: "/content/templates.json",
   // فحص الإدارة الموحّد: super أو sub فقط
