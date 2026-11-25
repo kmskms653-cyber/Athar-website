@@ -6,6 +6,7 @@ import ServicePage from "./ServicePage.jsx";
 import Account from "./Account.jsx";
 import BundlePage from "./BundlePage.jsx";
 import CreativeStudio from "./CreativeStudio.jsx";
+import CardMaker from "./CardMaker.jsx";
 import LegalPage from "./LegalPage.jsx";
 
 function useHash() {
@@ -23,6 +24,7 @@ export default function App() {
   if (hash === "#admin") return <Admin />;
   if (hash === "#studio") return <Studio />;
   if (hash === "#account") return <Account />;
+  if (/^#cards(-[a-z]+)?$/.test(hash)) return <CardMaker />;
   if (hash === "#creative") return <CreativeStudio />;
   if (hash === "#terms") return <LegalPage kind="terms" />;
   if (hash === "#privacy") return <LegalPage kind="privacy" />;
