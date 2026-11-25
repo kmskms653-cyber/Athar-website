@@ -16,7 +16,8 @@ export const ATHAR_CONFIG = {
   },
   // جسر الإيصالات والتسليم مع Google Drive (بدون ADMIN_KEY لحماية لوحة الإدارة)
   receiptBridge: {
-    url: "https://script.google.com/macros/s/AKfycbxFc3qUiBK7ZtmwBQBK_oQjq-B1t07gAIjJB6DCKLbti1GpskKcvvbWi3wA29OjMiGg/exec",
+    url: "https://script.google.com/macros/s/AKfycbxk3QBSZccmYXJnNDEmkr0uzpRrglNf4L--yPuWAfgOM8fjG7ggYY5lsgwgVArfThan/exec
+",
     publicKey: "athar-upload-2026",
   },
   // مسار القوالب العامة (قراءة للزوار) — يُستخدم كنسخة احتياطية إن تعذّر Firestore
