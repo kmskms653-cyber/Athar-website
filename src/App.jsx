@@ -7,6 +7,7 @@ import Account from "./Account.jsx";
 import BundlePage from "./BundlePage.jsx";
 import CreativeStudio from "./CreativeStudio.jsx";
 import CardMaker from "./CardMaker.jsx";
+import StudioHub from "./StudioHub.jsx";
 import LegalPage from "./LegalPage.jsx";
 
 function useHash() {
@@ -25,7 +26,9 @@ export default function App() {
   if (hash === "#studio") return <Studio />;
   if (hash === "#account") return <Account />;
   if (/^#cards(-[a-z]+)?$/.test(hash)) return <CardMaker />;
-  if (hash === "#creative") return <CreativeStudio />;
+  if (/^#creative(-(personal|corporate|signature|mark))?$/.test(hash)) return <CreativeStudio />;
+  const hb = /^#studio-([1-5])$/.exec(hash);
+  if (hb) return <StudioHub id={Number(hb[1])} />;
   if (hash === "#terms") return <LegalPage kind="terms" />;
   if (hash === "#privacy") return <LegalPage kind="privacy" />;
   if (hash === "#refund") return <LegalPage kind="refund" />;

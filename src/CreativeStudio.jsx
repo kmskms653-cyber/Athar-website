@@ -16,7 +16,7 @@ function download(blob, filename) {
 
 export default function CreativeStudio() {
   const { user, requireAuth } = useSession();
-  const [mode, setMode] = useState("personal");
+  const [mode, setMode] = useState(() => { const m = /^#creative-(personal|corporate|signature|mark)$/.exec(window.location.hash); return m ? m[1] : "personal"; });
   const [name, setName] = useState("أثر");
   const [subtitle, setSubtitle] = useState("فخامة الإبداع العربي");
   const [style, setStyle] = useState("heritage");
