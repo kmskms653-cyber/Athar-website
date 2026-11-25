@@ -87,7 +87,7 @@ function ContactForm({ services, pick }) {
       </select>
       <textarea rows={5} aria-label="تفاصيل مشروعك" placeholder="حدّثنا عن مشروعك" value={form.message} onChange={set("message")} maxLength={2000} />
       <button className="btn" disabled={state.status === "sending"}>
-        {state.status === "sending" ? "جارٍ الإرسال…" : "إرسال الطلب"}
+        {state.status === "sending" ? "جارٍ الإرسال…" : "أرسل طلبك"}
       </button>
       {state.status === "done" && <p className="ok">وصلنا طلبك، سنتواصل معك قريباً.</p>}
       {state.status === "error" && <p className="err">{state.error}</p>}
@@ -103,9 +103,22 @@ const BUNDLE_IMG = {
 };
 
 const SLIDES = [
-  { img: "/img/hero-pen.jpg", title: "من الفكرة إلى أثر لا يُنسى", text: "نصنع الهويات، ونصمم المنتجات، ونحوّل الأفكار إلى أعمال فنية تحمل شخصيتك.", cta: "اكتشف خدماتنا", to: "services" },
-  { img: "/img/svc-calligraphy.jpg", title: "بصمتك بخطٍّ عربي يشبهك", text: "لوحات وتوقيعات وبصمات مصممة بعناية لتبقى في ذاكرة من يراها.", cta: "البصمة والهوية", to: "#service-5" },
-  { img: "/works/work-2.jpg", title: "تفاصيل صغيرة .. تصنع الفارق", text: "منتجات وهدايا تحمل هويتك بلمسة فاخرة من القلم إلى العطر.", cta: "تصفّح الأعمال", to: "works" },
+  { img: "/img/hero-pen.jpg", title: "من الفكرة إلى أثر لا يُنسى", text: "نصنع الهويات، ونصمم المنتجات، ونحوّل الأفكار إلى أعمال بصرية تحمل شخصيتك.", cta: "اكتشف خدماتنا", to: "studios", cap: "أثر — أفكارك تستحق أن تُرى" },
+  { img: "/img/svc-calligraphy.jpg", title: "بصمتك بخطٍّ عربي يشبهك", text: "هوية وتوقيع وبصمة مصممة بعناية لتبقى في ذاكرة من يراها.", cta: "استديو أثر الإبداعي", to: "#creative", cap: "أثر — أفكارك تستحق أن تُرى" },
+  { img: "/works/work-2.jpg", title: "تفاصيل صغيرة .. تصنع الفارق", text: "بطاقات وهدايا ومنتجات تحمل هويتك بلمسة فاخرة.", cta: "استديو الإهداء والبطاقات", to: "#cards", cap: "أثر — أفكارك تستحق أن تُرى" },
+];
+
+const STUDIOS = [
+  { id: 1, title: "استديو أثر الإبداعي", text: "صناعة الهوية والتوقيع والبصمة بأسلوب يعكس شخصية المستخدم.", img: "/img/svc-calligraphy.jpg", href: "#creative",
+    items: [["صانع الهوية الشخصية", "#creative"], ["صانع هوية الشركات", "#creative"], ["صانع التوقيع — 15 أسلوباً", "#creative"], ["صانع البصمة", "#creative"]] },
+  { id: 2, title: "استديو الصور والكرتون", text: "تحويل الصور إلى أعمال كرتونية وإبداعات شخصية.", img: "/img/svc-content.jpg", href: "",
+    items: [["شخصيتك الكرتونية"], ["شخصيتي في مغامرة"], ["صانع الملصقات (Stickers)"]] },
+  { id: 3, title: "استديو الإهداء والبطاقات", text: "تصميم بطاقات شخصية للمناسبات والإهداءات.", img: "/img/svc-creative.jpg", href: "#cards",
+    items: [["بطاقة إهداء", "#cards-gift"], ["بطاقة شكر وتقدير", "#cards-thanks"], ["بطاقة تهنئة", "#cards-congrats"], ["دعوة مناسبة", "#cards-invite"], ["بطاقة اقتباس", "#cards-quote"], ["بطاقة رقمية مخصصة", "#cards-custom"]] },
+  { id: 4, title: "استديو الأعمال والتجارة", text: "صور احترافية للمنتجات وعروض بصرية للمشاريع والمتاجر.", img: "/img/svc-products.jpg", href: "",
+    items: [["مصور المنتجات الذكي"], ["تصميم عروض المنتجات"], ["محتوى بصري للمشاريع والمتاجر"]] },
+  { id: 5, title: "استديو القوالب والتصاميم", text: "قوالب قابلة للتخصيص للمنشورات والإعلانات والهويات.", img: "/img/svc-digital.jpg", href: "#studio",
+    items: [["قوالب المنشورات", "#studio"], ["قوالب الإعلانات"], ["قوالب الهوية التجارية"], ["تصميم أسماء الشركات وشعاراتها وبصمتها", "#creative"], ["حزم التصاميم الجاهزة", "store"]] },
 ];
 
 const FEATURES = [
@@ -172,25 +185,19 @@ export default function Site() {
         <nav className={`hm-menu ${menu ? "o" : ""}`}>
           <button className="on" onClick={() => go("home")}>الرئيسية</button>
           <div className="hm-dd">
-            <button onClick={() => go("services")}>خدماتنا <i>▾</i></button>
+            <button onClick={() => go("studios")}>استديوهاتنا <i>▾</i></button>
             <div className="hm-sub">
-              {sv.map(({ s, i }) => <a key={i} href={`#service-${i + 1}`} onClick={() => setMenu(false)}>{s.title}</a>)}
+              {STUDIOS.map((st) => <a key={st.id} href={st.href || "#studios"} onClick={(e) => { setMenu(false); if (!st.href) { e.preventDefault(); go("studios"); } }}>{st.title}</a>)}
             </div>
           </div>
-          <button onClick={() => go("store")}>الباقات</button>
-          <button onClick={() => go("works")}>أعمالنا</button>
+          <button onClick={() => go("store")}>الباقات المميزة</button>
+          <button onClick={() => go("studio-banner")}>القوالب</button>
           <button onClick={() => go("about")}>من نحن</button>
-          <div className="hm-dd">
-            <button onClick={() => go("studio-banner")}>الاستديو <i>▾</i></button>
-            <div className="hm-sub">
-              <a href="#studio" onClick={() => setMenu(false)}>استديو القوالب</a>
-              <a href="#cards" onClick={() => setMenu(false)}>بطاقات الإهداء والدعوة</a>
-              <a href="#creative" onClick={() => setMenu(false)}>صانع الهوية والتوقيع</a>
-            </div>
-          </div>
         </nav>
         <div className="hm-actions">
-          <a className="hm-order" href="#contact" onClick={(e) => { e.preventDefault(); go("contact"); }}>اطلب مشروعك ✈</a>
+          <a className="hm-link" href="#account">حسابي</a>
+          <a className="hm-link" href="#account">ملفاتي</a>
+          <a className="hm-order" href="#contact" onClick={(e) => { e.preventDefault(); go("contact"); }}>اطلب تصميمك ✈</a>
           <a className="hm-circ" href="#account" aria-label="حسابي" title="حسابي وتسجيل الدخول">
             <Ico d="M12 4a4 4 0 100 8 4 4 0 000-8z M4 21c0-4 3.6-7 8-7s8 3 8 7" size={18} />
           </a>
@@ -201,9 +208,10 @@ export default function Site() {
         {SLIDES.map((sl, n) => <div key={sl.img} className={`hm-slide ${n === slide ? "on" : ""}`} style={{ backgroundImage: `url(${sl.img})` }} aria-hidden="true" />)}
         <div className="hm-shade" />
         <div className="hm-copy" key={slide}>
-          <h1>{slide === 0 ? c.hero.slogan || cur.title : cur.title}</h1>
+          <h1>{cur.title}</h1>
           <p>{cur.text}</p>
           <button className="hm-btn" onClick={() => go(cur.to)}>{cur.cta} <span>←</span></button>
+          <em className="hm-cap">{cur.cap}</em>
           <ul className="hm-feat">
             {FEATURES.map(([t, d]) => <li key={t}><Ico d={d} /><span>{t}</span></li>)}
           </ul>
@@ -215,18 +223,25 @@ export default function Site() {
         </div>
       </section>
 
-      <section className="hm-sec" id="services">
-        <h2 className="hm-h rv">خدماتنا الإبداعية</h2>
-        <div className="hm-svc">
-          {sv.map(({ s, i }, n) => (
-            <a className="hm-card rv" style={{ "--d": `${n * 70}ms` }} key={i} href={`#service-${i + 1}`} aria-label={s.title}>
-              <div className="hm-ph" style={{ backgroundImage: `url(${s.iconUrl || c.serviceImages?.[i] || ""})` }} />
+      <section className="hm-sec" id="studios">
+        <h2 className="hm-h rv" id="services">استديوهاتنا</h2>
+        <div className="hm-st">
+          {STUDIOS.map((st, n) => (
+            <article className="hm-card hm-studio rv" style={{ "--d": `${n * 70}ms` }} key={st.id}>
+              <a className="hm-ph" href={st.href || "#contact"} onClick={(e) => { if (!st.href) { e.preventDefault(); go("contact"); } }} aria-label={st.title} style={{ backgroundImage: `url(${st.img})` }}><b className="hm-num">{st.id}</b></a>
               <div className="hm-cb">
-                <h3>{s.title}</h3>
-                <p>{s.text}</p>
-                <span className="hm-pill">{fromPrice(i)}</span>
+                <h3>{st.title}</h3>
+                <p>{st.text}</p>
+                <ul className="hm-items">
+                  {st.items.map(([label, href]) => (
+                    <li key={label}>
+                      {href ? <a href={href.startsWith("#") ? href : `#${href}`} onClick={(e) => { if (!href.startsWith("#")) { e.preventDefault(); go(href); } }}>{label}</a> : <span>{label}<small>قريباً</small></span>}
+                    </li>
+                  ))}
+                </ul>
+                {st.href ? <a className="hm-pill" href={st.href}>ادخل الاستديو</a> : <button className="hm-pill" onClick={() => go("contact")}>اطلب هذه الخدمة</button>}
               </div>
-            </a>
+            </article>
           ))}
         </div>
       </section>
@@ -250,11 +265,9 @@ export default function Site() {
       <section className="hm-banner rv" id="studio-banner" style={{ backgroundImage: "linear-gradient(90deg,#120b08 8%,#120b08c9 45%,#120b0866),url(/works/work-2.jpg)" }}>
         <div>
           <h2>استديو القوالب الإبداعي</h2>
-          <p>صمّم بنفسك، خصص قوالبنا الجاهزة، واحصل على تصاميم احترافية في دقائق.</p>
+          <p>اختر قالبك، خصّصه، واحصل على تصميمك الإبداعي في دقائق.</p>
           <div className="hm-row">
-            <a className="hm-out" href="#studio">ادخل الاستديو ←</a>
-            <a className="hm-out" href="#cards">بطاقات الإهداء والدعوة</a>
-            <a className="hm-out" href="#creative">صانع الهوية والتوقيع</a>
+            <a className="hm-out" href="#studio">ابدأ الآن ←</a>
           </div>
         </div>
       </section>
@@ -277,8 +290,8 @@ export default function Site() {
       <section className="hm-sec" id="contact">
         <div className="hm-cta rv">
           <div className="hm-ctxt">
-            <b>اطلب مشروعك الآن</b>
-            <span>فريق أثر جاهز لتحقيق رؤيتك بأعلى جودة.</span>
+            <b>تواصل معنا.. لنصنع معاً أثراً</b>
+            <span>اطلب مشروعك الآن، وفريق أثر جاهز لتحقيق رؤيتك بأعلى جودة.</span>
             <div className="hm-soc">
               <a href={`https://instagram.com/${c.contact.instagram.replace("@", "")}`} target="_blank" rel="noreferrer" aria-label="إنستغرام">IG</a>
               <a href={`mailto:${c.contact.email}`} aria-label="البريد">@</a>
@@ -294,8 +307,6 @@ export default function Site() {
         <nav>
           <a href="#terms">الشروط والأحكام</a>
           <a href="#privacy">سياسة الخصوصية</a>
-          <a href="#cards">بطاقات الإهداء</a>
-          <a href="#studio">استديو القوالب</a>
         </nav>
         <span>© {c.footerYear} أثر — جميع الحقوق محفوظة</span>
       </footer>
