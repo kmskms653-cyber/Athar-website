@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-route="creative-signature">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>أثر | ATHAR STUDIO — صانع التوقيع الشخصي والخطي (15 نمطاً)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,700&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;600;700;800&family=Lalezar&family=Marhey:wght@400;600;700&family=Montserrat:wght@400;600;700&family=Reem+Kufi:wght@500;700&family=Scheherazade+New:wght@400;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --charcoal-deep: #1C1A19;
+      --charcoal-surface: #20201E;
+      --charcoal-elevated: #2A2826;
+      --gold-bronze: #C5A880;
+      --gold-warm: #D0B58B;
+      --ivory-soft: #F4EFE6;
+      --ivory-marble: #F5F2EB;
+      --gray-warm: #8C8175;
+      --border-subtle: rgba(197, 168, 128, 0.22);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--charcoal-deep);
+      color: var(--ivory-soft);
+      font-family: 'Tajawal', sans-serif;
+      min-height: 100vh;
+      line-height: 1.6;
+      background-image: radial-gradient(circle at 12% 10%, rgba(197, 168, 128, 0.08) 0%, transparent 45%),
+                        radial-gradient(circle at 88% 90%, rgba(208, 181, 139, 0.06) 0%, transparent 45%);
+    }
+
+    header {
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(28, 26, 25, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .header-inner {
+      max-width: 1460px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.85rem; }
+
+    .brand-mark {
+      width: 44px; height: 44px;
+      border: 1.5px solid var(--gold-bronze);
+      border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold-warm);
+      font-family: 'Aref Ruqaa', serif;
+      font-size: 1.5rem;
+      background: linear-gradient(135deg, rgba(197,168,128,0.14), transparent);
+    }
+
+    .brand-title h1 {
+      font-family: 'Aref Ruqaa', serif;
+      font-size: 1.4rem;
+      color: var(--gold-warm);
+      font-weight: 400;
+    }
+
+    .brand-title span {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 2.5px;
+      color: var(--gray-warm);
+      display: block;
+    }
+
+    .header-badges {
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .pill-tag {
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(197, 168, 128, 0.08);
+      color: var(--gold-warm);
+      font-size: 0.82rem;
+    }
+
+    /* Control Bar */
+    .control-bar {
+      max-width: 1460px;
+      margin: 1.6rem auto 0;
+      padding: 0 1.5rem;
+    }
+
+    .control-box {
+      background: var(--charcoal-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 1.4rem 1.6rem;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr auto;
+      gap: 1.1rem;
+      align-items: end;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.35);
+    }
+
+    @media (max-width: 1100px) {
+      .control-box { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .control-box { grid-template-columns: 1fr; }
+    }
+
+    .field label {
+      display: block;
+      font-size: 0.84rem;
+      color: var(--ivory-marble);
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+    }
+
+    .field input, .field select {
+      width: 100%;
+      background: var(--charcoal-deep);
+      border: 1px solid rgba(140, 129, 117, 0.38);
+      border-radius: 11px;
+      padding: 0.72rem 0.95rem;
+      color: var(--ivory-soft);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.96rem;
+    }
+
+    .field input:focus, .field select:focus {
+      outline: none;
+      border-color: var(--gold-warm);
+      box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.14);
+    }
+
+    /* Ink Color Swatches */
+    .ink-swatches {
+      display: flex;
+      gap: 0.45rem;
+      align-items: center;
+      height: 44px;
+    }
+
+    .ink-dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid rgba(255,255,255,0.2);
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .ink-dot.active {
+      transform: scale(1.16);
+      border-color: var(--gold-warm);
+      box-shadow: 0 0 0 2px var(--charcoal-deep), 0 0 0 4px var(--gold-warm);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold-warm), var(--gold-bronze));
+      color: var(--charcoal-deep);
+      border: none;
+      border-radius: 11px;
+      padding: 0.75rem 1.25rem;
+      font-family: 'Tajawal', sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      white-space: nowrap;
+      height: 45px;
+    }
+
+    /* Category Filter Tabs */
+    .filter-tabs {
+      max-width: 1460px;
+      margin: 1.2rem auto 0;
+      padding: 0 1.5rem;
+      display: flex;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      padding: 0.45rem 1rem;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      background: var(--charcoal-surface);
+      color: var(--ivory-soft);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--gold-warm);
+      color: var(--charcoal-deep);
+      font-weight: 700;
+      border-color: var(--gold-warm);
+    }
+
+    /* 15 Signatures Grid */
+    .signatures-grid {
+      max-width: 1460px;
+      margin: 1.4rem auto 4rem;
+      padding: 0 1.5rem;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.35rem;
+    }
+
+    @media (max-width: 1150px) {
+      .signatures-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 720px) {
+      .signatures-grid { grid-template-columns: 1fr; }
+    }
+
+    .sig-card {
+      background: #F5F2EB;
+      border-radius: 20px;
+      padding: 1.15rem;
+      border: 1.5px solid rgba(197, 168, 128, 0.45);
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.32);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+    }
+
+    .sig-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 22px 45px rgba(0, 0, 0, 0.48);
+    }
+
+    .sig-card.dark-paper {
+      background: linear-gradient(155deg, #232120 0%, #171615 100%);
+    }
+
+    .sig-badge-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.42rem 0.95rem;
+      border-radius: 999px;
+      color: #FFFFFF;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.65rem;
+    }
+
+    .sig-num {
+      width: 21px;
+      height: 21px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      color: #1C1A19;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .sig-canvas-area {
+      height: 185px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+
+    .sig-canvas-area svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .sig-desc {
+      text-align: center;
+      font-size: 0.82rem;
+      color: #4B4640;
+      margin: 0.5rem 0 0.8rem;
+      font-weight: 500;
+    }
+
+    .dark-paper .sig-desc {
+      color: #C8BFB3;
+    }
+
+    .sig-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+    }
+
+    .btn-dl {
+      padding: 0.52rem 0.6rem;
+      border-radius: 10px;
+      border: 1px solid rgba(28, 26, 25, 0.18);
+      background: rgba(28, 26, 25, 0.06);
+      color: #1C1A19;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .dark-paper .btn-dl {
+      border-color: rgba(208, 181, 139, 0.3);
+      background: rgba(208, 181, 139, 0.1);
+      color: var(--gold-warm);
+    }
+
+    .btn-dl:hover {
+      background: var(--charcoal-deep);
+      color: var(--gold-warm);
+      border-color: var(--gold-warm);
+    }
+
+    /* Custom Hand-Draw Modal */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-card {
+      background: var(--charcoal-surface);
+      border: 1px solid var(--gold-bronze);
+      border-radius: 22px;
+      padding: 1.6rem;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    #drawPad {
+      width: 100%;
+      height: 230px;
+      background: #F5F2EB;
+      border-radius: 14px;
+      cursor: crosshair;
+      touch-action: none;
+      border: 1.5px solid var(--gold-bronze);
+      margin: 1rem 0;
+    }
+  </style>
+<script src="/tools/athar-common.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-mark">أ</div>
+      <div class="brand-title">
+        <h1>أثر — استوديو التوقيع الشخصي والخطي</h1>
+        <span>ATHAR STUDIO • 15 SIGNATURE ARCHETYPES</span>
+      </div>
+    </div>
+    <div class="header-badges">
+      <span class="pill-tag">١٥ نموذجاً فنياً وهندسياً</span>
+      <button type="button" class="btn-gold" onclick="openDrawModal()">✍️ ارسم توقيعك يدوياً</button>
+    </div>
+  </div>
+</header>
+
+<section class="control-bar">
+  <div class="control-box">
+    <div class="field">
+      <label>اكتب الاسم المراد تحويله لتوقيع</label>
+      <input type="text" id="sigNameInput" value="خالد" placeholder="اكتب اسمك هنا..." oninput="renderAllSignatures()">
+    </div>
+    <div class="field">
+      <label>لون الحبر الأساسي</label>
+      <div class="ink-swatches" id="inkSwatches">
+        <div class="ink-dot active" data-color="auto" style="background:conic-gradient(#1B365D, #C59B27, #135D54, #1C1A19);" title="ألوان النماذج الأصلية" onclick="selectInk('auto', this)"></div>
+        <div class="ink-dot" data-color="#1B365D" style="background:#1B365D;" title="أزرق حبر رسمي" onclick="selectInk('#1B365D', this)"></div>
+        <div class="ink-dot" data-color="#1C1A19" style="background:#1C1A19;" title="أسود فحمي" onclick="selectInk('#1C1A19', this)"></div>
+        <div class="ink-dot" data-color="#B88928" style="background:#B88928;" title="ذهبي ملكي" onclick="selectInk('#B88928', this)"></div>
+        <div class="ink-dot" data-color="#125B50" style="background:#125B50;" title="زمردي داكن" onclick="selectInk('#125B50', this)"></div>
+        <div class="ink-dot" data-color="#6B1D2F" style="background:#6B1D2F;" title="عنابي فاخر" onclick="selectInk('#6B1D2F', this)"></div>
+      </div>
+    </div>
+    <div class="field">
+      <label>خلفية العرض</label>
+      <select id="paperModeSelect" onchange="renderAllSignatures()">
+        <option value="light">ورق عاجي فاخر (فاتح)</option>
+        <option value="dark">بطاقة فحمية (داكن)</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>حجم الخط داخل التوقيع</label>
+      <select id="scaleSelect" onchange="renderAllSignatures()">
+        <option value="1">متوسط متوازن (100%)</option>
+        <option value="1.15">كبير بارز (115%)</option>
+        <option value="0.88">مدمج أنيق (88%)</option>
+      </select>
+    </div>
+    <button type="button" class="btn-gold" onclick="renderAllSignatures()">تحديث النماذج</button>
+  </div>
+</section>
+
+<nav class="filter-tabs">
+  <button type="button" class="tab-btn active" onclick="filterCategory('all', this)">الكل (١٥ نموذجاً)</button>
+  <button type="button" class="tab-btn" onclick="filterCategory('personal', this)">التوقيع الشخصي (١ - ٣)</button>
+  <button type="button" class="tab-btn" onclick="filterCategory('royal', this)">الفخامة والملكية (٤ - ٥)</button>
+  <button type="button" class="tab-btn" onclick="filterCategory('arabic', this)">الخط العربي الأصيل (٦ - ٨)</button>
+  <button type="button" class="tab-btn" onclick="filterCategory('geometric', this)">العصري والهندسي (٩ - ١٠)</button>
+  <button type="button" class="tab-btn" onclick="filterCategory('artistic', this)">الفني والإبداعي (١١ - ١٣)</button>
+  <button type="button" class="tab-btn" onclick="filterCategory('minimal', this)">بصمة مينيمال (١٤ - ١٥)</button>
+</nav>
+
+<main class="signatures-grid" id="signaturesGrid"></main>
+
+<!-- Hand-Draw Signature Modal -->
+<div class="modal-backdrop" id="drawModal">
+  <div class="modal-card">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <h3 style="font-family:'Aref Ruqaa', serif; color:var(--gold-warm); font-size:1.3rem;">ارسم توقيعك الشخصي بحرية</h3>
+      <button type="button" onclick="closeDrawModal()" style="background:none; border:none; color:var(--ivory-soft); font-size:1.3rem; cursor:pointer;">✕</button>
+    </div>
+    <p style="font-size:0.84rem; color:var(--gray-warm); margin-top:0.25rem;">استخدم الفأرة أو شاشة اللمس لرسم توقيعك، ثم حمّله بخلفية شفافة PNG.</p>
+    <canvas id="drawPad" width="500" height="230"></canvas>
+    <div style="display:flex; gap:0.65rem; justify-content:flex-end;">
+      <button type="button" class="tab-btn" onclick="clearPad()">مسح اللوحة</button>
+      <button type="button" class="btn-gold" onclick="downloadDrawnSignature()">⬇️ تحميل التوقيع اليدوي (PNG)</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let selectedInk = 'auto';
+  let activeCategory = 'all';
+
+  const signatureModels = [
+    {
+      id: 1,
+      cat: 'personal',
+      title: 'التوقيع الشخصي – كلاسيكي',
+      badgeColor: '#244A7C',
+      defaultInk: '#163868',
+      desc: 'توقيع بسيط وأنيق يناسب جميع الاستخدامات والمستندات الرسمية.',
+      render: (name, ink, isDark, scale) => {
+        const c = ink === 'auto' ? (isDark ? '#7AA7E8' : '#163868') : ink;
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(210,100) scale(${scale}) translate(-210,-100)">
+            <text x="215" y="102" text-anchor="middle" fill="${c}" font-family="'Aref Ruqaa', serif" font-size="68" transform="rotate(-6 215 102)">${name}</text>
+            <path d="M85,134 C140,122 250,105 342,96 C270,118 145,142 82,144 C56,144 54,124 94,114 C135,104 220,100 295,104" stroke="${c}" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+          </g>
+        </svg>`;
+      }
+    },
+    {
+      id: 2,
+      cat: 'personal',
+      title: 'التوقيع الشخصي – عصري',
+      badgeColor: '#244A7C',
+      defaultInk: '#181818',
+      desc: 'تصميم عصري بانسيابية مميزة وحركة خطية متصلة.',
+      render: (name, ink, isDark, scale) => {
+        const c = ink === 'auto' ? (isDark ? '#F4EFE6' : '#181818') : ink;
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(210,100) scale(${scale}) translate(-210,-100)">
+            <path d="M125,112 C95,90 120,58 185,68 C255,78 335,88 345,106 C352,120 275,134 175,144 C95,152 65,144 75,126 C88,104 185,96 310,112" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+            <text x="212" y="108" text-anchor="middle" fill="${c}" font-family="'Aref Ruqaa', serif" font-size="70" transform="rotate(-8 212 108)">${name}</text>
+          </g>
+        </svg>`;
+      }
+    },
+    {
+      id: 3,
+      cat: 'personal',
+      title: 'التوقيع الشخصي – جريء',
+      badgeColor: '#244A7C',
+      defaultInk: '#141414',
+      desc: 'بصمة قوية تعبر عن الثقة والتميز بضربة ريشة حادة.',
+      render: (name, ink, isDark, scale) => {
+        const c = ink === 'auto' ? (isDark ? '#E8DFD1' : '#141414') : ink;
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(210,100) scale(${scale}) translate(-210,-100)">
+            <text x="212" y="106" text-anchor="middle" fill="${c}" font-family="'Lalezar', 'Aref Ruqaa', serif" font-size="74" transform="rotate(-11 212 106)">${name}</text>
+            <polygon points="75,162 355,68 358,72 82,168" fill="${c}"/>
+            <path d="M98,136 Q210,104 328,84" stroke="${c}" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+          </g>
+        </svg>`;
+      }
+    },
+    {
+      id: 4,
+      cat: 'royal',
+      title: 'الفخامة والملكية – ذهبي',
+      badgeColor: '#A96E24',
+      defaultInk: '#C8962E',
+      desc: 'تصميم فاخر يليق بالتميز والرفعة مع تاج ملكي ولمعان ذهبي.',
+      render: (name, ink, isDark, scale) => {
+        const gradId = 'goldGrad4';
+        const fillVal = ink === 'auto' ? `url(#${gradId})` : ink;
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#F3D686"/>
+              <stop offset="45%" stop-color="#C89328"/>
+              <stop offset="80%" stop-color="#8A5E14"/>
+              <stop offset="100%" stop-color="#E7C46C"/>
+            </linearGradient>
+          </defs>
+          <g transform="translate(210,104) scale(${scale}) translate(-210,-104)">
+            <!-- Royal Crown -->
+            <path d="M186,44 L192,26 L203,37 L210,21 L217,37 L228,26 L234,44 Z" fill="${fillVal}"/>
+            <rect x="186" y="46" width="48" height="4" rx="2" fill="${fillVal}"/>
+            <text x="210" y="122" text-anchor="middle" fill="${fillVal}" font-family="'Aref Ruqaa', serif" font-size="74" font-weight="700">${name}</text>
+            <path d="M105,148 C175,162 285,152 325,126 C335,118 320,106 302,112" stroke="${fillVal}" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </g>
+        </svg>`;
+      }
+    },
+    {
+      id: 5,
+      cat: 'royal',
+      title: 'الفخامة والملكية – ملكي',
+      badgeColor: '#A96E24',
+      defaultInk: '#B88628',
+      desc: 'بصمة ملكية بطابع فخم وأنيق محاطة بدرع وأغصان الغار.',
+      render: (name, ink, isDark, scale) => {
+        const c = ink === 'auto' ? '#C49230' : ink;
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(210,100) scale(${scale}) translate(-210,-100)">
+            <!-- Shield -->
+            <path d="M150,44 L210,30 L270,44 V110 C270,146 210,172 210,172 C210,172 150,146 150,110 Z" stroke="${c}" stroke-width="3" fill="none"/>
+            <path d="M157,50 L210,38 L263,50 V108 C263,140 210,164 210,164 C210,164 157,140 157,108 Z" stroke="${c}" stroke-width="1" fill="none"/>
+            <!-- Crown Top -->
+            <path d="M192,26 L197,14 L205,22 L210,10 L215,22 L223,14 L228,26 Z" fill="${c}"/>
+            <!-- Laurel Wreath -->
+            <path d="M142,56 C118,86 122,134 162,162" stroke="${c}" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/>
+            <path d="M278,56 C302,86 298,134 258,162" stroke="${c}" stroke-width="2.5" stroke-dasharray="6 5" fill="none"/>
+            <text x="210" y="116" text-anchor="middle" fill="${c}" font-family="'Aref Ruqaa', serif" font-size="54" font-weight="700">${name}</text>
+          </g>
+        </svg>`;
+      }
+    },
+    {
+      id: 6,
+      cat: 'arabic',
+      title: 'الخط العربي الأصيل – رقعة',
+      badgeColor: '#6D2E28',
+      defaultInk: '#231715',
+      desc: 'بخط الرقعة الأصيل وبطابع تراثي متزن مع التشكيل.',
+      render: (name, ink, isDark, scale) => {
+        const c = ink === 'auto' ? (isDark ? '#E8D5C4' : '#231715') : ink;
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(210,104) scale(${scale}) translate(-210,-104)">
+            <text x="210" y="122" text-anchor="middle" fill="${c}" font-family="'Aref Ruqaa', serif" font-size="78" font-weight="700">${name}</text>
+            <!-- Calligraphic Diacritics -->
+            <path d="M150,42 L162,34 M245,38 C252,32 258,40 250,46" stroke="${c}" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+            <line x1="155" y1="146" x2="185" y2="138" stroke="${c}" stroke-width="2.8" stroke-linecap="round"/>
+            <line x1="235" y1="146" x2="265" y2="138" stroke="${c}" stroke-width="2.8" stroke-linecap="round"/>
+          </g>
+        </svg>`;
+      }
+    },
+    {
+      id: 7,
+      cat: 'arabic',
+      title: 'الخط العربي الأصيل – ديواني',
+      badgeColor: '#6D2E28',
+      defaultInk: '#3D2618',
+      desc: 'تصميم ديواني فاخر ومزخرف بانسيابية الحروف المتداخلة.',
+      render: (name, ink, isDark, scale) => {
+        const c = ink === 'auto' ? (isDark ? '#DFC39D' : '#3D2618') : ink;
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(210,104) scale(${scale}) translate(-210,-104)">
+            <path d="M135,70 C115,95 125,138 175,142 C225,146 275,125 288,88" stroke="${c}" stroke-width="2.2" fill="none" opacity="0.75"/>
+            <text x="210" y="120" text-anchor="middle" fill="${c}" font-family="'Aref Ruqaa', 'Amiri', serif" font-size="76" font-style="italic">${name}</text>
+            <circle cx="165" cy="54" r="3" fill="${c}"/><circle cx="255" cy="52" r="3" fill="${c}"/>
+            <path d="M196,154 Q210,164 224,152" stroke="${c}" stroke-width="2.2" fill="none"/>
+          </g>
+        </svg>`;
+      }
+    },
+    {
+      id: 8,
+      cat: 'arabic',
+      title: 'الخط العربي الأصيل – ثلث',
+      badgeColor: '#6D2E28',
+      defaultInk: '#1E1B1A',
+      desc: 'بصمة فنية بروح التراث العربي العريق وحليات خط الثلث.',
+      render: (name, ink, isDark, scale) => {
+        const c = ink === 'auto' ? (isDark ? '#F4EFE6' : '#1E1B1A') : ink;
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(210,104) scale(${scale}) translate(-210,-104)">
+            <text x="210" y="122" text-anchor="middle" fill="${c}" font-family="'Scheherazade New', 'Amiri', serif" font-size="84" font-weight="700">${name}</text>
+            <!-- Thuluth Ornaments -->
+            <path d="M140,48 C144,36 154,36 152,48 M265,44 C269,32 279,32 277,44" stroke="${c}" stroke-width="2" fill="none"/>
+            <path d="M198,34 L206,24 L214,34" stroke="${c}" stroke-width="2.2" fill="none"/>
+            <path d="M168,148 C174,158 184,154 182,146 M236,148 C242,158 252,154 250,146" stroke="${c}" stroke-width="2" fill="none"/>
+          </g>
+        </svg>`;
+      }
+    },
+    {
+      id: 9,
+      cat: 'geometric',
+      title: 'العصري والهندسي – هندسي',
+      badgeColor: '#0E6B62',
+      defaultInk: '#0D5C54',
+      desc: 'تصميم هندسي حديث وبسيط بزوايا حادة وهوية معمارية.',
+      render: (name, ink, isDark, scale) => {
+        const c = ink === 'auto' ? (isDark ? '#4CC9B8' : '#0D5C54') : ink;
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(210,100) scale(${scale}) translate(-210,-100)">
+            <text x="210" y="114" text-anchor="middle" fill="${c}" font-family="'Reem Kufi', sans-serif" font-size="74" font-weight="700">${name}</text>
+            <polygon points="210,136 222,148 210,160 198,148" stroke="${c}" stroke-width="2.6" fill="none"/>
+            <line x1="115" y1="148" x2="188" y2="148" stroke="${c}" stroke-width="3"/>
+            <line x1="232" y1="148" x2="305" y2="148" stroke="${c}" stroke-width="3"/>
+          </g>
+        </svg>`;
+      }
+    },
+    {
+      id: 10,
+      cat: 'geometric',
+      title: 'العصري والهندسي – بسيط',
+      badgeColor: '#0E6B62',
+      defaultInk: '#124640',
+      desc: 'بصمة عصرية أنيقة بلمسة بسيطة وخط أفقي ممتد.',
+      render: (name, ink, isDark, scale) => {
+        const c = ink === 'auto' ? (isDark ? '#8CE0D3' : '#124640') : ink;
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(210,100) scale(${scale}) translate(-210,-100)">
+            <text x="210" y="112" text-anchor="middle" fill="${c}" font-family="'Cairo', sans-serif" font-size="68" font-weight="700">${name}</text>
+            <path d="M90,134 L330,122" stroke="${c}" stroke-width="3" stroke-linecap="round"/>
+            <path d="M135,146 L285,138" stroke="${c}" stroke-width="1.6" opacity="0.7" stroke-linecap="round"/>
+          </g>
+        </svg>`;
+      }
+    },
+    {
+      id: 11,
+      cat: 'artistic',
+      title: 'الفني والإبداعي – ملون',
+      badgeColor: '#5B2B7A',
+      defaultInk: 'multi',
+      desc: 'تصميم فني مليء بالحيوية والألوان المتدرجة المشرقة.',
+      render: (name, ink, isDark, scale) => {
+        const gradId = 'artSplash11';
+        const fillVal = ink === 'auto' ? `url(#${gradId})` : ink;
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#FF5E62"/>
+              <stop offset="35%" stop-color="#FF9966"/>
+              <stop offset="70%" stop-color="#2193B0"/>
+              <stop offset="100%" stop-color="#1E3C72"/>
+            </linearGradient>
+          </defs>
+          <g transform="translate(210,100) scale(${scale}) translate(-210,-100)">
+            <ellipse cx="165" cy="96" rx="85" ry="38" fill="#FFB300" opacity="0.22" transform="rotate(-14 165 96)"/>
+            <ellipse cx="255" cy="108" rx="80" ry="32" fill="#0088CC" opacity="0.2" transform="rotate(10 255 108)"/>
+            <text x="210" y="118" text-anchor="middle" fill="${fillVal}" font-family="'Aref Ruqaa', serif" font-size="76" font-weight="700">${name}</text>
+            <path d="M95,144 Q210,122 330,136" stroke="${fillVal}" stroke-width="4" fill="none" stroke-linecap="round"/>
+          </g>
+        </svg>`;
+      }
+    },
+    {
+      id: 12,
+      cat: 'artistic',
+      title: 'الفني والإبداعي – مزخرف',
+      badgeColor: '#5E2448',
+      defaultInk: '#4A1936',
+      desc: 'بصمة مزخرفة بأناقة وإبداع تجمع الخط بالزخرفة النباتية.',
+      render: (name, ink, isDark, scale) => {
+        const c = ink === 'auto' ? (isDark ? '#E8C5D8' : '#4A1936') : ink;
+        const gold = '#C59638';
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(210,100) scale(${scale}) translate(-210,-100)">
+            <!-- Floral Scrolls -->
+            <path d="M115,100 C85,70 115,35 155,55 C135,75 110,95 125,125 C140,150 180,155 210,145" stroke="${gold}" stroke-width="2.4" fill="none"/>
+            <path d="M305,100 C335,70 305,35 265,55 C285,75 310,95 295,125 C280,150 240,155 210,145" stroke="${gold}" stroke-width="2.4" fill="none"/>
+            <text x="210" y="118" text-anchor="middle" fill="${c}" font-family="'Aref Ruqaa', serif" font-size="72" font-weight="700">${name}</text>
+          </g>
+        </svg>`;
+      }
+    },
+    {
+      id: 13,
+      cat: 'artistic',
+      title: 'الفني والإبداعي – حروفي',
+      badgeColor: '#2E2B3F',
+      defaultInk: '#1F2A38',
+      desc: 'تصميم حروفي مبتكر ومميز بضربة فرشاة دائرية.',
+      render: (name, ink, isDark, scale) => {
+        const c = ink === 'auto' ? (isDark ? '#E2D6C3' : '#1F2A38') : ink;
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(210,100) scale(${scale}) translate(-210,-100)">
+            <path d="M250,34 A68,68 0 1,0 262,158" stroke="#2D5A88" stroke-width="14" stroke-linecap="round" fill="none" opacity="0.28"/>
+            <path d="M165,42 A62,62 0 0,1 268,144" stroke="#C59B27" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.55"/>
+            <text x="212" y="118" text-anchor="middle" fill="${c}" font-family="'Aref Ruqaa', serif" font-size="74" font-weight="700">${name}</text>
+          </g>
+        </svg>`;
+      }
+    },
+    {
+      id: 14,
+      cat: 'minimal',
+      title: 'بصمة مينيمال – أنيقة',
+      badgeColor: '#0E5852',
+      defaultInk: '#171717',
+      desc: 'بصمة بسيطة بذوق رفيع داخل هالة دائرية مفتوحة.',
+      render: (name, ink, isDark, scale) => {
+        const c = ink === 'auto' ? (isDark ? '#F4EFE6' : '#171717') : ink;
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(210,100) scale(${scale}) translate(-210,-100)">
+            <path d="M148,125 A68,68 0 1,1 272,115" stroke="${c}" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <text x="210" y="114" text-anchor="middle" fill="${c}" font-family="'Aref Ruqaa', serif" font-size="60">${name}</text>
+            <line x1="115" y1="118" x2="305" y2="118" stroke="${c}" stroke-width="1.6"/>
+          </g>
+        </svg>`;
+      }
+    },
+    {
+      id: 15,
+      cat: 'minimal',
+      title: 'بصمة مينيمال – عصرية',
+      badgeColor: '#0E5852',
+      defaultInk: '#141414',
+      desc: 'تصميم عصري بأقل التفاصيل وخط هندسي نظيف.',
+      render: (name, ink, isDark, scale) => {
+        const c = ink === 'auto' ? (isDark ? '#D0B58B' : '#141414') : ink;
+        return `<svg viewBox="0 0 420 200" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(210,100) scale(${scale}) translate(-210,-100)">
+            <text x="210" y="112" text-anchor="middle" fill="${c}" font-family="'Reem Kufi', sans-serif" font-size="66">${name}</text>
+            <line x1="95" y1="130" x2="325" y2="130" stroke="${c}" stroke-width="2.4"/>
+            <circle cx="332" cy="130" r="3.5" fill="${c}"/>
+          </g>
+        </svg>`;
+      }
+    }
+  ];
+
+  function selectInk(color, el) {
+    selectedInk = color;
+    document.querySelectorAll('.ink-dot').forEach(d => d.classList.remove('active'));
+    el.classList.add('active');
+    renderAllSignatures();
+  }
+
+  function filterCategory(cat, btn) {
+    activeCategory = cat;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderAllSignatures();
+  }
+
+  function renderAllSignatures() {
+    const rawName = (document.getElementById('sigNameInput').value.trim() || 'خالد').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const isDark = document.getElementById('paperModeSelect').value === 'dark';
+    const scale = parseFloat(document.getElementById('scaleSelect').value);
+    const grid = document.getElementById('signaturesGrid');
+    grid.innerHTML = '';
+
+    const filtered = activeCategory === 'all'
+      ? signatureModels
+      : signatureModels.filter(m => m.cat === activeCategory);
+
+    filtered.forEach(model => {
+      const card = document.createElement('div');
+      card.className = 'sig-card' + (isDark ? ' dark-paper' : '');
+      const svgMarkup = model.render(rawName, selectedInk, isDark, scale);
+
+      card.innerHTML = `
+        <div>
+          <div class="sig-badge-header" style="background:${model.badgeColor};">
+            <span class="sig-num">${model.id}</span>
+            <span>${model.title}</span>
+          </div>
+          <div class="sig-canvas-area" id="sigBox-${model.id}">
+            ${svgMarkup}
+          </div>
+          <p class="sig-desc">${model.desc}</p>
+        </div>
+        <div class="sig-actions">
+          <button type="button" class="btn-dl" onclick="downloadSigPNG(${model.id})">🖼️ تحميل PNG شفاف</button>
+          <button type="button" class="btn-dl" onclick="downloadSigSVG(${model.id})">✒️ تحميل متجه SVG</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  const sigFile = (id, ext) => {
+    const n = (document.getElementById('sigNameInput').value.trim() || 'name').replace(/[^\p{L}\p{N}_-]+/gu, '-').slice(0, 40);
+    return `athar-signature-${id}-${n}.${ext}`;
+  };
+  const sigSvgText = async (id) => {
+    const svgEl = document.querySelector(`#sigBox-${id} svg`);
+    if (!svgEl) return '';
+    const clone = svgEl.cloneNode(true);
+    clone.setAttribute('width', '1400'); clone.setAttribute('height', '670');
+    return await __embedFonts(new XMLSerializer().serializeToString(clone));
+  };
+  async function downloadSigSVG(id) {
+    const svg = await sigSvgText(id); if (!svg) return;
+    __save(new Blob(['<?xml version="1.0" standalone="no"?>\r\n' + svg], { type: 'image/svg+xml;charset=utf-8' }), sigFile(id, 'svg'));
+  }
+  async function downloadSigPNG(id) {
+    const svg = await sigSvgText(id); if (!svg) return;
+    try { __save(await __pngFromSvg(svg, 1400, 670, null), sigFile(id, 'png')); }
+    catch (e) { alert('تعذر إنشاء PNG، استخدم SVG.'); }
+  }
+  downloadSigSVG = __gated('تنزيل التوقيع SVG', downloadSigSVG);
+  downloadSigPNG = __gated('تنزيل التوقيع PNG', downloadSigPNG);
+
+  /* Custom Hand-Drawing Pad */
+  const pad = document.getElementById('drawPad');
+  const pCtx = pad.getContext('2d');
+  let drawing = false;
+
+  function openDrawModal() {
+    document.getElementById('drawModal').classList.add('open');
+  }
+  function closeDrawModal() {
+    document.getElementById('drawModal').classList.remove('open');
+  }
+  function clearPad() {
+    pCtx.clearRect(0, 0, pad.width, pad.height);
+  }
+
+  function getPos(e) {
+    const rect = pad.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return {
+      x: (clientX - rect.left) * (pad.width / rect.width),
+      y: (clientY - rect.top) * (pad.height / rect.height)
+    };
+  }
+
+  pad.addEventListener('mousedown', e => { drawing = true; const p = getPos(e); pCtx.beginPath(); pCtx.moveTo(p.x, p.y); });
+  pad.addEventListener('mousemove', e => {
+    if (!drawing) return;
+    const p = getPos(e);
+    pCtx.lineWidth = 3.2;
+    pCtx.lineCap = 'round';
+    pCtx.strokeStyle = selectedInk === 'auto' ? '#163868' : selectedInk;
+    pCtx.lineTo(p.x, p.y);
+    pCtx.stroke();
+  });
+  window.addEventListener('mouseup', () => { drawing = false; });
+
+  pad.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = getPos(e); pCtx.beginPath(); pCtx.moveTo(p.x, p.y); });
+  pad.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!drawing) return;
+    const p = getPos(e);
+    pCtx.lineWidth = 3.2;
+    pCtx.lineCap = 'round';
+    pCtx.strokeStyle = selectedInk === 'auto' ? '#163868' : selectedInk;
+    pCtx.lineTo(p.x, p.y);
+    pCtx.stroke();
+  });
+  pad.addEventListener('touchend', () => { drawing = false; });
+
+  function downloadDrawnSignatureRaw() {
+    const link = document.createElement('a');
+    link.download = 'athar-handwritten-signature.png';
+    link.href = pad.toDataURL('image/png');
+    link.click();
+  }
+
+  const downloadDrawnSignature = __gated('تنزيل التوقيع اليدوي', downloadDrawnSignatureRaw);
+  window.downloadDrawnSignature = downloadDrawnSignature;
+  renderAllSignatures();
+</script>
+</body>
+</html>

@@ -10,6 +10,7 @@ import CardMaker from "./CardMaker.jsx";
 import StudioHub from "./StudioHub.jsx";
 import ServiceOrder from "./ServiceOrder.jsx";
 import CartoonStudio from "./CartoonStudio.jsx";
+import ToolFrame from "./ToolFrame.jsx";
 import LegalPage from "./LegalPage.jsx";
 
 function useHash() {
@@ -27,6 +28,10 @@ export default function App() {
   if (hash === "#admin") return <Admin />;
   if (hash === "#studio") return <Studio />;
   if (hash === "#account") return <Account />;
+  if (hash === "#creative-signature") return <ToolFrame tool="signature" />;
+  if (hash === "#creative-personal") return <ToolFrame tool="personal" />;
+  if (hash === "#creative-corporate") return <ToolFrame tool="corporate" />;
+  if (hash === "#digital-card" || hash === "#cards-custom") return <ToolFrame tool="card" />;
   if (/^#cards(-[a-z]+)?$/.test(hash)) return <CardMaker />;
   if (/^#creative(-(personal|corporate|signature|mark))?$/.test(hash)) return <CreativeStudio />;
   const hb = /^#studio-([1-5])$/.exec(hash);

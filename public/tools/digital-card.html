@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-route="digital-card">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>أثر | ATHAR STUDIO — صانع البطاقة الرقمية متعدد الأنماط</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;600;700&family=Montserrat:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style id="sharedCardStyles">
+    :root {
+      --charcoal-deep: #1C1A19;
+      --charcoal-surface: #20201E;
+      --gold-bronze: #C5A880;
+      --gold-warm: #D0B58B;
+      --ivory-soft: #F4EFE6;
+      --ivory-marble: #F5F2EB;
+      --gray-warm: #8C8175;
+      --border-subtle: rgba(197, 168, 128, 0.22);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--charcoal-deep);
+      color: var(--ivory-soft);
+      font-family: 'Tajawal', sans-serif;
+      min-height: 100vh;
+      line-height: 1.6;
+      background-image: radial-gradient(circle at 15% 15%, rgba(197, 168, 128, 0.07) 0%, transparent 45%),
+                        radial-gradient(circle at 85% 85%, rgba(208, 181, 139, 0.05) 0%, transparent 45%);
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(28, 26, 25, 0.94);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      padding: 1rem 2rem;
+    }
+
+    .header-inner {
+      max-width: 1380px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.85rem; }
+
+    .brand-mark {
+      width: 42px; height: 42px;
+      border: 1.5px solid var(--gold-bronze);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold-warm);
+      font-family: 'Aref Ruqaa', serif;
+      font-size: 1.45rem;
+      background: linear-gradient(135deg, rgba(197,168,128,0.12), transparent);
+    }
+
+    .brand-title h1 {
+      font-family: 'Aref Ruqaa', serif;
+      font-size: 1.38rem;
+      color: var(--gold-warm);
+      font-weight: 400;
+    }
+
+    .brand-title span {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 2.5px;
+      color: var(--gray-warm);
+      display: block;
+    }
+
+    .badge-studio {
+      padding: 0.35rem 0.95rem;
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      font-size: 0.82rem;
+      color: var(--gold-bronze);
+      background: rgba(197, 168, 128, 0.08);
+    }
+
+    /* Main Grid */
+    .container {
+      max-width: 1380px;
+      margin: 2rem auto;
+      padding: 0 1.5rem 4rem;
+      display: grid;
+      grid-template-columns: 1.18fr 0.82fr;
+      gap: 2.2rem;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .container { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--charcoal-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 1.8rem;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.15rem;
+      padding-bottom: 0.7rem;
+      border-bottom: 1px solid rgba(197, 168, 128, 0.14);
+    }
+
+    .section-heading h2 {
+      font-family: 'Aref Ruqaa', serif;
+      font-size: 1.32rem;
+      color: var(--gold-warm);
+      font-weight: 400;
+    }
+
+    .section-step {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.74rem;
+      color: var(--gray-warm);
+      letter-spacing: 1.5px;
+    }
+
+    /* Layout Styles Grid (6 Architectural Styles) */
+    .layout-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.6rem;
+    }
+
+    @media (max-width: 600px) {
+      .layout-options { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .style-card-btn {
+      cursor: pointer;
+      border: 1.5px solid rgba(140, 129, 117, 0.3);
+      border-radius: 13px;
+      padding: 0.85rem 0.65rem;
+      background: var(--charcoal-deep);
+      color: var(--ivory-soft);
+      text-align: center;
+      transition: all 0.25s ease;
+      font-family: 'Tajawal', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .style-card-btn.active {
+      border-color: var(--gold-warm);
+      background: rgba(197, 168, 128, 0.14);
+      color: var(--gold-warm);
+    }
+
+    .style-icon { font-size: 1.35rem; }
+    .style-name { font-weight: 700; font-size: 0.88rem; }
+    .style-desc { font-size: 0.72rem; color: var(--gray-warm); }
+
+    /* Color Palettes Grid (6 Luxury Palettes) */
+    .theme-options {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.7rem;
+    }
+
+    @media (max-width: 600px) {
+      .theme-options { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .theme-btn {
+      cursor: pointer;
+      border: 1.5px solid rgba(140, 129, 117, 0.3);
+      border-radius: 12px;
+      padding: 0.75rem 0.55rem;
+      background: var(--charcoal-deep);
+      color: var(--ivory-soft);
+      text-align: center;
+      transition: all 0.25s ease;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.85rem;
+    }
+
+    .theme-btn.active {
+      border-color: var(--gold-warm);
+      background: rgba(197, 168, 128, 0.12);
+    }
+
+    .theme-swatch {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      margin: 0 auto 0.4rem;
+      border: 1.5px solid var(--gold-bronze);
+    }
+
+    /* Form Controls */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.95rem;
+      margin-bottom: 1.6rem;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    .full-width { grid-column: 1 / -1; }
+
+    .field label {
+      display: block;
+      font-size: 0.86rem;
+      color: var(--ivory-marble);
+      margin-bottom: 0.35rem;
+      font-weight: 500;
+    }
+
+    .field input, .field textarea, .field select {
+      width: 100%;
+      background: var(--charcoal-deep);
+      border: 1px solid rgba(140, 129, 117, 0.35);
+      border-radius: 11px;
+      padding: 0.7rem 0.9rem;
+      color: var(--ivory-soft);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.93rem;
+      transition: all 0.25s ease;
+    }
+
+    .field input:focus, .field textarea:focus, .field select:focus {
+      outline: none;
+      border-color: var(--gold-warm);
+      box-shadow: 0 0 0 3px rgba(197, 168, 128, 0.14);
+    }
+
+    .field input[dir="ltr"] {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.86rem;
+    }
+
+    .avatar-upload-box {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--charcoal-deep);
+      border: 1px dashed rgba(197, 168, 128, 0.4);
+      padding: 0.85rem 1.05rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    .avatar-thumb {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gold-bronze);
+      background: var(--charcoal-surface);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--gold-warm);
+      font-family: 'Aref Ruqaa', serif;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .avatar-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--gold-bronze);
+      color: var(--gold-warm);
+      padding: 0.42rem 0.9rem;
+      border-radius: 9px;
+      cursor: pointer;
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.84rem;
+    }
+
+    .social-adder {
+      display: grid;
+      grid-template-columns: 150px 1fr auto;
+      gap: 0.65rem;
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 600px) {
+      .social-adder { grid-template-columns: 1fr; }
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold-warm), var(--gold-bronze));
+      color: var(--charcoal-deep);
+      border: none;
+      border-radius: 11px;
+      padding: 0.7rem 1.2rem;
+      font-family: 'Tajawal', sans-serif;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+    }
+
+    .social-list { display: flex; flex-direction: column; gap: 0.55rem; }
+
+    .social-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--charcoal-deep);
+      border: 1px solid rgba(140, 129, 117, 0.25);
+      padding: 0.6rem 0.9rem;
+      border-radius: 11px;
+      gap: 0.75rem;
+    }
+
+    .social-item-info { display: flex; align-items: center; gap: 0.7rem; overflow: hidden; }
+
+    .social-tag {
+      background: rgba(197, 168, 128, 0.14);
+      color: var(--gold-warm);
+      padding: 0.18rem 0.6rem;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .social-url {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.8rem;
+      color: var(--gray-warm);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      direction: ltr;
+    }
+
+    .btn-remove {
+      background: rgba(220, 80, 80, 0.12);
+      color: #e57373;
+      border: 1px solid rgba(220, 80, 80, 0.25);
+      border-radius: 8px;
+      padding: 0.25rem 0.6rem;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-family: 'Tajawal', sans-serif;
+    }
+
+    /* ============================================================
+       DIGITAL CARD BASE + 6 THEMES + 6 ARCHITECTURAL LAYOUT STYLES
+       ============================================================ */
+    .preview-sticky {
+      position: sticky;
+      top: 88px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.35rem;
+    }
+
+    .digital-card {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 26px;
+      padding: 2.1rem 1.75rem 1.75rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 28px 65px rgba(0, 0, 0, 0.58);
+      transition: all 0.35s ease;
+      text-align: center;
+      --c-bg: linear-gradient(160deg, #242220 0%, #181615 100%);
+      --c-text: #F4EFE6;
+      --c-accent: #D0B58B;
+      --c-border: rgba(197, 168, 128, 0.45);
+      --c-pill-bg: rgba(197, 168, 128, 0.12);
+      --c-link-bg: rgba(255, 255, 255, 0.04);
+      background: var(--c-bg);
+      color: var(--c-text);
+      border: 1.5px solid var(--c-border);
+    }
+
+    /* 6 Color Palettes */
+    .digital-card.theme-charcoal {
+      --c-bg: linear-gradient(160deg, #242220 0%, #181615 100%);
+      --c-text: #F4EFE6;
+      --c-accent: #D0B58B;
+      --c-border: rgba(197, 168, 128, 0.45);
+      --c-pill-bg: rgba(197, 168, 128, 0.12);
+      --c-link-bg: rgba(255, 255, 255, 0.04);
+    }
+    .digital-card.theme-ivory {
+      --c-bg: linear-gradient(160deg, #F5F2EB 0%, #EAE3D5 100%);
+      --c-text: #1C1A19;
+      --c-accent: #8C6D46;
+      --c-border: #C5A880;
+      --c-pill-bg: rgba(28, 26, 25, 0.08);
+      --c-link-bg: rgba(28, 26, 25, 0.05);
+    }
+    .digital-card.theme-bronze {
+      --c-bg: linear-gradient(155deg, #2B251F 0%, #1C1A19 60%, #33291E 100%);
+      --c-text: #F5F2EB;
+      --c-accent: #D0B58B;
+      --c-border: #D0B58B;
+      --c-pill-bg: rgba(208, 181, 139, 0.15);
+      --c-link-bg: rgba(208, 181, 139, 0.07);
+    }
+    .digital-card.theme-emerald {
+      --c-bg: linear-gradient(160deg, #132821 0%, #0D1B16 100%);
+      --c-text: #F4EFE6;
+      --c-accent: #D4B475;
+      --c-border: rgba(212, 180, 117, 0.45);
+      --c-pill-bg: rgba(212, 180, 117, 0.13);
+      --c-link-bg: rgba(255, 255, 255, 0.04);
+    }
+    .digital-card.theme-navy {
+      --c-bg: linear-gradient(160deg, #141E30 0%, #0E1522 100%);
+      --c-text: #F4EFE6;
+      --c-accent: #C8B8A6;
+      --c-border: rgba(200, 184, 166, 0.4);
+      --c-pill-bg: rgba(200, 184, 166, 0.13);
+      --c-link-bg: rgba(255, 255, 255, 0.04);
+    }
+    .digital-card.theme-obsidian {
+      --c-bg: linear-gradient(160deg, #141414 0%, #0A0A0A 100%);
+      --c-text: #FFFFFF;
+      --c-accent: #E2D6C3;
+      --c-border: rgba(226, 214, 195, 0.35);
+      --c-pill-bg: rgba(226, 214, 195, 0.1);
+      --c-link-bg: rgba(255, 255, 255, 0.03);
+    }
+
+    /* Decorative Header Banner (Visible in Cover & Split styles) */
+    .card-cover-banner {
+      display: none;
+      height: 92px;
+      margin: -2.1rem -1.75rem 0;
+      background: linear-gradient(120deg, rgba(197,168,128,0.28), rgba(197,168,128,0.06));
+      border-bottom: 1px solid var(--c-border);
+      position: relative;
+    }
+
+    .card-top-brand {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.66rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      opacity: 0.65;
+      margin-bottom: 1.2rem;
+    }
+
+    .card-profile-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .card-avatar {
+      width: 94px; height: 94px;
+      border-radius: 50%;
+      margin: 0 auto 0.95rem;
+      border: 2px solid var(--c-accent);
+      padding: 4px;
+      background: rgba(197, 168, 128, 0.1);
+      flex-shrink: 0;
+    }
+
+    .card-avatar-inner {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      background: #1C1A19;
+      color: var(--c-accent);
+      font-family: 'Aref Ruqaa', serif;
+      font-size: 2rem;
+    }
+
+    .card-avatar-inner img { width: 100%; height: 100%; object-fit: cover; }
+
+    .card-name {
+      font-family: 'Aref Ruqaa', serif;
+      font-size: 1.85rem;
+      line-height: 1.28;
+      margin-bottom: 0.25rem;
+      color: var(--c-accent);
+    }
+
+    .card-role {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.15rem;
+    }
+
+    .card-company {
+      font-size: 0.84rem;
+      opacity: 0.78;
+      margin-bottom: 0.9rem;
+    }
+
+    .card-bio {
+      font-size: 0.85rem;
+      line-height: 1.65;
+      opacity: 0.86;
+      max-width: 340px;
+      margin: 0 auto 1.3rem;
+    }
+
+    .card-quick-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.55rem;
+      margin-bottom: 1.3rem;
+    }
+
+    .quick-pill {
+      padding: 0.55rem 0.4rem;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.2rem;
+      background: var(--c-pill-bg);
+      border: 1px solid var(--c-border);
+      color: var(--c-accent);
+      transition: 0.2s;
+    }
+
+    .card-socials {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      margin-bottom: 1.4rem;
+    }
+
+    .card-social-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.7rem 1rem;
+      border-radius: 13px;
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 600;
+      background: var(--c-link-bg);
+      border: 1px solid var(--c-border);
+      color: var(--c-text);
+      transition: 0.2s;
+    }
+
+    .card-qr-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 1.05rem;
+      border-top: 1px solid var(--c-border);
+      gap: 0.8rem;
+      text-align: right;
+    }
+
+    #qrcode {
+      background: #FFFFFF;
+      padding: 6px;
+      border-radius: 10px;
+      display: inline-block;
+      line-height: 0;
+    }
+
+    /* --- STYLE 2: EXECUTIVE SIDE-BY-SIDE (التنفيذي الجانبي) --- */
+    .digital-card.style-executive {
+      text-align: right;
+      border-radius: 20px;
+    }
+    .digital-card.style-executive .card-profile-block {
+      flex-direction: row;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.9rem;
+    }
+    .digital-card.style-executive .card-avatar {
+      margin: 0;
+      width: 78px;
+      height: 78px;
+      border-radius: 18px;
+    }
+    .digital-card.style-executive .card-avatar-inner {
+      border-radius: 13px;
+    }
+    .digital-card.style-executive .card-name {
+      font-size: 1.55rem;
+    }
+    .digital-card.style-executive .card-company {
+      margin-bottom: 0;
+    }
+    .digital-card.style-executive .card-bio {
+      margin: 0 0 1.2rem;
+      max-width: 100%;
+    }
+
+    /* --- STYLE 3: COVER BANNER (غلاف ملكي) --- */
+    .digital-card.style-cover .card-cover-banner {
+      display: block;
+    }
+    .digital-card.style-cover .card-top-brand {
+      position: absolute;
+      top: 14px;
+      left: 0;
+      right: 0;
+      z-index: 2;
+      margin: 0;
+    }
+    .digital-card.style-cover .card-avatar {
+      margin-top: -46px;
+      position: relative;
+      z-index: 3;
+      width: 98px;
+      height: 98px;
+    }
+
+    /* --- STYLE 4: MODERN GRID (شبكة أيقونات حديثة) --- */
+    .digital-card.style-grid .card-socials {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.6rem;
+    }
+    .digital-card.style-grid .card-social-link {
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      padding: 0.85rem 0.6rem;
+      gap: 0.25rem;
+    }
+
+    /* --- STYLE 5: MINIMAL PILLS (كبسولات انسيابية) --- */
+    .digital-card.style-minimal {
+      border-radius: 36px;
+      padding: 2.3rem 1.8rem;
+    }
+    .digital-card.style-minimal .card-social-link {
+      border-radius: 999px;
+      padding: 0.72rem 1.25rem;
+    }
+    .digital-card.style-minimal .quick-pill {
+      border-radius: 999px;
+    }
+
+    /* --- STYLE 6: DOUBLE FRAME MAJESTY (إطار التوقيع المزدوج) --- */
+    .digital-card.style-majesty {
+      border-radius: 14px;
+      outline: 1px solid var(--c-accent);
+      outline-offset: -9px;
+      padding: 2.35rem 1.95rem 1.95rem;
+    }
+    .digital-card.style-majesty .card-avatar {
+      border-radius: 16px;
+      transform: rotate(3deg);
+    }
+    .digital-card.style-majesty .card-avatar-inner {
+      border-radius: 12px;
+    }
+
+    /* Export Buttons */
+    .export-grid {
+      width: 100%;
+      max-width: 420px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.7rem;
+    }
+
+    .btn-export {
+      padding: 0.75rem 0.9rem;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--charcoal-surface);
+      color: var(--ivory-soft);
+      font-family: 'Tajawal', sans-serif;
+      font-size: 0.86rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+    }
+
+    .btn-export:hover {
+      border-color: var(--gold-warm);
+      color: var(--gold-warm);
+    }
+
+    .btn-export.primary {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, var(--gold-warm), var(--gold-bronze));
+      color: var(--charcoal-deep);
+      border: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--gold-warm);
+      color: var(--charcoal-deep);
+      padding: 0.75rem 1.5rem;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--gold-warm); outline-offset: 3px; }
+    @media (max-width: 600px) { header { padding: .85rem 1rem; } .container { padding: 0 .85rem 2rem; margin: 1rem auto; gap: 1rem; } .panel { padding: 1.1rem; } .preview-sticky { position: static; } .digital-card { padding-left: 1.2rem; padding-right: 1.2rem; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+  </style>
+<script src="/tools/athar-common.js"></script>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="brand-mark">أ</div>
+      <div class="brand-title">
+        <h1>أثر — صانع البطاقة الرقمية</h1>
+        <span>ATHAR STUDIO • MULTI-STYLE DIGITAL CARD</span>
+      </div>
+    </div>
+    <div class="badge-studio">٦ أنماط تصميمية × ٦ لوحات لونية</div>
+  </div>
+</header>
+
+<main class="container">
+  <!-- Right Column: Controls -->
+  <section class="panel">
+    <div class="section-heading">
+      <h2>١. اختر نمط وتخطيط البطاقة</h2>
+      <span class="section-step">LAYOUT STYLE</span>
+    </div>
+
+    <div class="layout-options">
+      <button type="button" class="style-card-btn active" onclick="setLayoutStyle('classic', this)">
+        <span class="style-icon">🏛️</span>
+        <span class="style-name">الكلاسيكي المركزي</span>
+        <span class="style-desc">توازن ملكي متمركز</span>
+      </button>
+      <button type="button" class="style-card-btn" onclick="setLayoutStyle('executive', this)">
+        <span class="style-icon">💼</span>
+        <span class="style-name">التنفيذي الجانبي</span>
+        <span class="style-desc">محاذاة رسمية للأعمال</span>
+      </button>
+      <button type="button" class="style-card-btn" onclick="setLayoutStyle('cover', this)">
+        <span class="style-icon">🖼️</span>
+        <span class="style-name">الغلاف الفاخر</span>
+        <span class="style-desc">شريط علوي وصورة بارزة</span>
+      </button>
+      <button type="button" class="style-card-btn" onclick="setLayoutStyle('grid', this)">
+        <span class="style-icon">💠</span>
+        <span class="style-name">الشبكة العصرية</span>
+        <span class="style-desc">بطاقات تواصل ثنائية</span>
+      </button>
+      <button type="button" class="style-card-btn" onclick="setLayoutStyle('minimal', this)">
+        <span class="style-icon">✨</span>
+        <span class="style-name">الانسيابي الناعم</span>
+        <span class="style-desc">حواف دائرية وأزرار كبسولة</span>
+      </button>
+      <button type="button" class="style-card-btn" onclick="setLayoutStyle('majesty', this)">
+        <span class="style-icon">👑</span>
+        <span class="style-name">إطار التوقيع</span>
+        <span class="style-desc">إطار مزدوج بهوية أثر</span>
+      </button>
+    </div>
+
+    <div class="section-heading">
+      <h2>٢. لوحة الألوان المعتمدة</h2>
+      <span class="section-step">COLOR PALETTE</span>
+    </div>
+
+    <div class="theme-options">
+      <button type="button" class="theme-btn active" onclick="setTheme('charcoal', this)">
+        <div class="theme-swatch" style="background:#1C1A19;"></div>
+        فحمي ملكي
+      </button>
+      <button type="button" class="theme-btn" onclick="setTheme('ivory', this)">
+        <div class="theme-swatch" style="background:#F4EFE6;"></div>
+        عاجي رخامي
+      </button>
+      <button type="button" class="theme-btn" onclick="setTheme('bronze', this)">
+        <div class="theme-swatch" style="background:#33291E;"></div>
+        برونزي دافئ
+      </button>
+      <button type="button" class="theme-btn" onclick="setTheme('emerald', this)">
+        <div class="theme-swatch" style="background:#132821;"></div>
+        زمردي نجدي
+      </button>
+      <button type="button" class="theme-btn" onclick="setTheme('navy', this)">
+        <div class="theme-swatch" style="background:#141E30;"></div>
+        كحلي تنفيذي
+      </button>
+      <button type="button" class="theme-btn" onclick="setTheme('obsidian', this)">
+        <div class="theme-swatch" style="background:#0A0A0A;"></div>
+        أسود مطفي
+      </button>
+    </div>
+
+    <div class="avatar-upload-box">
+      <div class="avatar-thumb" id="avatarThumbPreview">خ</div>
+      <div style="flex:1;">
+        <div style="font-weight:700; font-size:0.92rem; margin-bottom:0.2rem;">الصورة الشخصية أو شعار العلامة</div>
+        <div style="font-size:0.8rem; color:var(--gray-warm); margin-bottom:0.55rem;">صورة مربعة واضحة (PNG / JPG)</div>
+        <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+          <label class="btn-outline" style="display:inline-block;">
+            رفع صورة
+            <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="handleAvatarUpload(event)">
+          </label>
+          <button type="button" class="btn-outline" onclick="clearAvatar()">إزالة الصورة</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-heading">
+      <h2>٣. البيانات الأساسية والتواصل</h2>
+      <span class="section-step">PROFILE INFO</span>
+    </div>
+
+    <div class="form-grid">
+      <div class="field">
+        <label>الاسم الكامل / اسم العلامة</label>
+        <input type="text" id="fullName" value="" placeholder="اكتب الاسم" oninput="updateCard()">
+      </div>
+      <div class="field">
+        <label>المسمى الوظيفي أو التخصص</label>
+        <input type="text" id="jobTitle" value="" placeholder="مثال: مصمم جرافيك" oninput="updateCard()">
+      </div>
+      <div class="field">
+        <label>الجهة / الشركة / المنصة</label>
+        <input type="text" id="companyName" value="أثر ستوديو | ATHAR STUDIO" oninput="updateCard()">
+      </div>
+      <div class="field">
+        <label>المدينة / الدولة</label>
+        <input type="text" id="locationText" value="" placeholder="المدينة والدولة" oninput="updateCard()">
+      </div>
+      <div class="field full-width">
+        <label>نبذة تعريفية مختصرة</label>
+        <textarea id="bioText" rows="2" oninput="updateCard()"></textarea>
+      </div>
+      <div class="field">
+        <label>رقم الجوال (للاتصال المباشر)</label>
+        <input type="tel" dir="ltr" id="phoneInput" value="" placeholder="+9665XXXXXXXX" oninput="updateCard()">
+      </div>
+      <div class="field">
+        <label>رقم واتساب</label>
+        <input type="tel" dir="ltr" id="whatsappInput" value="" placeholder="9665XXXXXXXX" oninput="updateCard()">
+      </div>
+      <div class="field">
+        <label>البريد الإلكتروني</label>
+        <input type="email" dir="ltr" id="emailInput" value="" placeholder="name@example.com" oninput="updateCard()">
+      </div>
+      <div class="field">
+        <label>الموقع الإلكتروني أو رابط المتجر</label>
+        <input type="url" dir="ltr" id="websiteInput" value="" placeholder="https://example.com" oninput="updateCard()">
+      </div>
+    </div>
+
+    <div class="section-heading">
+      <h2>٤. حسابات التواصل الاجتماعي</h2>
+      <span class="section-step">SOCIAL LINKS</span>
+    </div>
+
+    <div class="social-adder">
+      <div class="field">
+        <select id="platformSelect">
+          <option value="X (تويتر)">X (تويتر)</option>
+          <option value="إنستغرام">إنستغرام</option>
+          <option value="سناب شات">سناب شات</option>
+          <option value="تيك توك">تيك توك</option>
+          <option value="لينكدإن">لينكدإن</option>
+          <option value="يوتيوب">يوتيوب</option>
+          <option value="بيهانس">بيهانس</option>
+          <option value="تيليجرام">تيليجرام</option>
+          <option value="جيت هب">جيت هب</option>
+        </select>
+      </div>
+      <div class="field">
+        <input type="text" dir="ltr" id="socialHandleInput" placeholder="اسم المستخدم أو الرابط (مثال: @athar_studio)">
+      </div>
+      <button type="button" class="btn-gold" onclick="addSocialLink()">+ إضافة حساب</button>
+    </div>
+
+    <div class="social-list" id="socialListContainer"></div>
+  </section>
+
+  <!-- Left Column: Live Preview & Export -->
+  <aside class="preview-sticky">
+    <div id="digitalCardCapture" class="digital-card style-classic theme-charcoal">
+      <div class="card-cover-banner"></div>
+      <div class="card-top-brand">ATHAR STUDIO • DIGITAL CARD</div>
+
+      <div class="card-profile-block">
+        <div class="card-avatar">
+          <div class="card-avatar-inner" id="cardAvatarDisplay">أ</div>
+        </div>
+        <div>
+          <h3 class="card-name" id="cardNameDisplay">اسمك هنا</h3>
+          <div class="card-role" id="cardRoleDisplay"></div>
+          <div class="card-company" id="cardCompanyDisplay">أثر ستوديو | ATHAR STUDIO</div>
+        </div>
+      </div>
+
+      <p class="card-bio" id="cardBioDisplay"></p>
+
+      <div class="card-quick-actions">
+        <a id="cardCallLink" href="#" class="quick-pill">
+          <span>📞</span>
+          <span>اتصال</span>
+        </a>
+        <a id="cardWaLink" href="#" target="_blank" rel="noopener noreferrer" class="quick-pill">
+          <span>💬</span>
+          <span>واتساب</span>
+        </a>
+        <a id="cardMailLink" href="#" class="quick-pill">
+          <span>✉️</span>
+          <span>بريد</span>
+        </a>
+      </div>
+
+      <div class="card-socials" id="cardSocialsDisplay"></div>
+
+      <div class="card-qr-box">
+        <div>
+          <div style="font-size:0.78rem; font-weight:700; color:var(--c-accent);">امسح الرمز للوصول السريع</div>
+          <div style="font-size:0.72rem; opacity:0.72;" id="cardDomainHint">أضف رابط موقعك لإنشاء رمز QR</div>
+        </div>
+        <div id="qrcode"></div>
+      </div>
+    </div>
+
+    <div class="export-grid">
+      <button type="button" class="btn-export primary" onclick="exportStandaloneHTML()">
+        🌐 تصدير البطاقة كصفحة ويب مستقلة (HTML)
+      </button>
+      <button type="button" class="btn-export" onclick="downloadCardPNG()">
+        🖼️ حفظ البطاقة كصورة (PNG)
+      </button>
+      <button type="button" class="btn-export" onclick="downloadVCard()">
+        📇 حفظ جهة اتصال (vCard)
+      </button>
+    </div>
+  </aside>
+</main>
+
+<div class="toast" id="toastMsg">تم التحديث بنجاح</div>
+
+<script>
+  let currentLayout = 'classic';
+  let currentTheme = 'charcoal';
+  let avatarDataUrl = '';
+  let socials = [];
+
+  const platformBaseUrls = {
+    'X (تويتر)': 'https://x.com/',
+    'إنستغرام': 'https://instagram.com/',
+    'سناب شات': 'https://snapchat.com/add/',
+    'تيك توك': 'https://tiktok.com/@',
+    'لينكدإن': 'https://linkedin.com/in/',
+    'يوتيوب': 'https://youtube.com/@',
+    'بيهانس': 'https://behance.net/',
+    'تيليجرام': 'https://t.me/',
+    'جيت هب': 'https://github.com/'
+  };
+
+  function normalizeWebUrl(raw) {
+    const value = String(raw || '').trim();
+    if (!value) return '';
+    const candidate = /^https?:\/\//i.test(value) ? value : `https://${value}`;
+    try {
+      const parsed = new URL(candidate);
+      return ['http:', 'https:'].includes(parsed.protocol) ? parsed.href : '';
+    } catch (_) { return ''; }
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toastMsg');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function applyCardClasses() {
+    const card = document.getElementById('digitalCardCapture');
+    card.className = `digital-card style-${currentLayout} theme-${currentTheme}`;
+  }
+
+  function setLayoutStyle(styleName, btn) {
+    currentLayout = styleName;
+    document.querySelectorAll('.style-card-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyCardClasses();
+  }
+
+  function setTheme(theme, btn) {
+    currentTheme = theme;
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyCardClasses();
+  }
+
+  function handleAvatarUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { showToast('يرجى اختيار ملف صورة'); e.target.value = ''; return; }
+    if (file.size > 5 * 1024 * 1024) { showToast('حجم الصورة يجب ألا يتجاوز 5 ميجابايت'); e.target.value = ''; return; }
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      avatarDataUrl = evt.target.result;
+      updateCard();
+      showToast('تم تحديث الصورة بنجاح');
+    };
+    reader.onerror = () => showToast('تعذر قراءة الصورة؛ جرّب ملفاً آخر');
+    reader.readAsDataURL(file);
+  }
+
+  function clearAvatar() {
+    avatarDataUrl = '';
+    document.getElementById('avatarInput').value = '';
+    updateCard();
+  }
+
+  function addSocialLink() {
+    const platform = document.getElementById('platformSelect').value;
+    let raw = document.getElementById('socialHandleInput').value.trim();
+    if (!raw) {
+      showToast('يرجى إدخال اسم المستخدم أو الرابط');
+      return;
+    }
+
+    let url = raw;
+    let label = raw;
+    if (!/^https?:\/\//i.test(raw)) {
+      const cleanHandle = raw.replace(/^@/, '').trim();
+      if (!cleanHandle || /[\s<>"'`]/.test(cleanHandle)) {
+        showToast('تحقق من اسم المستخدم أو الرابط'); return;
+      }
+      url = (platformBaseUrls[platform] || 'https://') + encodeURIComponent(cleanHandle);
+      label = '@' + cleanHandle;
+    } else {
+      url = normalizeWebUrl(raw);
+      if (!url) { showToast('الرابط غير صالح؛ استخدم http أو https'); return; }
+      try { label = new URL(url).hostname; } catch (_) {}
+    }
+
+    socials.push({ platform, value: url, label });
+    document.getElementById('socialHandleInput').value = '';
+    renderSocialControls();
+    updateCard();
+    showToast('تمت إضافة ' + platform);
+  }
+
+  function removeSocial(idx) {
+    socials.splice(idx, 1);
+    renderSocialControls();
+    updateCard();
+  }
+
+  function renderSocialControls() {
+    const container = document.getElementById('socialListContainer');
+    container.replaceChildren();
+    socials.forEach((item, index) => {
+      const div = document.createElement('div');
+      div.className = 'social-item';
+      const info = document.createElement('div'); info.className = 'social-item-info';
+      const tag = document.createElement('span'); tag.className = 'social-tag'; tag.textContent = item.platform;
+      const url = document.createElement('span'); url.className = 'social-url'; url.textContent = item.value;
+      info.append(tag, url);
+      const remove = document.createElement('button');
+      remove.type = 'button'; remove.className = 'btn-remove'; remove.textContent = 'حذف';
+      remove.addEventListener('click', () => removeSocial(index));
+      div.append(info, remove); container.appendChild(div);
+    });
+  }
+
+  function updateCard() {
+    const name = document.getElementById('fullName').value.trim() || 'الاسم الكريم';
+    const role = document.getElementById('jobTitle').value.trim();
+    const company = document.getElementById('companyName').value.trim();
+    const location = document.getElementById('locationText').value.trim();
+    const bio = document.getElementById('bioText').value.trim();
+    const phone = document.getElementById('phoneInput').value.trim();
+    const wa = document.getElementById('whatsappInput').value.trim().replace(/[^0-9]/g, '');
+    const email = document.getElementById('emailInput').value.trim();
+    const websiteRaw = document.getElementById('websiteInput').value.trim();
+    const website = normalizeWebUrl(websiteRaw);
+
+    document.getElementById('cardNameDisplay').textContent = name;
+    document.getElementById('cardRoleDisplay').textContent = role;
+    document.getElementById('cardCompanyDisplay').textContent = [company, location].filter(Boolean).join(' • ');
+    document.getElementById('cardBioDisplay').textContent = bio;
+
+    const firstChar = name.charAt(0) || 'أ';
+    const avatarDisplay = document.getElementById('cardAvatarDisplay');
+    const thumbPreview = document.getElementById('avatarThumbPreview');
+
+    if (avatarDataUrl) {
+      const makeImage = () => { const img = document.createElement('img'); img.src = avatarDataUrl; img.alt = 'الصورة الشخصية'; return img; };
+      avatarDisplay.replaceChildren(makeImage());
+      thumbPreview.replaceChildren(makeImage());
+    } else {
+      avatarDisplay.textContent = firstChar;
+      thumbPreview.textContent = firstChar;
+    }
+
+    document.getElementById('cardCallLink').href = phone ? `tel:${phone}` : '#';
+    document.getElementById('cardWaLink').href = wa ? `https://wa.me/${wa}` : '#';
+    document.getElementById('cardMailLink').href = email ? `mailto:${email}` : '#';
+
+    const socialsDisplay = document.getElementById('cardSocialsDisplay');
+    socialsDisplay.innerHTML = '';
+    socials.forEach(s => {
+      const a = document.createElement('a');
+      a.className = 'card-social-link'; a.href = s.value; a.target = '_blank'; a.rel = 'noopener noreferrer';
+      const platform = document.createElement('span'); platform.textContent = s.platform;
+      const label = document.createElement('span');
+      label.style.cssText = "font-family:'Montserrat',sans-serif;font-size:0.78rem;opacity:0.8;direction:ltr;";
+      label.textContent = `${s.label} ↗`;
+      a.append(platform, label); socialsDisplay.appendChild(a);
+    });
+
+    if (website) {
+      const webLink = document.createElement('a');
+      webLink.className = 'card-social-link'; webLink.href = website; webLink.target = '_blank'; webLink.rel = 'noopener noreferrer';
+      const label = document.createElement('span'); label.textContent = 'الموقع الرسمي';
+      const hint = document.createElement('span'); hint.style.cssText = "font-family:'Montserrat',sans-serif;font-size:0.76rem;opacity:0.8;direction:ltr;"; hint.textContent = 'زيارة الرابط ↗';
+      webLink.append(label, hint); socialsDisplay.appendChild(webLink);
+    }
+
+    document.getElementById('cardDomainHint').textContent = website ? new URL(website).host : 'أضف رابط موقعك لإنشاء رمز QR';
+    const qrBox = document.getElementById('qrcode');
+    qrBox.replaceChildren();
+    if (website && window.QRCode) {
+      new QRCode(qrBox, { text: website, width: 68, height: 68, colorDark: '#1C1A19', colorLight: '#FFFFFF', correctLevel: QRCode.CorrectLevel.M });
+    }
+  }
+
+  function downloadCardPNG() {
+    const cardEl = document.getElementById('digitalCardCapture');
+    if (!window.html2canvas) { showToast('تعذر تحميل أداة حفظ الصور؛ تحقق من الاتصال بالإنترنت'); return; }
+    html2canvas(cardEl, { scale: 2.5, backgroundColor: null, useCORS: true }).then(canvas => {
+      const link = document.createElement('a');
+      link.download = `athar-card-${currentLayout}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      showToast('تم تحميل صورة البطاقة بجودة عالية');
+    }).catch(() => showToast('تعذر إنشاء الصورة؛ حاول مجدداً بعد تحميل الخطوط والصورة'));
+  }
+
+  function downloadVCard() {
+    const name = document.getElementById('fullName').value.trim();
+    const role = document.getElementById('jobTitle').value.trim();
+    const company = document.getElementById('companyName').value.trim();
+    const phone = document.getElementById('phoneInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim();
+    const website = normalizeWebUrl(document.getElementById('websiteInput').value.trim());
+
+    const escapeVCard = value => String(value || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+    const vcard = [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      `FN:${escapeVCard(name)}`,
+      `ORG:${escapeVCard(company)}`,
+      `TITLE:${escapeVCard(role)}`,
+      phone ? `TEL;TYPE=CELL:${phone}` : '',
+      email ? `EMAIL:${escapeVCard(email)}` : '',
+      website ? `URL:${escapeVCard(website)}` : '',
+      'END:VCARD'
+    ].filter(Boolean).join('\n');
+
+    const blob = new Blob([vcard], { type: 'text/vcard;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'contact-card.vcf';
+    link.click();
+    showToast('تم تصدير ملف جهة الاتصال (vCard)');
+  }
+
+  function exportStandaloneHTML() {
+    const cardHTML = document.getElementById('digitalCardCapture').outerHTML;
+    const sharedCSS = document.getElementById('sharedCardStyles').innerHTML;
+    const title = (document.getElementById('fullName').value.trim() || 'بطاقة رقمية').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+
+    const standalone = `<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${title} | بطاقة رقمية</title>
+  <link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Montserrat:wght@400;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    ${sharedCSS}
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: #121110;
+    }
+  </style>
+</head>
+<body>${cardHTML}</body>
+</html>`;
+
+    const blob = new Blob([standalone], { type: 'text/html;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `digital-card-${currentLayout}.html`;
+    link.click();
+    showToast('تم تصدير صفحة البطاقة المستقلة بنمطها المختار');
+  }
+
+  downloadCardPNG = __gated('حفظ البطاقة PNG', downloadCardPNG);
+  downloadVCard = __gated('حفظ جهة الاتصال', downloadVCard);
+  exportStandaloneHTML = __gated('تصدير البطاقة HTML', exportStandaloneHTML);
+  renderSocialControls();
+  updateCard();
+</script>
+</body>
+</html>

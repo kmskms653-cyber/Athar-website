@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-route="creative-personal">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#1c1a19">
+<title>أثر | استوديو الشعارات والهوية البصرية</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;600;700&family=Montserrat:wght@400;600;700&family=Reem+Kufi:wght@500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1c1a19;--panel:#242220;--panel2:#2c2926;--gold:#d0b58b;--ivory:#f4efe6;--muted:#a99b8b;--line:rgba(208,181,139,.23)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ivory);font-family:Tajawal,sans-serif;line-height:1.6}
+header{position:sticky;top:0;z-index:5;background:rgba(28,26,25,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:13px 22px}
+.header-inner{max-width:1500px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px}.mark{width:44px;height:44px;border:1px solid var(--gold);border-radius:12px;display:grid;place-items:center;color:var(--gold);font:28px 'Aref Ruqaa'}
+.brand h1{font:22px 'Aref Ruqaa';color:var(--gold);margin:0}.brand small{display:block;direction:ltr;text-align:right;color:var(--muted);font:10px Montserrat;letter-spacing:2px}
+.actions,.toolbar,.pills{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+button,select,input{font:inherit}button{cursor:pointer}
+.btn{border:1px solid var(--gold);border-radius:10px;padding:9px 14px;background:transparent;color:var(--gold);font-weight:700}.btn.primary{background:var(--gold);color:#1c1a19}.btn:hover,.choice:hover{filter:brightness(1.12)}
+.layout{max-width:1500px;margin:24px auto;padding:0 18px 50px;display:grid;grid-template-columns:minmax(300px,430px) minmax(0,1fr);gap:22px;align-items:start}
+.panel,.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;min-width:0}
+.panel{position:sticky;top:90px;max-height:calc(100vh - 110px);overflow:auto}
+.section-title{font:20px 'Aref Ruqaa';color:var(--gold);border-bottom:1px solid var(--line);padding-bottom:7px;margin:4px 0 12px}
+.section-title:not(:first-child){margin-top:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.choice{background:#191817;border:1px solid #51483d;border-radius:10px;color:var(--ivory);padding:10px 5px;text-align:center;min-width:0}
+.choice.active{border-color:var(--gold);background:rgba(208,181,139,.14);color:var(--gold)}
+.choice b{display:block;font-size:13px}.choice small{display:block;color:var(--muted);font-size:11px}
+.field{margin:10px 0}.field label{display:block;color:#e8dfd2;font-size:13px;margin-bottom:5px}
+.field input,.field select{width:100%;background:#191817;border:1px solid #51483d;border-radius:9px;color:var(--ivory);padding:10px;min-width:0}
+.field input:focus,.field select:focus{outline:1px solid var(--gold)}
+input[type=range]{accent-color:var(--gold);padding:0}
+.icon-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.icon-choice{background:#191817;border:1px solid #51483d;border-radius:10px;aspect-ratio:1;display:grid;place-items:center}
+.icon-choice.active{border:2px solid var(--gold);background:#393024}
+.icon-choice svg{width:34px;height:34px}
+.palette-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.palette-choice{border:1px solid #51483d;background:#191817;border-radius:10px;padding:9px;text-align:right;color:var(--ivory)}
+.palette-choice.active{border-color:var(--gold)}
+.dots{display:flex;gap:5px;margin-bottom:5px}.dots i{width:17px;height:17px;border-radius:50%;border:1px solid #ffffff44}
+.workspace{display:grid;gap:18px;min-width:0}.card-head{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:13px}.card-head strong{color:var(--gold);font-size:17px}
+.pill{border:1px solid var(--line);background:#191817;color:var(--ivory);padding:6px 11px;border-radius:20px;font-size:12px}.pill.active{background:var(--gold);color:#191817}
+.stage{min-height:350px;border:1px solid var(--line);border-radius:14px;display:grid;place-items:center;padding:25px;overflow:hidden;transition:.2s}
+.stage svg{display:block;max-width:100%;max-height:440px;height:auto}
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.swatch{overflow:hidden;border:1px solid #ffffff22;border-radius:10px;cursor:pointer;background:#191817}.swatch-color{height:48px}.swatch-info{padding:7px;font-size:11px;display:flex;justify-content:space-between;gap:4px;flex-wrap:wrap}
+.mockups{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.mock{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px;min-width:0}.mock label{display:block;color:var(--muted);font-size:12px;margin-bottom:10px}.business-card{aspect-ratio:1.75;background:#1c1a19;border-radius:10px;padding:13px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 8px 18px #0005;overflow:hidden}.social{background:#292522;border-radius:12px;padding:12px;display:flex;gap:10px;align-items:center;min-height:100px;overflow:hidden}.avatar{width:58px;height:58px;border:1px solid;border-radius:50%;display:grid;place-items:center;flex:none}
+.letter{background:#f5f2eb;color:#1c1a19;border-top:4px solid;padding:13px;border-radius:10px;min-height:110px}.line{height:5px;background:#ded6ca;border-radius:5px;margin:8px 0}
+.note{font-size:12px;color:var(--muted);margin-top:10px}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#e9dfcf;color:#211d18;padding:9px 16px;border-radius:10px;box-shadow:0 5px 20px #0006;display:none;z-index:10}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}.panel{position:static;max-height:none}.mockups{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){header{padding:10px}.header-inner{align-items:flex-start}.brand h1{font-size:18px}.actions{width:100%}.actions .btn{flex:1;font-size:12px;padding:8px 6px}.layout{padding:0 10px 30px;margin:14px auto}.panel,.card{padding:13px}.stage{min-height:270px;padding:12px}.swatches{grid-template-columns:repeat(2,1fr)}.mockups{grid-template-columns:1fr}.grid3{grid-template-columns:repeat(2,1fr)}}
+@media print{body{background:#fff;color:#111}.header-inner .actions,.panel,.toolbar,.note{display:none!important}.layout{display:block;margin:0;padding:0}.workspace{gap:12px}.card,.mock{break-inside:avoid;background:#fff;border:1px solid #ccc;color:#111}.stage{min-height:280px}.mockups{grid-template-columns:repeat(3,1fr)}}
+</style>
+<script src="/tools/athar-common.js"></script>
+</head>
+<body>
+<header><div class="header-inner">
+<div class="brand"><div class="mark">أ</div><div><h1>أثر — استوديو الشعارات والهوية البصرية</h1><small>ATHAR STUDIO • BRAND IDENTITY MAKER</small></div></div>
+<div class="actions">
+<button class="btn" id="svgBtn">تحميل SVG</button><button class="btn" id="pngBtn">تحميل PNG</button><button class="btn primary" id="pdfBtn">تصدير دليل الهوية PDF</button>
+</div></div></header>
+<div class="layout">
+<aside class="panel">
+<div class="section-title">١. التوجه الإبداعي</div>
+<div class="grid3" id="archetypes"></div>
+<div class="section-title">٢. بيانات الهوية</div>
+<div class="grid2">
+<div class="field"><label id="nameLabel">اسم العلامة بالعربية</label><input id="nameAr" value="أثر" maxlength="45"></div>
+<div class="field"><label>الاسم بالإنجليزية</label><input id="nameEn" value="ATHAR" dir="ltr" maxlength="45"></div>
+</div>
+<div class="grid2">
+<div class="field"><label>الشعار اللفظي / التخصص</label><input id="tagline" value="للتصميم والإنتاج الإبداعي" maxlength="70"></div>
+<div class="field"><label>حرف المونوغرام</label><input id="mono" value="أ" maxlength="3"></div>
+</div>
+<div class="grid2"><button class="choice active" id="company">شركة / علامة تجارية</button><button class="choice" id="personal">هوية شخصية</button></div>
+<div class="section-title">٣. الرمز والتكوين</div><div class="icon-grid" id="icons"></div>
+<div class="grid2">
+<div class="field"><label>تخطيط الشعار</label><select id="layout">
+<option value="vertical">عمودي كلاسيكي</option><option value="horizontal">أفقي تنفيذي</option><option value="emblem">ختم مستطيل</option><option value="seal">ختم دائري</option><option value="split">فاصل عمودي</option><option value="badge">شارة مونوغرام</option><option value="arch">قوس معماري</option><option value="type">نصي خالص</option>
+</select></div>
+<div class="field"><label>الخط العربي</label><select id="font"><option value="Aref Ruqaa">رقعة فني</option><option value="Reem Kufi">كوفي معاصر</option><option value="Amiri">أميري كلاسيكي</option><option value="Cairo">كايرو هندسي</option></select></div>
+</div>
+<div class="grid2">
+<div class="field"><label>حجم الرمز: <span id="sizeValue">72</span></label><input id="size" type="range" min="42" max="105" value="72"></div>
+<div class="field"><label>سماكة الخط: <span id="strokeValue">2</span></label><input id="stroke" type="range" min="1" max="3.5" step=".1" value="2"></div>
+</div>
+<div class="section-title">٤. لوحات الألوان</div><div class="palette-grid" id="palettes"></div>
+<p class="note">يمكنك نسخ أكواد الألوان بالنقر على عينات الألوان في مساحة العمل. التصدير بصيغة SVG يحافظ على الطابع المتجهي للشعار.</p>
+</aside>
+<main class="workspace">
+<section class="card">
+<div class="card-head"><strong>المعاينة الرئيسية للشعار</strong><div class="toolbar" id="backgrounds">
+<button class="pill active" data-bg="dark">خلفية الهوية</button><button class="pill" data-bg="light">فاتحة</button><button class="pill" data-bg="accent">لون الشعار</button><button class="pill" data-bg="grid">شبكة هندسية</button><button class="pill" data-bg="transparent">شفافة</button>
+</div></div>
+<div class="stage" id="stage"></div>
+</section>
+<section class="card"><div class="card-head"><strong>نظام الألوان المعتمد</strong><span class="note">انقر على اللون لنسخ الكود</span></div><div class="swatches" id="swatches"></div></section>
+<section class="mockups">
+<div class="mock"><label>تطبيق بطاقة الأعمال · 90 × 55 mm</label><div class="business-card" id="businessCard"></div></div>
+<div class="mock"><label>أيقونة الحسابات الرقمية · Avatar</label><div class="social" id="social"></div></div>
+<div class="mock"><label>الترويسة الرسمية · A4</label><div class="letter" id="letter"></div></div>
+</section>
+</main></div><div class="toast" id="toast"></div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const palettes=[
+{name:'فخامة أثر',bg:'#1C1A19',surface:'#262321',primary:'#D0B58B',text:'#F4EFE6'},
+{name:'عاجي ملكي',bg:'#F4EFE6',surface:'#E8DFD1',primary:'#8C6D46',text:'#1C1A19'},
+{name:'زمردي نجدي',bg:'#13241E',surface:'#1B332B',primary:'#D4B475',text:'#F5F2EB'},
+{name:'كحلي تنفيذي',bg:'#141B29',surface:'#1E283B',primary:'#C8B8A6',text:'#F4EFE6'},
+{name:'طيني رخامي',bg:'#2B211C',surface:'#3A2C25',primary:'#DFC39D',text:'#F7F3EC'},
+{name:'أسود وبلاتيني',bg:'#121212',surface:'#1E1E1E',primary:'#E2D6C3',text:'#FFFFFF'},
+{name:'أبيض وفحمي',bg:'#FFFFFF',surface:'#F3F3F1',primary:'#1C1A19',text:'#2B2927'},
+{name:'عنابي ملكي',bg:'#2A1215',surface:'#3B191E',primary:'#DFC18D',text:'#F7F2EA'}];
+const icons=[
+(c,w)=>`<polygon points="50,8 92,50 50,92 8,50" stroke="${c}" stroke-width="${w}" fill="none"/><polygon points="50,22 78,50 50,78 22,50" stroke="${c}" stroke-width="${w}" fill="none"/><circle cx="50" cy="50" r="5" fill="${c}"/>`,
+(c,w)=>`<path d="M22 88V45A28 28 0 0 1 78 45V88M34 88V49A16 16 0 0 1 66 49V88M50 15V31" stroke="${c}" stroke-width="${w}" fill="none"/>`,
+(c,w)=>`<rect x="22" y="22" width="56" height="56" stroke="${c}" stroke-width="${w}" fill="none"/><rect x="22" y="22" width="56" height="56" transform="rotate(45 50 50)" stroke="${c}" stroke-width="${w}" fill="none"/><circle cx="50" cy="50" r="9" stroke="${c}" stroke-width="${w}" fill="none"/>`,
+(c,w,m)=>`<circle cx="50" cy="50" r="41" stroke="${c}" stroke-width="${w}" fill="none"/><circle cx="50" cy="50" r="34" stroke="${c}" stroke-width="${w*.6}" stroke-dasharray="4 3" fill="none"/><text x="50" y="62" text-anchor="middle" fill="${c}" font-family="Aref Ruqaa" font-size="34">${esc(m)}</text>`,
+(c,w)=>`<path d="M50 12C76 35 76 62 50 88C24 62 24 35 50 12ZM50 24V88" stroke="${c}" stroke-width="${w}" fill="none"/>`,
+(c,w)=>`<polygon points="50,10 86,30 86,70 50,90 14,70 14,30" stroke="${c}" stroke-width="${w}" fill="none"/><path d="M26 38L50 52L74 38M50 52V82" stroke="${c}" stroke-width="${w}" fill="none"/>`,
+(c,w)=>`<path d="M62 20A32 32 0 1 0 80 68A25 25 0 1 1 62 20ZM16 82H84" stroke="${c}" stroke-width="${w}" fill="none"/>`,
+(c,w)=>`<path d="M20 24L50 14L80 24V52C80 72 50 88 50 88S20 72 20 52Z" stroke="${c}" stroke-width="${w}" fill="none"/><path d="M34 48L43 36L50 45L57 36L66 48Z" stroke="${c}" stroke-width="${w}" fill="none"/>`,
+(c,w)=>`<path d="M14 50C26 20 42 20 50 50S74 80 86 50" stroke="${c}" stroke-width="${w*1.2}" fill="none"/><circle cx="50" cy="50" r="36" stroke="${c}" stroke-width="${w*.7}" fill="none"/>`,
+(c,w)=>`<rect x="28" y="16" width="14" height="68" stroke="${c}" stroke-width="${w}" fill="none"/><rect x="58" y="28" width="14" height="56" stroke="${c}" stroke-width="${w}" fill="none"/><path d="M20 84H80" stroke="${c}" stroke-width="${w}"/>`,
+(c,w)=>`<path d="M50 84V36M50 42C34 26 20 30 16 42M50 42C66 26 80 30 84 42M50 36C38 16 24 18 20 28M50 36C62 16 76 18 80 28" stroke="${c}" stroke-width="${w}" fill="none"/>`,
+(c,w)=>`<ellipse cx="50" cy="50" rx="40" ry="16" transform="rotate(30 50 50)" stroke="${c}" stroke-width="${w}" fill="none"/><ellipse cx="50" cy="50" rx="40" ry="16" transform="rotate(-30 50 50)" stroke="${c}" stroke-width="${w}" fill="none"/><circle cx="50" cy="50" r="7" fill="${c}"/>`
+];
+const presets=[
+{key:'royal',icon:2,layout:'emblem',font:'Aref Ruqaa',palette:0,size:70,stroke:1.8,title:'ملكي فاخر',sub:'فخامة وذهب'},
+{key:'najdi',icon:0,layout:'arch',font:'Reem Kufi',palette:2,size:68,stroke:2,title:'تراثي نجدي',sub:'أصالة وهندسة'},
+{key:'modern',icon:5,layout:'split',font:'Cairo',palette:3,size:74,stroke:2.2,title:'تقني حديث',sub:'هندسي ومعاصر'},
+{key:'minimal',icon:9,layout:'horizontal',font:'Cairo',palette:6,size:62,stroke:1.6,title:'مينيمال',sub:'بساطة ووضوح'},
+{key:'calligraphy',icon:4,layout:'type',font:'Aref Ruqaa',palette:1,size:70,stroke:1.6,title:'خطي حر',sub:'حضور الحروف'},
+{key:'editorial',icon:7,layout:'seal',font:'Amiri',palette:4,size:66,stroke:1.8,title:'مؤسسي رصين',sub:'ختم ووقار'}];
+let iconIndex=0,paletteIndex=0,bgMode='dark',entity='company';
+function esc(s){return String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+function getData(){return {ar:$('nameAr').value.trim()||'اسم العلامة',en:$('nameEn').value.trim()||'BRAND',tag:$('tagline').value.trim(),mono:$('mono').value.trim()||$('nameAr').value.trim().charAt(0)||'أ',font:$('font').value,size:+$('size').value,stroke:+$('stroke').value,layout:$('layout').value,p:palettes[paletteIndex]};}
+function iconSvg(color,d){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img">${icons[iconIndex](color,d.stroke,d.mono)}</svg>`;}
+function makeLogo(d,fg=d.p.text,accent=d.p.primary){
+const {ar,en,tag,mono,font,size,stroke,layout}=d;const safeAr=esc(ar),safeEn=esc(en),safeTag=esc(tag),safeMono=esc(mono);
+const sym=icons[iconIndex](accent,stroke,mono);
+const text=(x,y,txt,fill,fam,fs,extra='')=>`<text x="${x}" y="${y}" text-anchor="middle" fill="${fill}" font-family="${fam}" font-size="${fs}" ${extra}>${txt}</text>`;
+let body='';
+if(layout==='type'){body=`${text(220,90,safeAr,accent,font,62,'font-weight="700"')}${text(220,127,safeEn,fg,'Montserrat',15,'letter-spacing="5" font-weight="600"')}<path d="M145 145H295" stroke="${accent}" opacity=".7"/>${text(220,171,safeTag,fg,'Tajawal',14)}`;return svgWrap(440,200,body);}
+if(layout==='horizontal'||layout==='split'){body=`<g transform="translate(365 ${85-size/2}) scale(${size/100})">${sym}</g>${layout==='split'?`<path d="M330 28V142" stroke="${accent}" stroke-width="1.5"/>`:''}<text x="310" y="75" text-anchor="end" fill="${accent}" font-family="${font}" font-size="43" font-weight="700">${safeAr}</text><text x="310" y="105" text-anchor="end" fill="${fg}" font-family="Montserrat" font-size="13" letter-spacing="3">${safeEn}</text><text x="310" y="131" text-anchor="end" fill="${fg}" font-family="Tajawal" font-size="13">${safeTag}</text>`;return svgWrap(500,170,body);}
+if(layout==='emblem'){body=`<rect x="30" y="15" width="300" height="250" rx="20" stroke="${accent}" fill="none" stroke-width="1.7"/><rect x="39" y="24" width="282" height="232" rx="15" stroke="${accent}" opacity=".5" fill="none"/><g transform="translate(${180-size*.42} 42) scale(${size*.84/100})">${sym}</g>${text(180,164,safeAr,accent,font,43,'font-weight="700"')}${text(180,196,safeEn,fg,'Montserrat',13,'letter-spacing="4"')}${text(180,224,safeTag,fg,'Tajawal',12)}`;return svgWrap(360,280,body);}
+if(layout==='seal'){body=`<circle cx="170" cy="170" r="150" stroke="${accent}" fill="none" stroke-width="1.7"/><circle cx="170" cy="170" r="140" stroke="${accent}" fill="none" stroke-dasharray="5 4" opacity=".6"/><g transform="translate(${170-size*.4} 50) scale(${size*.8/100})">${sym}</g>${text(170,180,safeAr,accent,font,42,'font-weight="700"')}${text(170,211,safeEn,fg,'Montserrat',12,'letter-spacing="4"')}${text(170,239,safeTag,fg,'Tajawal',12)}`;return svgWrap(340,340,body);}
+if(layout==='badge'){body=`<polygon points="200,12 255,67 200,122 145,67" stroke="${accent}" fill="none" stroke-width="1.7"/>${text(200,80,safeMono,accent,'Aref Ruqaa',38)}${text(200,171,safeAr,accent,font,43,'font-weight="700"')}${text(200,201,safeEn,fg,'Montserrat',12,'letter-spacing="4"')}${text(200,229,safeTag,fg,'Tajawal',13)}`;return svgWrap(400,260,body);}
+if(layout==='arch'){body=`<path d="M55 280V135A125 115 0 0 1 305 135V280Z" stroke="${accent}" fill="none" stroke-width="1.7"/><g transform="translate(${180-size*.4} 48) scale(${size*.8/100})">${sym}</g>${text(180,175,safeAr,accent,font,42,'font-weight="700"')}${text(180,207,safeEn,fg,'Montserrat',12,'letter-spacing="4"')}${text(180,235,safeTag,fg,'Tajawal',12)}`;return svgWrap(360,300,body);}
+body=`<g transform="translate(${190-size/2} 12) scale(${size/100})">${sym}</g>${text(190,150,safeAr,accent,font,46,'font-weight="700"')}${text(190,182,safeEn,fg,'Montserrat',13,'letter-spacing="4"')}${text(190,212,safeTag,fg,'Tajawal',13)}`;return svgWrap(380,250,body);
+}
+function svgWrap(w,h,content){return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${content}</svg>`;}
+function render(){
+const d=getData();$('sizeValue').textContent=d.size;$('strokeValue').textContent=d.stroke;
+let bg=d.p.bg,fg=d.p.text,accent=d.p.primary;
+if(bgMode==='light'){bg='#F5F2EB';fg='#1C1A19';accent=['#F4EFE6','#FFFFFF'].includes(d.p.bg)?d.p.primary:d.p.bg;}
+if(bgMode==='accent'){bg=d.p.primary;fg='#1C1A19';accent=d.p.bg==='#FFFFFF'?'#FFFFFF':'#1C1A19';}
+const stage=$('stage');stage.style.backgroundColor=bg;stage.style.backgroundImage=bgMode==='grid'?`linear-gradient(${d.p.primary}22 1px,transparent 1px),linear-gradient(90deg,${d.p.primary}22 1px,transparent 1px)`:'none';stage.style.backgroundSize='25px 25px';stage.style.background=bgMode==='transparent'?'transparent':stage.style.backgroundColor;stage.style.backgroundImage=bgMode==='grid'?`linear-gradient(${d.p.primary}22 1px,transparent 1px),linear-gradient(90deg,${d.p.primary}22 1px,transparent 1px)`:'none';stage.innerHTML=makeLogo(d,fg,accent);
+$('swatches').innerHTML=[['الخلفية',d.p.bg],['السطح الثانوي',d.p.surface],['اللون المميز',d.p.primary],['النصوص',d.p.text]].map(([n,c])=>`<button class="swatch" data-copy="${c}" aria-label="نسخ ${c}"><div class="swatch-color" style="background:${c}"></div><div class="swatch-info"><span>${n}</span><b dir="ltr">${c}</b></div></button>`).join('');
+const mini=iconSvg(d.p.primary,d);
+$('businessCard').style.background=d.p.bg;$('businessCard').style.color=d.p.text;$('businessCard').style.border=`1px solid ${d.p.primary}88`;
+$('businessCard').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><span style="width:34px">${mini}</span><small dir="ltr" style="color:${d.p.primary};letter-spacing:2px">${esc(d.en)}</small></div><div><div style="font: bold 22px '${d.font}';color:${d.p.primary}">${esc(d.ar)}</div><small>${esc(d.tag)}</small></div>`;
+$('social').style.background=d.p.surface;$('social').style.color=d.p.text;$('social').innerHTML=`<div class="avatar" style="background:${d.p.bg};color:${d.p.primary};border-color:${d.p.primary}">${mini}</div><div style="min-width:0"><b style="font:20px '${d.font}';color:${d.p.primary}">${esc(d.ar)}</b><div dir="ltr" style="font:11px Montserrat;overflow-wrap:anywhere">@${esc(d.en.toLowerCase().replace(/\s+/g,''))}</div><small>${esc(d.tag)}</small></div>`;
+$('letter').style.borderColor=d.p.primary;$('letter').innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #ddd;padding-bottom:8px"><div><b style="font:20px '${d.font}'">${esc(d.ar)}</b><div style="font-size:11px">${esc(d.tag)}</div></div><span style="width:28px">${iconSvg('#1c1a19',d)}</span></div><div class="line" style="width:85%"></div><div class="line" style="width:96%"></div><div class="line" style="width:60%"></div>`;
+}
+function init(){
+$('archetypes').innerHTML=presets.map((p,i)=>`<button class="choice ${i===0?'active':''}" data-preset="${i}"><span>${['👑','🏛️','⚡','◻️','✒️','▣'][i]}</span><b>${p.title}</b><small>${p.sub}</small></button>`).join('');
+$('icons').innerHTML=icons.map((fn,i)=>`<button class="icon-choice ${i===0?'active':''}" data-icon="${i}" aria-label="رمز ${i+1}">${svgWrap(100,100,fn('#D0B58B',2,'أ'))}</button>`).join('');
+$('palettes').innerHTML=palettes.map((p,i)=>`<button class="palette-choice ${i===0?'active':''}" data-palette="${i}"><span class="dots"><i style="background:${p.bg}"></i><i style="background:${p.primary}"></i><i style="background:${p.text}"></i></span>${p.name}</button>`).join('');
+render();
+}
+$('archetypes').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(!b)return;const p=presets[+b.dataset.preset];iconIndex=p.icon;paletteIndex=p.palette;$('layout').value=p.layout;$('font').value=p.font;$('size').value=p.size;$('stroke').value=p.stroke;document.querySelectorAll('[data-preset]').forEach(x=>x.classList.toggle('active',x===b));document.querySelectorAll('[data-icon]').forEach(x=>x.classList.toggle('active',+x.dataset.icon===iconIndex));document.querySelectorAll('[data-palette]').forEach(x=>x.classList.toggle('active',+x.dataset.palette===paletteIndex));render();});
+$('icons').addEventListener('click',e=>{const b=e.target.closest('[data-icon]');if(!b)return;iconIndex=+b.dataset.icon;document.querySelectorAll('[data-icon]').forEach(x=>x.classList.toggle('active',x===b));render();});
+$('palettes').addEventListener('click',e=>{const b=e.target.closest('[data-palette]');if(!b)return;paletteIndex=+b.dataset.palette;document.querySelectorAll('[data-palette]').forEach(x=>x.classList.toggle('active',x===b));render();});
+$('backgrounds').addEventListener('click',e=>{const b=e.target.closest('[data-bg]');if(!b)return;bgMode=b.dataset.bg;document.querySelectorAll('[data-bg]').forEach(x=>x.classList.toggle('active',x===b));render();});
+['nameAr','nameEn','tagline','mono','layout','font','size','stroke'].forEach(id=>$(id).addEventListener('input',render));
+$('company').onclick=()=>{entity='company';$('company').classList.add('active');$('personal').classList.remove('active');$('nameLabel').textContent='اسم العلامة بالعربية';$('nameAr').value='أثر';$('nameEn').value='ATHAR';$('tagline').value='للتصميم والإنتاج الإبداعي';$('mono').value='أ';render();};
+$('personal').onclick=()=>{entity='personal';$('personal').classList.add('active');$('company').classList.remove('active');$('nameLabel').textContent='الاسم الشخصي بالعربية';$('nameAr').value='الاسم الشخصي';$('nameEn').value='YOUR NAME';$('tagline').value='التخصص أو المسمى المهني';$('mono').value='ش';render();};
+$('swatches').addEventListener('click',async e=>{const b=e.target.closest('[data-copy]');if(!b)return;try{await navigator.clipboard.writeText(b.dataset.copy);toast('تم نسخ '+b.dataset.copy);}catch{toast('تعذر النسخ؛ الكود: '+b.dataset.copy);}});
+function toast(t){$('toast').textContent=t;$('toast').style.display='block';setTimeout(()=>$('toast').style.display='none',2100);}
+function currentSvg(){return makeLogo(getData());}
+function download(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1200);}
+function svgDims(svg){const vb=svg.match(/viewBox="0 0 (\d+) (\d+)"/);return [+(vb&&vb[1]||400),+(vb&&vb[2]||250)];}
+$('svgBtn').onclick=__gated('تنزيل الشعار SVG',async()=>{const svg=await __embedFonts(currentSvg());__save(new Blob(['<?xml version="1.0" encoding="UTF-8"?>\n'+svg],{type:'image/svg+xml;charset=utf-8'}),'athar-brand-logo.svg');});
+$('pngBtn').onclick=__gated('تنزيل الشعار PNG',async()=>{const svg=await __embedFonts(currentSvg());const [w,h]=svgDims(svg);const k=Math.min(2400/w,1800/h);try{__save(await __pngFromSvg(svg,Math.round(w*k),Math.round(h*k),null),'athar-brand-logo.png');}catch(e){toast('تعذر إنشاء PNG');}});
+$('pdfBtn').onclick=__gated('تصدير دليل الهوية',()=>window.print());
+init();
+if(new URLSearchParams(location.search).get('entity')==='corporate'){/* الوضع الافتراضي شركة */}else{$('personal').click();}
+</script>
+</body></html>
