@@ -123,17 +123,28 @@ function buildSvg({ template, text, palette, format, customBg, showOrnament }) {
   </svg>`;
 }
 
+const KINDS = [
+  { id: "gift", label: "بطاقة إهداء", type: "gift", occ: "بطاقة عامة", text: { title: "هدية لك", body: "هديةٌ صغيرة بحجم محبتي لك\nتمنياتي أن تنال إعجابك", from: "مع كل الحب", name: "اسم المُهدي", date: "" } },
+  { id: "thanks", label: "شكر وتقدير", type: "gift", occ: "شكر وتقدير", text: DEFAULT_TEXT.gift },
+  { id: "congrats", label: "بطاقة تهنئة", type: "gift", occ: "تهنئة", text: { title: "مبارك لك", body: "نبارك لك هذا الإنجاز الجميل\nودامت لك الأفراح والمسرات", from: "بكل الود", name: "اسم المُهنِّئ", date: "" } },
+  { id: "invite", label: "دعوة مناسبة", type: "invite", occ: "دعوة عامة", text: DEFAULT_TEXT.invite },
+  { id: "quote", label: "بطاقة اقتباس", type: "gift", occ: "دعاء وأمنيات", text: { title: "اقتباس", body: "اكتب هنا عبارتك أو اقتباسك المفضل\nبما يعبّر عنك", from: "", name: "القائل", date: "" } },
+  { id: "custom", label: "بطاقة رقمية مخصصة", type: "gift", occ: "بطاقة عامة", text: { title: "عنوان بطاقتك", body: "صمّمها بالكامل كما تريد\nنصاً وألواناً ومقاساً", from: "", name: "", date: "" } },
+];
+
 const OCC_ICONS = ["❀","✦","❖","✿","❦","♡","☾","✧","⌂","★","❂","✺","❁","☆","◇"];
 
 export default function CardMaker() {
   const { requireAuth } = useSession();
-  const [type, setType] = useState("gift");
-  const [occasion, setOccasion] = useState(OCCASIONS.gift[0]);
-  const [templateId, setTemplateId] = useState("gift-1");
-  const [palette, setPalette] = useState("gold");
+  const initial = KINDS.find((k) => window.location.hash === `#cards-${k.id}`) || KINDS[0];
+  const [kind, setKind] = useState(initial.id);
+  const [type, setType] = useState(initial.type);
+  const [occasion, setOccasion] = useState(initial.occ);
+  const [templateId, setTemplateId] = useState(`${initial.type}-1`);
+  const [palette, setPalette] = useState(initial.type === "gift" ? "gold" : "rose");
   const [format, setFormat] = useState("portrait");
   const [showOrnament, setShowOrnament] = useState(true);
-  const [text, setText] = useState(DEFAULT_TEXT.gift);
+  const [text, setText] = useState(initial.text);
   const [notice, setNotice] = useState("");
   const [step, setStep] = useState(1);
   const [full, setFull] = useState(false);
@@ -144,14 +155,17 @@ export default function CardMaker() {
   const colors = PALETTES[palette] || PALETTES.gold;
   const update = (key, value) => { setText((p) => ({ ...p, [key]: value })); setStep((s) => Math.max(s, 2)); };
 
-  function chooseType(next) {
-    setType(next);
-    setOccasion(OCCASIONS[next][0]);
-    setTemplateId(`${next}-1`);
-    setText(DEFAULT_TEXT[next]);
-    setPalette(next === "gift" ? "gold" : "rose");
+  function chooseKind(k) {
+    setKind(k.id);
+    setType(k.type);
+    setOccasion(k.occ);
+    setTemplateId(`${k.type}-1`);
+    setText(k.text);
+    setPalette(k.type === "gift" ? "gold" : "rose");
     setStep(1);
+    history.replaceState(null, "", `#cards-${k.id}`);
   }
+  const kindObj = KINDS.find((k) => k.id === kind) || KINDS[0];
 
   const svgMarkup = () => buildSvg({ template, text, palette, format, customBg: null, showOrnament });
 
@@ -206,7 +220,7 @@ export default function CardMaker() {
   return (
     <main className="cm" dir="rtl">
       <header className="cm-top">
-        <a className="cm-brand" href="#">
+        <a className="cm-brand" href="#" title="الصفحة الرئيسية">
           <img src="/logo.png" alt="أثر" />
           <span><b>استديو أثر</b><small>أبدع .. بطريقتك</small></span>
         </a>
@@ -217,20 +231,21 @@ export default function CardMaker() {
             </li>
           ))}
         </ol>
+        <a className="cm-back" href="#studios">← استديوهاتنا</a>
         <div className="cm-title">
           <span className="cm-title-ico">🎁</span>
-          <div><h1>صانع بطاقات الإهداء والدعوة</h1><p>بطاقات مميزة .. لكل مناسبة</p></div>
+          <div><h1>استديو الإهداء والبطاقات</h1><p>بطاقات مميزة .. لكل مناسبة</p></div>
         </div>
       </header>
 
       <div className="cm-grid">
         <aside className="cm-side" ref={controlsRef}>
           <section className="cm-panel">
-            <h2>اختر المناسبة</h2>
-            <div className="cm-types">
-              <button className={type === "gift" ? "on" : ""} onClick={() => chooseType("gift")}>كروت الإهداء</button>
-              <button className={type === "invite" ? "on" : ""} onClick={() => chooseType("invite")}>الدعوات</button>
+            <h2>نوع البطاقة</h2>
+            <div className="cm-kinds">
+              {KINDS.map((k) => <button key={k.id} className={kind === k.id ? "on" : ""} onClick={() => chooseKind(k)}>{k.label}</button>)}
             </div>
+            <h2 className="cm-h2b">اختر المناسبة</h2>
             <div className="cm-occ">
               {OCCASIONS[type].slice(0, 7).map((o, i) => (
                 <button key={o} className={occasion === o ? "on" : ""} onClick={() => setOccasion(o)}>
@@ -316,7 +331,7 @@ export default function CardMaker() {
 
           <div className="cm-bar">
             <div className="cm-note"><i>💡</i><div><b>ملاحظة</b><span>يمكنك تعديل النص والألوان وإضافة لمساتك الخاصة</span></div></div>
-            <button className="cm-ghost" onClick={() => { setText(DEFAULT_TEXT[type]); setNotice("تمت إعادة النص الافتراضي."); }}>⟳ إعادة التوليد</button>
+            <button className="cm-ghost" onClick={() => { setText(kindObj.text); setNotice("تمت إعادة النص الافتراضي."); }}>⟳ إعادة التوليد</button>
           </div>
           <div className="cm-cta">
             <button className="cm-dl" onClick={() => requireAuth(downloadPng, { label: "تنزيل PNG" })}>⤓ تحميل البطاقة</button>

@@ -24,7 +24,7 @@ export default function App() {
   if (hash === "#admin") return <Admin />;
   if (hash === "#studio") return <Studio />;
   if (hash === "#account") return <Account />;
-  if (hash === "#cards") return <CardMaker />;
+  if (/^#cards(-[a-z]+)?$/.test(hash)) return <CardMaker />;
   if (hash === "#creative") return <CreativeStudio />;
   if (hash === "#terms") return <LegalPage kind="terms" />;
   if (hash === "#privacy") return <LegalPage kind="privacy" />;
