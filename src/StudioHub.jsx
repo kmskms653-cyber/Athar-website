@@ -24,7 +24,7 @@ export default function StudioHub({ id }) {
         <p>{st.text}</p>
       </section>
       <section className="hub-grid">
-        {st.items.map(([label, href, price], n) => {
+        {st.items.filter((it) => !it[3] || features[it[3]] || isAdmin).map(([label, href, price], n) => {
           const link = href ? (href.startsWith("#") ? href : `#${href}`) : "#contact";
           return (
             <a key={label} className={`hub-tile ${href ? "" : "soon"}`} href={link}>

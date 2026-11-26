@@ -34,6 +34,8 @@ export default function App() {
   if (hash === "#digital-card" || hash === "#cards-custom") return <ToolFrame tool="card" />;
   if (/^#cards(-[a-z]+)?$/.test(hash)) return <CardMaker />;
   if (/^#creative(-(personal|corporate|signature|mark))?$/.test(hash)) return <CreativeStudio />;
+  const bzm = /^#biz-(ads|products|menu)$/.exec(hash);
+  if (bzm) return <ToolFrame tool="biz" type={bzm[1]} />;
   const qm = /^#qr(?:-(website|whatsapp|contact|wifi|menu|location))?$/.exec(hash);
   if (qm) return <ToolFrame tool="qr" type={qm[1] || ""} />;
   const hb = /^#studio-([1-6])$/.exec(hash);

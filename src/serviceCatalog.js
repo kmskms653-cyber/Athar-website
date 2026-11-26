@@ -57,6 +57,27 @@ export const SERVICES = {
     delivery: "قوالب هوية تجارية جاهزة",
     img: "/img/svc-digital.jpg", studio: 5,
   },
+  bizAds: {
+    title: "قوالب الإعلانات والمنشورات التجارية", price: 20, minPhotos: 0, maxPhotos: 1, feature: "bizAds",
+    intro: "تصميم إعلان أو منشور تجاري من قوالبنا الجاهزة (30 قالباً) بنصوصك وألوانك.",
+    placeholder: "تفاصيل القالب والنصوص تُملأ تلقائياً من صفحة التصميم، ويمكنك إضافة ملاحظاتك.",
+    delivery: "التصميم النهائي بدون علامة مائية",
+    img: "/img/svc-products.jpg", studio: 4,
+  },
+  bizProducts: {
+    title: "قوالب العطور والمنتجات", price: 20, minPhotos: 1, maxPhotos: 1, feature: "bizProducts",
+    intro: "مشهد احترافي لمنتجك (عطر، تجميل، أزياء، إكسسوار) من 20 قالباً. أرفق صورة المنتج.",
+    placeholder: "تفاصيل القالب والنصوص تُملأ تلقائياً من صفحة التصميم، ويمكنك إضافة ملاحظاتك.",
+    delivery: "التصميم النهائي بدون علامة مائية",
+    img: "/img/svc-products.jpg", studio: 4,
+  },
+  bizMenu: {
+    title: "قائمة طعام وأسعار", price: 20, minPhotos: 0, maxPhotos: 2, feature: "bizMenu",
+    intro: "قائمة طعام أو أسعار جاهزة للطباعة والنشر من 15 قالباً. أرفق شعارك إن رغبت.",
+    placeholder: "تفاصيل القالب والنصوص تُملأ تلقائياً من صفحة التصميم، ويمكنك إضافة ملاحظاتك.",
+    delivery: "التصميم النهائي بدون علامة مائية",
+    img: "/img/svc-products.jpg", studio: 4,
+  },
   qrSingle: {
     title: "رمز QR مخصص — كود واحد", price: 15, minPhotos: 0, maxPhotos: 1, feature: "qr",
     intro: "نجهّز لك رمز QR بتصميمك (PNG وSVG عالي الدقة). أرفق شعارك إن رغبت بوضعه في منتصف الرمز.",

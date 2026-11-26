@@ -3,7 +3,7 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "./firebase";
 
 // أقسام مخفية تُفعَّل من لوحة الإدارة (الوثيقة العامة site/features). الافتراضي: مخفية.
-export const FEATURE_DEFAULTS = { qr: false };
+export const FEATURE_DEFAULTS = { qr: false, bizAds: false, bizProducts: false, bizMenu: false };
 
 export function useFeatures() {
   const [f, setF] = useState(FEATURE_DEFAULTS);

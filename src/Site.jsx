@@ -127,7 +127,8 @@ export const STUDIOS = [
   { id: 4, title: "استديو الأعمال والتجارة", text: "صور احترافية للمنتجات وعروض بصرية للمشاريع والمتاجر.", img: "/img/svc-products.jpg", href: "#studio-4",
     items: [["مصور المنتجات الذكي", "#order-productPhoto", "35 ريال للصورة"], ["تصميم عروض المنتجات", "#order-productPresentation", "39 ريال"], ["محتوى بصري للمشاريع والمتاجر", "#order-visualContent", "49 ريال"]] },
   { id: 5, title: "استديو القوالب والتصاميم", text: "قوالب قابلة للتخصيص للمنشورات والإعلانات والهويات.", img: "/img/svc-digital.jpg", href: "#studio-5",
-    items: [["قوالب المنشورات", "#studio", "9 ريال للقالب"], ["قوالب الإعلانات", "#order-adTemplates", "19 ريال للقالب"], ["قوالب الهوية التجارية", "#order-brandTemplates", "39 ريال"], ["تصميم أسماء الشركات وشعاراتها وبصمتها", "#creative-corporate", "69 ريال"], ["حزم التصاميم الجاهزة", "store", "29 ريال للحزمة"]] },
+    items: [["قوالب المنشورات", "#studio", "9 ريال للقالب"], ["قوالب الإعلانات", "#order-adTemplates", "19 ريال للقالب"], ["قوالب الهوية التجارية", "#order-brandTemplates", "39 ريال"], ["تصميم أسماء الشركات وشعاراتها وبصمتها", "#creative-corporate", "69 ريال"], ["حزم التصاميم الجاهزة", "store", "29 ريال للحزمة"],
+      ["قوالب الإعلانات والمنشورات التجارية (30 قالباً)", "#biz-ads", "20 ريال", "bizAds"], ["قوالب العطور والمنتجات (20 قالباً)", "#biz-products", "20 ريال", "bizProducts"], ["قوائم الطعام والأسعار (15 قالباً)", "#biz-menu", "20 ريال", "bizMenu"]] },
   { id: 6, feature: "qr", title: "QR code", text: "رموز QR احترافية بتصميمك وألوانك وشعارك، وبطاقات طاولة وستيكرات جاهزة للطباعة.", img: "/img/svc-digital.jpg", href: "#studio-6",
     items: [["رمز QR لمتجر أو موقع", "#qr-website", "15 ريال"], ["رمز QR لواتساب مباشر", "#qr-whatsapp", "15 ريال"], ["رمز QR لبيانات الاتصال", "#qr-contact", "15 ريال"], ["رمز QR لشبكة واي فاي", "#qr-wifi", "15 ريال"], ["رمز QR لمنيو المطاعم", "#qr-menu", "15 ريال"], ["رمز QR لموقع جغرافي", "#qr-location", "15 ريال"], ["بطاقة طاولة / ستيكر مع الرمز", "#qr-website", "49 ريال"]] },
 ];
@@ -249,7 +250,7 @@ export default function Site() {
                 <h3>{st.title}</h3>
                 <p>{st.text}</p>
                 <ul className="hm-items">
-                  {st.items.map(([label, href, price]) => (
+                  {st.items.filter((it) => !it[3] || features[it[3]]).map(([label, href, price]) => (
                     <li key={label}>
                       {href ? <a href={href.startsWith("#") ? href : `#${href}`} onClick={(e) => { if (!href.startsWith("#")) { e.preventDefault(); go(href); } }}>{label}</a> : <span>{label}<small>قريباً</small></span>}
                       {price && <em className="hm-pr">{price}</em>}

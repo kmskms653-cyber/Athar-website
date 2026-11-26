@@ -37,10 +37,12 @@ function FeaturesPanel() {
     <section className="panel">
       <h2>الأقسام الإضافية</h2>
       <p className="muted">الأقسام المخفية لا تظهر للزوار في القائمة أو الصفحة الرئيسية ولا تُفتح بالرابط المباشر، وتبقى متاحة للمدراء للتجربة.</p>
-      <label className="field" style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-        <input type="checkbox" checked={!!features.qr} disabled={busy} onChange={(e) => toggle("qr", e.target.checked)} />
-        <span>قسم QR code (تصميم رموز QR وبطاقات الطاولة والستيكرات) — {features.qr ? "ظاهر للزوار" : "مخفي"}</span>
-      </label>
+      {[["qr", "قسم QR code (رموز QR وبطاقات الطاولة والستيكرات)"], ["bizAds", "الأعمال والتجارة: قوالب الإعلانات والمنشورات التجارية (30 قالباً)"], ["bizProducts", "الأعمال والتجارة: قوالب العطور والمنتجات (20 قالباً)"], ["bizMenu", "الأعمال والتجارة: قوائم الطعام والأسعار (15 قالباً)"]].map(([k, label]) => (
+        <label key={k} className="field" style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <input type="checkbox" checked={!!features[k]} disabled={busy} onChange={(e) => toggle(k, e.target.checked)} />
+          <span>{label} — {features[k] ? "ظاهر للزوار" : "مخفي"}</span>
+        </label>
+      ))}
       {msg && <p className="ok">{msg}</p>}
     </section>
   );
