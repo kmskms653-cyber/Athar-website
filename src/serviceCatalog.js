@@ -57,6 +57,27 @@ export const SERVICES = {
     delivery: "قوالب هوية تجارية جاهزة",
     img: "/img/svc-digital.jpg", studio: 5,
   },
+  qrSingle: {
+    title: "رمز QR مخصص — كود واحد", price: 15, minPhotos: 0, maxPhotos: 1, feature: "qr",
+    intro: "نجهّز لك رمز QR بتصميمك (PNG وSVG عالي الدقة). أرفق شعارك إن رغبت بوضعه في منتصف الرمز.",
+    placeholder: "تفاصيل الرمز تُملأ تلقائياً من صفحة التصميم، ويمكنك إضافة ملاحظاتك.",
+    delivery: "رمز QR بصيغتي PNG وSVG بدون علامة مائية",
+    img: "/img/svc-digital.jpg", studio: 6,
+  },
+  qrTriple: {
+    title: "رمز QR مخصص — باقة 3 أكواد", price: 39, minPhotos: 0, maxPhotos: 1, feature: "qr",
+    intro: "ثلاثة رموز QR (مثلاً منيو وواي فاي وموقع) بنفس هويتك البصرية.",
+    placeholder: "اكتب في الملاحظات محتوى الرمزين الإضافيين.",
+    delivery: "3 رموز QR بصيغتي PNG وSVG بدون علامة مائية",
+    img: "/img/svc-digital.jpg", studio: 6,
+  },
+  qrPrint: {
+    title: "رمز QR + بطاقة طاولة / ستيكر", price: 49, minPhotos: 0, maxPhotos: 1, feature: "qr",
+    intro: "رمز QR مع تصميم بطاقة طاولة أو ستيكر جاهز للطباعة.",
+    placeholder: "اكتب في الملاحظات المقاس المطلوب وتفاصيل الطباعة.",
+    delivery: "رمز QR وبطاقة/ستيكر جاهزة للطباعة (PNG وPDF)",
+    img: "/img/svc-digital.jpg", studio: 6,
+  },
 };
 
 export const REQUEST_STATUS = {

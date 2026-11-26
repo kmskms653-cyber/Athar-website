@@ -140,7 +140,7 @@ export default function Studio() {
       </header>
 
       <div className="studio-body">
-        <div className="studio-preview">
+        <div className="studio-preview athar-wm">
           <div
             ref={ref}
             className={`tpl ${tpl.align} ${tpl.frame ? "framed" : ""} ${tpl.tag ? "tagt" : ""}`}

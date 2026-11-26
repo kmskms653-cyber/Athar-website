@@ -19,8 +19,32 @@ import {
   testAdminKey,
   validateBridgeUrl,
 } from "./drive";
+import { useFeatures } from "./useFeatures.js";
 import Receipt from "./Receipt.jsx";
 import DriveReceipt from "./DriveReceipt.jsx";
+
+function FeaturesPanel() {
+  const features = useFeatures();
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState("");
+  async function toggle(key, on) {
+    setBusy(true); setMsg("");
+    try { await setDoc(doc(db, "site", "features"), { [key]: on }, { merge: true }); setMsg(on ? "تم إظهار القسم للزوار." : "تم إخفاء القسم عن الزوار."); }
+    catch (e) { setMsg("تعذر الحفظ: " + (e.code || e.message)); }
+    setBusy(false);
+  }
+  return (
+    <section className="panel">
+      <h2>الأقسام الإضافية</h2>
+      <p className="muted">الأقسام المخفية لا تظهر للزوار في القائمة أو الصفحة الرئيسية ولا تُفتح بالرابط المباشر، وتبقى متاحة للمدراء للتجربة.</p>
+      <label className="field" style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+        <input type="checkbox" checked={!!features.qr} disabled={busy} onChange={(e) => toggle("qr", e.target.checked)} />
+        <span>قسم QR code (تصميم رموز QR وبطاقات الطاولة والستيكرات) — {features.qr ? "ظاهر للزوار" : "مخفي"}</span>
+      </label>
+      {msg && <p className="ok">{msg}</p>}
+    </section>
+  );
+}
 
 const STATUS = { new: "جديد", in_progress: "قيد المتابعة", completed: "مكتمل" };
 
@@ -852,7 +876,7 @@ export default function Admin() {
   }, []);
 
   useEffect(() => {
-    if (!isSuper && ["content", "team", "consents", "drive"].includes(tab)) setTab("orders");
+    if (!isSuper && ["content", "team", "consents", "drive", "features"].includes(tab)) setTab("orders");
   }, [isSuper, tab]);
 
   if (loading) return <div className="fatal"><p>جارٍ التحميل…</p></div>;
@@ -892,6 +916,7 @@ export default function Admin() {
           <button className={tab === "requests" ? "tab on" : "tab"} onClick={() => setTab("requests")}>طلبات التواصل</button>
           <button className={tab === "delivery" ? "tab on" : "tab"} onClick={() => setTab("delivery")}>التسليم</button>
           {isSuper && <button className={tab === "content" ? "tab on" : "tab"} onClick={() => setTab("content")}>المحتوى</button>}
+          {isSuper && <button className={tab === "features" ? "tab on" : "tab"} onClick={() => setTab("features")}>الأقسام</button>}
           {isSuper && <button className={tab === "team" ? "tab on" : "tab"} onClick={() => setTab("team")}>الفريق</button>}
           {isSuper && <button className={tab === "consents" ? "tab on" : "tab"} onClick={() => setTab("consents")}>الموافقات</button>}
           {isSuper && <button className={tab === "drive" ? "tab on" : "tab"} onClick={() => setTab("drive")}>ربط Drive</button>}
@@ -920,6 +945,7 @@ export default function Admin() {
       {tab === "requests" && <Requests />}
       {tab === "delivery" && <Deliveries />}
       {tab === "content" && isSuper && <ContentEditor />}
+      {tab === "features" && isSuper && <FeaturesPanel />}
       {tab === "team" && isSuper && <TeamPanel currentEmail={user.email} />}
       {tab === "consents" && isSuper && <ConsentsPanel />}
     </div>

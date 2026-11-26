@@ -4,6 +4,7 @@ import { db } from "./firebase";
 import { useSession } from "./AuthContext.jsx";
 import { PAYMENT } from "./payment";
 import { SERVICES } from "./serviceCatalog";
+import { useFeatures } from "./useFeatures.js";
 import { DRIVE_FOLDER_LABEL, driveReady, formatBytes, notifyNewRequest, uploadReceipt } from "./drive";
 
 const IMG = ["image/jpeg", "image/png", "image/webp"];
@@ -11,9 +12,13 @@ const MAX_IMG = 12 * 1024 * 1024;
 
 export default function ServiceOrder({ keyName }) {
   const svc = SERVICES[keyName];
-  const { user, consented, openAuth, loading } = useSession();
+  const { user, consented, openAuth, loading, isAdmin } = useSession();
+  const features = useFeatures();
   const [photos, setPhotos] = useState([]);
-  const [desc, setDesc] = useState("");
+  const [desc, setDesc] = useState(() => {
+    if (!/^qr/.test(keyName)) return "";
+    try { const d = JSON.parse(sessionStorage.getItem("athar-qr-draft") || "null"); return d && d.key === keyName ? d.desc : ""; } catch { return ""; }
+  });
   const [sender, setSender] = useState("");
   const [receipt, setReceipt] = useState(null);
   const [own, setOwn] = useState(false);
@@ -29,6 +34,7 @@ export default function ServiceOrder({ keyName }) {
   useEffect(() => () => previews.forEach((u) => URL.revokeObjectURL(u)), [previews]);
 
   if (!svc) return <div className="fatal"><p>الخدمة غير موجودة.</p><a className="back" href="#/">← الموقع</a></div>;
+  if (svc.feature && !features[svc.feature] && !isAdmin) return <div className="fatal"><p>هذه الخدمة غير متاحة حالياً.</p><a className="back" href="#/">← الموقع</a></div>;
   const qty = svc.perPhoto ? Math.max(1, photos.length) : 1;
   const total = svc.price * qty;
 

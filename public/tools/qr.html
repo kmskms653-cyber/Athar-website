@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-route="qr" data-wm=".qr-stage">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>أثر | تصميم رمز QR وبطاقات العرض الاحترافية</title>
+
+<!-- خطوط هوية أثر: الرقعة (Aref Ruqaa)، Tajawal، Montserrat -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Montserrat:wght@400;600;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+
+<!-- مكتبة توليد QR Code متقدمة + مكتبة تصدير البطاقة المطبوعة -->
+<script src="https://unpkg.com/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.js"></script>
+
+<style>
+:root {
+--bg-charcoal: #1C1A19;
+--surface-charcoal: #20201E;
+--surface-elevated: #272523;
+--gold-primary: #C5A880;
+--gold-light: #D0B58B;
+--ivory-bg: #F4EFE6;
+--ivory-soft: #F5F2EB;
+--warm-gray: #8C8175;
+--border-gold: rgba(197, 168, 128, 0.25);
+--danger: #d96b6b;
+--success: #6bbf8a;
+}
+
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+}
+
+body {
+background-color: var(--bg-charcoal);
+color: var(--ivory-bg);
+font-family: 'Tajawal', sans-serif;
+line-height: 1.7;
+min-height: 100vh;
+}
+
+.en-font {
+font-family: 'Montserrat', sans-serif;
+}
+
+header {
+border-bottom: 1px solid var(--border-gold);
+padding: 18px 5%;
+display: flex;
+justify-content: space-between;
+align-items: center;
+background: rgba(28, 26, 25, 0.95);
+position: sticky;
+top: 0;
+z-index: 100;
+}
+
+.brand {
+display: flex;
+align-items: center;
+gap: 12px;
+text-decoration: none;
+}
+
+.brand-ar {
+font-family: 'Aref Ruqaa', serif;
+font-size: 2rem;
+color: var(--gold-light);
+line-height: 1;
+}
+
+.brand-en {
+font-family: 'Montserrat', sans-serif;
+font-size: 0.75rem;
+letter-spacing: 3px;
+color: var(--warm-gray);
+border-right: 1px solid var(--border-gold);
+padding-right: 12px;
+}
+
+.price-pill {
+background: rgba(197, 168, 128, 0.12);
+border: 1px solid var(--gold-primary);
+color: var(--gold-light);
+padding: 6px 16px;
+border-radius: 999px;
+font-size: 0.9rem;
+font-weight: 700;
+}
+
+.container {
+max-width: 1220px;
+margin: 0 auto;
+padding: 40px 20px 80px;
+}
+
+.hero-intro {
+text-align: center;
+max-width: 760px;
+margin: 0 auto 40px;
+}
+
+.hero-intro h1 {
+font-family: 'Aref Ruqaa', serif;
+font-size: clamp(2rem, 4vw, 2.8rem);
+color: var(--gold-light);
+margin-bottom: 12px;
+}
+
+.hero-intro p {
+color: var(--ivory-soft);
+opacity: 0.85;
+font-size: 1.05rem;
+}
+
+.workspace-grid {
+display: grid;
+grid-template-columns: 1.15fr 0.85fr;
+gap: 32px;
+align-items: start;
+}
+
+@media (max-width: 940px) {
+.workspace-grid {
+grid-template-columns: 1fr;
+}
+}
+
+.card {
+background: var(--surface-charcoal);
+border: 1px solid var(--border-gold);
+border-radius: 16px;
+padding: 28px;
+box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.section-title {
+font-size: 1.15rem;
+font-weight: 700;
+color: var(--gold-light);
+margin-bottom: 18px;
+display: flex;
+align-items: center;
+gap: 10px;
+border-bottom: 1px solid var(--border-gold);
+padding-bottom: 12px;
+}
+
+.step-badge {
+background: var(--gold-primary);
+color: var(--bg-charcoal);
+width: 26px;
+height: 26px;
+border-radius: 50%;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+font-size: 0.85rem;
+font-weight: 800;
+font-family: 'Montserrat', sans-serif;
+}
+
+/* الباقات */
+.bundles-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 12px;
+margin-bottom: 24px;
+}
+
+@media (max-width: 600px) {
+.bundles-grid {
+grid-template-columns: 1fr;
+}
+}
+
+.bundle-option {
+background: var(--surface-elevated);
+border: 1px solid var(--border-gold);
+border-radius: 12px;
+padding: 14px;
+cursor: pointer;
+transition: all 0.25s ease;
+position: relative;
+}
+
+.bundle-option:hover {
+border-color: var(--gold-light);
+}
+
+.bundle-option.active {
+border: 2px solid var(--gold-light);
+background: rgba(197, 168, 128, 0.14);
+}
+
+.bundle-tag {
+position: absolute;
+top: -10px;
+left: 12px;
+background: var(--gold-primary);
+color: var(--bg-charcoal);
+font-size: 0.7rem;
+font-weight: 800;
+padding: 2px 8px;
+border-radius: 6px;
+}
+
+.bundle-name {
+font-weight: 700;
+font-size: 0.95rem;
+color: var(--ivory-bg);
+margin-bottom: 4px;
+}
+
+.bundle-price {
+font-size: 1.15rem;
+font-weight: 800;
+color: var(--gold-light);
+}
+
+.bundle-desc {
+font-size: 0.78rem;
+color: var(--warm-gray);
+margin-top: 4px;
+}
+
+/* أنواع QR الستة */
+.qr-types-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 10px;
+margin-bottom: 18px;
+}
+
+@media (max-width: 680px) {
+.qr-types-grid {
+grid-template-columns: repeat(2, 1fr);
+}
+}
+
+.qr-type-card {
+background: var(--surface-elevated);
+border: 1px solid var(--border-gold);
+border-radius: 12px;
+padding: 11px 12px;
+cursor: pointer;
+transition: all 0.2s ease;
+display: flex;
+flex-direction: column;
+gap: 2px;
+}
+
+.qr-type-card:hover {
+border-color: var(--gold-light);
+}
+
+.qr-type-card.active {
+border: 2px solid var(--gold-light);
+background: rgba(197, 168, 128, 0.16);
+}
+
+.qr-type-title {
+font-weight: 700;
+font-size: 0.9rem;
+color: var(--ivory-bg);
+}
+
+.qr-type-sub {
+font-size: 0.74rem;
+color: var(--warm-gray);
+line-height: 1.4;
+}
+
+.dynamic-fields-box {
+background: rgba(28, 26, 25, 0.55);
+border: 1px solid var(--border-gold);
+border-radius: 12px;
+padding: 16px;
+margin-bottom: 22px;
+}
+
+.type-panel {
+display: none;
+}
+
+.type-panel.active {
+display: block;
+}
+
+.two-col {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+}
+
+@media (max-width: 560px) {
+.two-col {
+grid-template-columns: 1fr;
+}
+}
+
+.form-group {
+margin-bottom: 15px;
+}
+
+.form-group:last-child {
+margin-bottom: 0;
+}
+
+label {
+display: block;
+font-size: 0.88rem;
+font-weight: 600;
+color: var(--ivory-soft);
+margin-bottom: 6px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="password"],
+select,
+textarea {
+width: 100%;
+background: var(--bg-charcoal);
+border: 1px solid var(--border-gold);
+border-radius: 10px;
+padding: 10px 14px;
+color: var(--ivory-bg);
+font-family: 'Tajawal', sans-serif;
+font-size: 0.94rem;
+transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+outline: none;
+border-color: var(--gold-light);
+}
+
+.presets-row {
+display: flex;
+gap: 10px;
+flex-wrap: wrap;
+margin-bottom: 14px;
+}
+
+.preset-btn {
+background: var(--surface-elevated);
+border: 1px solid var(--border-gold);
+color: var(--ivory-bg);
+padding: 7px 12px;
+border-radius: 8px;
+cursor: pointer;
+display: flex;
+align-items: center;
+gap: 8px;
+font-family: 'Tajawal', sans-serif;
+font-size: 0.84rem;
+transition: 0.2s;
+}
+
+.preset-btn:hover, .preset-btn.active {
+border-color: var(--gold-light);
+background: rgba(197, 168, 128, 0.14);
+}
+
+.swatch-pair {
+display: inline-flex;
+border-radius: 4px;
+overflow: hidden;
+border: 1px solid rgba(255,255,255,0.2);
+}
+
+.swatch-pair span {
+width: 14px;
+height: 14px;
+display: block;
+}
+
+.color-pickers-row {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+gap: 12px;
+}
+
+@media (max-width: 600px) {
+.color-pickers-row {
+grid-template-columns: 1fr;
+}
+}
+
+.color-box {
+background: var(--bg-charcoal);
+border: 1px solid var(--border-gold);
+border-radius: 10px;
+padding: 8px 12px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+font-size: 0.86rem;
+}
+
+input[type="color"] {
+border: none;
+width: 30px;
+height: 30px;
+background: transparent;
+cursor: pointer;
+}
+
+.file-drop {
+border: 1px dashed var(--gold-primary);
+background: rgba(197, 168, 128, 0.05);
+border-radius: 12px;
+padding: 14px;
+text-align: center;
+cursor: pointer;
+transition: 0.2s;
+}
+
+.file-drop:hover {
+background: rgba(197, 168, 128, 0.12);
+}
+
+.file-drop input[type="file"] {
+display: none;
+}
+
+.file-name-display {
+font-size: 0.8rem;
+color: var(--gold-light);
+margin-top: 5px;
+}
+
+/* العمود الأيسر: المعاينة الحية + قالب البطاقة */
+.preview-sticky {
+position: sticky;
+top: 90px;
+}
+
+.view-mode-tabs {
+display: grid;
+grid-template-columns: 1fr 1fr;
+background: var(--bg-charcoal);
+padding: 4px;
+border-radius: 10px;
+border: 1px solid var(--border-gold);
+margin-bottom: 16px;
+}
+
+.view-tab-btn {
+background: transparent;
+border: none;
+color: var(--warm-gray);
+padding: 8px 10px;
+border-radius: 8px;
+font-family: 'Tajawal', sans-serif;
+font-size: 0.88rem;
+font-weight: 700;
+cursor: pointer;
+transition: 0.2s;
+}
+
+.view-tab-btn.active {
+background: var(--gold-primary);
+color: var(--bg-charcoal);
+}
+
+.qr-stage {
+background: var(--ivory-bg);
+border-radius: 14px;
+padding: 26px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+position: relative;
+overflow: hidden;
+min-height: 340px;
+user-select: none;
+-webkit-user-select: none;
+transition: all 0.3s ease;
+}
+
+/* تصميم بطاقة الطاولة / الستيكر المدمج */
+.qr-stage.card-mockup-mode {
+padding: 28px 22px;
+border: 2px solid var(--gold-primary);
+box-shadow: inset 0 0 0 6px rgba(197, 168, 128, 0.2);
+}
+
+.card-header-text {
+display: none;
+text-align: center;
+margin-bottom: 14px;
+z-index: 2;
+}
+
+.qr-stage.card-mockup-mode .card-header-text {
+display: block;
+}
+
+.card-brand-title {
+font-family: 'Aref Ruqaa', serif;
+font-size: 1.55rem;
+line-height: 1.3;
+}
+
+.card-brand-sub {
+font-size: 0.8rem;
+opacity: 0.78;
+}
+
+.qr-frame-box {
+padding: 10px;
+border-radius: 14px;
+transition: 0.3s;
+z-index: 2;
+}
+
+.qr-stage.card-mockup-mode .qr-frame-box {
+border: 1.5px solid rgba(197, 168, 128, 0.65);
+box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.card-footer-cta {
+display: none;
+margin-top: 14px;
+padding: 6px 18px;
+border-radius: 999px;
+font-size: 0.88rem;
+font-weight: 700;
+z-index: 2;
+background: rgba(197, 168, 128, 0.22);
+border: 1px solid rgba(197, 168, 128, 0.5);
+}
+
+.qr-stage.card-mockup-mode .card-footer-cta {
+display: inline-block;
+}
+
+.watermark-overlay {
+position: absolute;
+inset: 0;
+z-index: 5;
+pointer-events: none;
+display: flex;
+flex-direction: column;
+justify-content: space-around;
+align-items: center;
+overflow: hidden;
+background: repeating-linear-gradient(
+-32deg,
+rgba(28, 26, 25, 0.04),
+rgba(28, 26, 25, 0.04) 18px,
+rgba(197, 168, 128, 0.10) 18px,
+rgba(197, 168, 128, 0.10) 36px
+);
+transition: opacity 0.3s ease;
+}
+
+.watermark-overlay.unlocked {
+opacity: 0;
+visibility: hidden;
+}
+
+.wm-line {
+font-family: 'Montserrat', sans-serif;
+font-weight: 700;
+font-size: 0.82rem;
+letter-spacing: 3px;
+color: rgba(28, 26, 25, 0.38);
+transform: rotate(-22deg);
+white-space: nowrap;
+text-shadow: 0 0 4px rgba(244, 239, 230, 0.9);
+}
+
+.wm-badge-center {
+background: rgba(28, 26, 25, 0.9);
+color: var(--gold-light);
+border: 1px solid var(--gold-primary);
+padding: 6px 14px;
+border-radius: 999px;
+font-size: 0.76rem;
+font-weight: 700;
+box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+}
+
+/* حقول تخصيص نصوص البطاقة */
+.card-text-customizer {
+display: none;
+margin-top: 14px;
+background: var(--surface-elevated);
+border: 1px solid var(--border-gold);
+border-radius: 10px;
+padding: 12px;
+}
+
+.card-text-customizer.visible {
+display: block;
+}
+
+.contrast-status {
+margin-top: 12px;
+font-size: 0.84rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+background: var(--surface-elevated);
+padding: 10px 14px;
+border-radius: 10px;
+border: 1px solid var(--border-gold);
+}
+
+.status-dot {
+display: inline-block;
+width: 9px;
+height: 9px;
+border-radius: 50%;
+background: var(--success);
+margin-left: 6px;
+}
+
+.payment-box {
+background: var(--surface-elevated);
+border: 1px solid var(--border-gold);
+border-radius: 12px;
+padding: 18px;
+margin-top: 18px;
+}
+
+.bank-info {
+background: var(--bg-charcoal);
+padding: 12px 14px;
+border-radius: 8px;
+font-size: 0.88rem;
+margin: 10px 0 16px;
+border-right: 3px solid var(--gold-primary);
+}
+
+.bank-info div {
+display: flex;
+justify-content: space-between;
+margin-bottom: 4px;
+}
+
+.checkbox-row {
+display: flex;
+align-items: flex-start;
+gap: 10px;
+margin: 16px 0;
+font-size: 0.88rem;
+color: var(--ivory-soft);
+cursor: pointer;
+}
+
+.checkbox-row input {
+margin-top: 5px;
+accent-color: var(--gold-primary);
+width: 16px;
+height: 16px;
+}
+
+.btn-primary {
+width: 100%;
+background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
+color: var(--bg-charcoal);
+border: none;
+border-radius: 12px;
+padding: 15px 20px;
+font-family: 'Tajawal', sans-serif;
+font-size: 1.05rem;
+font-weight: 800;
+cursor: pointer;
+transition: transform 0.15s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+transform: translateY(-1px);
+box-shadow: 0 8px 24px rgba(197, 168, 128, 0.3);
+}
+
+.btn-primary:disabled {
+opacity: 0.55;
+cursor: not-allowed;
+transform: none;
+}
+
+.download-actions {
+display: none;
+grid-template-columns: 1fr 1fr;
+gap: 8px;
+margin-top: 14px;
+}
+
+.download-actions.visible {
+display: grid;
+}
+
+.btn-outline {
+background: transparent;
+border: 1px solid var(--gold-primary);
+color: var(--gold-light);
+padding: 9px 10px;
+border-radius: 10px;
+font-family: 'Tajawal', sans-serif;
+font-size: 0.85rem;
+font-weight: 700;
+cursor: pointer;
+transition: 0.2s;
+}
+
+.btn-outline:hover {
+background: rgba(197, 168, 128, 0.15);
+}
+
+.btn-card-export {
+grid-column: span 2;
+background: rgba(197, 168, 128, 0.14);
+}
+
+.alert-msg {
+margin-top: 14px;
+padding: 12px;
+border-radius: 10px;
+font-size: 0.9rem;
+display: none;
+}
+
+.alert-msg.success {
+display: block;
+background: rgba(107, 191, 138, 0.15);
+border: 1px solid var(--success);
+color: #b7ebd0;
+}
+
+.alert-msg.error {
+display: block;
+background: rgba(217, 107, 107, 0.15);
+border: 1px solid var(--danger);
+color: #f3bcbc;
+}
+
+.admin-preview-toggle {
+margin-top: 14px;
+text-align: center;
+font-size: 0.78rem;
+color: var(--warm-gray);
+}
+
+.admin-preview-toggle button {
+background: none;
+border: none;
+color: var(--gold-primary);
+text-decoration: underline;
+cursor: pointer;
+font-family: 'Tajawal', sans-serif;
+font-size: 0.78rem;
+}
+</style>
+<script src="/tools/athar-common.js"></script>
+<style>.preview-note{margin-top:14px;font-size:.82rem;opacity:.8;text-align:center;color:var(--gold-light)}</style>
+</head>
+<body>
+
+<header>
+<a href="#" class="brand">
+<span class="brand-ar">أثر</span>
+<span class="brand-en">ATHAR STUDIO</span>
+</a>
+<div class="price-pill">ابتداءً من 15 ريال</div>
+</header>
+
+<main class="container">
+<div class="hero-intro">
+<h1>تصميم رمز QR وبطاقات العرض الاحترافية</h1>
+<p>أنشئ رمزاً مخصصاً لموقعك، واتساب، بيانات الاتصال، الواي فاي، المنيو، أو موقعك الجغرافي — مع إمكانية معاينته كبطاقة طاولة أو ستيكر جاهز للطباعة.</p>
+</div>
+
+<div class="workspace-grid">
+<!-- العمود الأيمن -->
+<form id="qrOrderForm" class="card">
+<div class="section-title">
+<span class="step-badge">1</span>
+<span>اختر الباقة المناسبة</span>
+</div>
+
+<div class="bundles-grid" id="bundlesGrid">
+<div class="bundle-option active" data-id="single" data-price="15" data-qty="1">
+<div class="bundle-name">كود واحد مخصص</div>
+<div class="bundle-price">15 ريال</div>
+<div class="bundle-desc">PNG + SVG عالي الدقة</div>
+</div>
+
+<div class="bundle-option" data-id="triple" data-price="39" data-qty="3">
+<span class="bundle-tag">الأكثر طلباً</span>
+<div class="bundle-name">باقة 3 أكواد</div>
+<div class="bundle-price">39 ريال</div>
+<div class="bundle-desc">بدلاً من 45 ريال (منيو + واي فاي + موقع)</div>
+</div>
+
+<div class="bundle-option" data-id="print_pack" data-price="49" data-qty="1">
+<div class="bundle-name">كود + بطاقة/ستيكر</div>
+<div class="bundle-price">49 ريال</div>
+<div class="bundle-desc">تصميم طاولة أو تغليف جاهز للطباعة</div>
+</div>
+</div>
+
+<div class="section-title">
+<span class="step-badge">2</span>
+<span>ماذا تريد أن يفتح رمز QR عند مسحه؟</span>
+</div>
+
+<div class="qr-types-grid" id="qrTypesGrid">
+<div class="qr-type-card active" data-type="website">
+<span class="qr-type-title">مواقع ومتاجر</span>
+<span class="qr-type-sub">رابط متجر أو حساب تواصل</span>
+</div>
+
+<div class="qr-type-card" data-type="whatsapp">
+<span class="qr-type-title">واتساب مباشر</span>
+<span class="qr-type-sub">محادثة فورية برسالة جاهزة</span>
+</div>
+
+<div class="qr-type-card" data-type="contact">
+<span class="qr-type-title">بيانات اتصال</span>
+<span class="qr-type-sub">حفظ الاسم والجوال في الهاتف</span>
+</div>
+
+<div class="qr-type-card" data-type="wifi">
+<span class="qr-type-title">شبكة واي فاي</span>
+<span class="qr-type-sub">اتصال تلقائي للزوار والعملاء</span>
+</div>
+
+<div class="qr-type-card" data-type="menu">
+<span class="qr-type-title">منيو مطاعم ومحلات</span>
+<span class="qr-type-sub">قائمة طعام أو كتالوج منتجات</span>
+</div>
+
+<div class="qr-type-card" data-type="location">
+<span class="qr-type-title">موقع جغرافي</span>
+<span class="qr-type-sub">فتح خرائط قوقل لمقر المتجر</span>
+</div>
+</div>
+
+<!-- الحقول المتغيرة -->
+<div class="dynamic-fields-box">
+<!-- 1. مواقع ومتاجر -->
+<div class="type-panel active" id="panel-website">
+<div class="form-group">
+<label for="websiteUrl">رابط الموقع أو المتجر</label>
+<input type="text" id="websiteUrl" class="en-font" dir="ltr" value="https://athar-website-rose.vercel.app/" placeholder="https://example.com" />
+</div>
+</div>
+
+<!-- 2. واتساب مباشر -->
+<div class="type-panel" id="panel-whatsapp">
+<div class="form-group">
+<label for="waPhone">رقم الواتساب مع رمز الدولة (بدون + أو أصفار زائدة)</label>
+<input type="tel" id="waPhone" class="en-font" dir="ltr" value="966500000000" placeholder="966500000000" />
+</div>
+<div class="form-group">
+<label for="waMessage">رسالة ترحيبية جاهزة تظهر للعميل عند المسح (اختياري)</label>
+<input type="text" id="waMessage" value="مرحباً، أود الاستفسار عن منتجاتكم" placeholder="اكتب الرسالة الجاهزة هنا..." />
+</div>
+</div>
+
+<!-- 3. بيانات اتصال -->
+<div class="type-panel" id="panel-contact">
+<div class="two-col form-group">
+<div>
+<label for="contactName">الاسم الكامل</label>
+<input type="text" id="contactName" value="خالد العتيبي" placeholder="مثال: خالد العتيبي" />
+</div>
+<div>
+<label for="contactOrg">اسم المنشأة / المتجر</label>
+<input type="text" id="contactOrg" value="ATHAR STUDIO" placeholder="مثال: أثر" />
+</div>
+</div>
+<div class="two-col form-group">
+<div>
+<label for="contactPhone">رقم الجوال</label>
+<input type="tel" id="contactPhone" class="en-font" dir="ltr" value="+966500000000" />
+</div>
+<div>
+<label for="contactEmailField">البريد الإلكتروني</label>
+<input type="email" id="contactEmailField" class="en-font" dir="ltr" value="atharstudio653@gmail.com" />
+</div>
+</div>
+</div>
+
+<!-- 4. شبكة واي فاي -->
+<div class="type-panel" id="panel-wifi">
+<div class="two-col form-group">
+<div>
+<label for="wifiSsid">اسم الشبكة (SSID)</label>
+<input type="text" id="wifiSsid" class="en-font" dir="ltr" value="Athar_Guest_WiFi" />
+</div>
+<div>
+<label for="wifiEncryption">نوع الحماية</label>
+<select id="wifiEncryption">
+<option value="WPA">WPA / WPA2</option>
+<option value="WEP">WEP</option>
+<option value="nopass">بدون كلمة مرور</option>
+</select>
+</div>
+</div>
+<div class="form-group">
+<label for="wifiPassword">كلمة مرور الشبكة</label>
+<input type="password" id="wifiPassword" class="en-font" dir="ltr" value="Athar2026" />
+</div>
+</div>
+
+<!-- 5. منيو مطاعم ومحلات -->
+<div class="type-panel" id="panel-menu">
+<div class="form-group">
+<label for="menuStoreName">اسم المطعم أو المحل</label>
+<input type="text" id="menuStoreName" value="مقهى وضيافة أثر" />
+</div>
+<div class="form-group">
+<label for="menuUrl">رابط المنيو الرقمي (PDF أو رابط المتجر)</label>
+<input type="text" id="menuUrl" class="en-font" dir="ltr" value="https://athar-website-rose.vercel.app/" />
+</div>
+</div>
+
+<!-- 6. موقع جغرافي -->
+<div class="type-panel" id="panel-location">
+<div class="form-group">
+<label for="locationUrl">رابط الموقع من خرائط قوقل (Google Maps Link)</label>
+<input type="text" id="locationUrl" class="en-font" dir="ltr" value="https://maps.google.com/?q=24.7136,46.6753" placeholder="https://maps.app.goo.gl/..." />
+</div>
+</div>
+</div>
+
+<div class="section-title">
+<span class="step-badge">3</span>
+<span>تخصيص الألوان والشعار</span>
+</div>
+
+<div class="form-group">
+<label>قوالب ألوان مقترحة</label>
+<div class="presets-row">
+<button type="button" class="preset-btn active" data-fg="#1C1A19" data-bg="#F4EFE6">
+<span class="swatch-pair"><span style="background:#1C1A19"></span><span style="background:#F4EFE6"></span></span>
+كلاسيك أثر
+</button>
+<button type="button" class="preset-btn" data-fg="#C5A880" data-bg="#1C1A19">
+<span class="swatch-pair"><span style="background:#C5A880"></span><span style="background:#1C1A19"></span></span>
+ذهبي ملكي
+</button>
+<button type="button" class="preset-btn" data-fg="#20201E" data-bg="#FFFFFF">
+<span class="swatch-pair"><span style="background:#20201E"></span><span style="background:#FFFFFF"></span></span>
+أبيض ناصع للطباعة
+</button>
+</div>
+
+<div class="color-pickers-row">
+<div class="color-box">
+<span>لون الرمز</span>
+<input type="color" id="fgColor" value="#1C1A19" />
+</div>
+<div class="color-box">
+<span>لون الخلفية</span>
+<input type="color" id="bgColor" value="#F4EFE6" />
+</div>
+<div class="color-box">
+<span>نمط النقاط</span>
+<select id="dotStyle" style="width:auto; padding:4px 8px; border:none;">
+<option value="rounded">دائري ناعم</option>
+<option value="square">مربع كلاسيكي</option>
+<option value="dots">نقاط</option>
+<option value="classy-rounded">فاخر</option>
+</select>
+</div>
+</div>
+</div>
+
+<div class="form-group">
+<label>شعار المتجر أو المطعم في منتصف الكود (اختياري)</label>
+<label class="file-drop" for="logoUpload">
+<div>اضغط لرفع الشعار بصيغة <span class="en-font">PNG / SVG</span></div>
+<div class="file-name-display" id="logoFileName">لم يتم اختيار شعار بعد</div>
+<input type="file" id="logoUpload" accept="image/png,image/jpeg,image/svg+xml" />
+</label>
+</div>
+
+<div class="form-group" id="extraNotesGroup" style="display:none;">
+<label for="orderNotes">ملاحظات إضافية (تفاصيل الأكواد الإضافية أو مقاس البطاقة/الستيكر)</label>
+<textarea id="orderNotes" rows="2" placeholder="اكتب هنا الروابط الإضافية أو تفاصيل الطباعة..."></textarea>
+</div>
+
+<div class="section-title" style="margin-top:26px;">
+<span class="step-badge">4</span>
+<span>متابعة الطلب والدفع</span>
+</div>
+<div class="payment-box">
+<div style="display:flex; justify-content:space-between; align-items:center;">
+<strong>الباقة المختارة:</strong>
+<span id="totalAmountDisplay" style="font-size:1.3rem; font-weight:800; color:var(--gold-light);">15 ريال</span>
+</div>
+<p style="font-size:0.85rem; opacity:.8; margin-top:8px;">بالضغط على المتابعة ننقل إعداداتك (النوع والألوان والنصوص) إلى صفحة الطلب، فتدفع بالتحويل وترفع الإيصال، ويجهّز فريق أثر الرمز ويسلّمه لك من حسابك.</p>
+</div>
+<button type="button" class="btn-primary" id="continueBtn">متابعة إلى الطلب والدفع (15 ريال)</button>
+<div id="formAlert" class="alert-msg"></div>
+</form>
+
+<!-- العمود الأيسر: المعاينة الحية + قالب البطاقة -->
+<div class="preview-sticky">
+<div class="card">
+<div class="section-title" style="justify-content:space-between;">
+<span>المعاينة الحية</span>
+<span id="activeTypeBadge" style="font-size:0.8rem; color:var(--gold-light); font-weight:700;">مواقع ومتاجر</span>
+</div>
+
+<!-- مبدّل وضع المعاينة: الرمز فقط أو بطاقة طاولة/ستيكر -->
+<div class="view-mode-tabs">
+<button type="button" class="view-tab-btn active" data-mode="qr-only">معاينة الرمز فقط</button>
+<button type="button" class="view-tab-btn" data-mode="card-mockup">معاينة بطاقة طاولة / ستيكر</button>
+</div>
+
+<div class="qr-stage" id="qrStage" oncontextmenu="return false;">
+<div class="card-header-text" id="cardHeaderText">
+<div class="card-brand-title" id="cardTitlePreview">أثر</div>
+<div class="card-brand-sub" id="cardSubPreview">ATHAR STUDIO</div>
+</div>
+
+<div class="qr-frame-box">
+<div id="qrCanvasContainer"></div>
+</div>
+
+<div class="card-footer-cta" id="cardCtaPreview">امسح الكود لزيارة موقعنا</div>
+
+</div>
+
+<!-- تخصيص نصوص البطاقة عند تفعيل وضع البطاقة -->
+<div class="card-text-customizer" id="cardTextCustomizer">
+<div class="two-col">
+<div>
+<label for="cardTitleInput" style="font-size:0.8rem;">اسم المتجر / العنوان أعلى البطاقة</label>
+<input type="text" id="cardTitleInput" value="أثر" style="padding:7px 10px; font-size:0.85rem;" />
+</div>
+<div>
+<label for="cardCtaInput" style="font-size:0.8rem;">العبارة أسفل الرمز</label>
+<input type="text" id="cardCtaInput" value="امسح الكود لزيارة موقعنا" style="padding:7px 10px; font-size:0.85rem;" />
+</div>
+</div>
+</div>
+
+<div class="contrast-status">
+<span><span class="status-dot" id="contrastDot"></span><span id="contrastText">تباين الألوان ممتاز وجاهز للمسح</span></span>
+<span class="en-font" style="color:var(--gold-light); font-size:0.8rem;">ECC: Level H</span>
+</div>
+
+<div class="preview-note">هذه معاينة محمية بعلامة أثر. يصلك الرمز النهائي بدون علامة (PNG وSVG عالي الدقة) بعد اعتماد الدفع.</div>
+</div>
+</div>
+</div>
+</main>
+
+<script>
+let selectedBundle = { id: "single", price: 15, qty: 1 };
+let currentQrType = "website";
+let uploadedLogoDataUrl = null;
+const BUNDLE_KEY = { single: "qrSingle", triple: "qrTriple", print_pack: "qrPrint" };
+const BUNDLE_NAME = { single: "كود واحد مخصص", triple: "باقة 3 أكواد", print_pack: "كود + بطاقة/ستيكر" };
+
+const typeMeta = {
+  website: { label: "مواقع ومتاجر", defaultCta: "امسح الكود لزيارة موقعنا" },
+  whatsapp: { label: "واتساب مباشر", defaultCta: "امسح للتواصل معنا عبر واتساب" },
+  contact: { label: "بيانات اتصال", defaultCta: "امسح لحفظ بيانات الاتصال" },
+  wifi: { label: "شبكة واي فاي", defaultCta: "امسح للاتصال بشبكة الواي فاي" },
+  menu: { label: "منيو مطاعم ومحلات", defaultCta: "امسح الكود لتصفح المنيو" },
+  location: { label: "موقع جغرافي", defaultCta: "امسح للوصول إلى موقعنا" }
+};
+const $ = (id) => document.getElementById(id);
+const val = (id) => ($(id) ? $(id).value.trim() : "");
+
+const qrCode = new QRCodeStyling({
+  width: 220, height: 220, type: "svg",
+  data: "https://athar-website-rose.vercel.app/", image: "",
+  dotsOptions: { color: "#1C1A19", type: "rounded" },
+  backgroundOptions: { color: "#F4EFE6" },
+  imageOptions: { crossOrigin: "anonymous", margin: 6, imageSize: 0.35 },
+  qrOptions: { errorCorrectionLevel: "H" }
+});
+qrCode.append($("qrCanvasContainer"));
+
+function buildQrPayload() {
+  const t = currentQrType;
+  if (t === "website") return val("websiteUrl") || "https://athar-website-rose.vercel.app/";
+  if (t === "whatsapp") {
+    const phone = $("waPhone").value.replace(/\D/g, "") || "966500000000";
+    const msg = val("waMessage");
+    return msg ? "https://wa.me/" + phone + "?text=" + encodeURIComponent(msg) : "https://wa.me/" + phone;
+  }
+  if (t === "contact") {
+    const name = val("contactName") || "ATHAR Client";
+    const org = val("contactOrg") || "ATHAR STUDIO";
+    const phone = val("contactPhone"), email = val("contactEmailField");
+    return ["BEGIN:VCARD", "VERSION:3.0", "FN:" + name, "ORG:" + org, phone ? "TEL:" + phone : "", email ? "EMAIL:" + email : "", "END:VCARD"].filter(Boolean).join("\n");
+  }
+  if (t === "wifi") {
+    const ssid = val("wifiSsid") || "Athar_WiFi", enc = $("wifiEncryption").value, pass = $("wifiPassword").value;
+    const esc = (s) => s.replace(/([\\;,:"])/g, "\\$1");
+    return enc === "nopass" ? "WIFI:T:nopass;S:" + esc(ssid) + ";;" : "WIFI:T:" + enc + ";S:" + esc(ssid) + ";P:" + esc(pass) + ";;";
+  }
+  if (t === "menu") return val("menuUrl") || "https://athar-website-rose.vercel.app/";
+  if (t === "location") return val("locationUrl") || "https://maps.google.com/?q=24.7136,46.6753";
+  return "https://athar-website-rose.vercel.app/";
+}
+
+function checkContrast(hex1, hex2) {
+  const lum = (hex) => {
+    const rgb = parseInt(hex.slice(1), 16);
+    const a = [(rgb >> 16) & 255, (rgb >> 8) & 255, rgb & 255].map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); });
+    return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+  };
+  const ratio = (Math.max(lum(hex1), lum(hex2)) + 0.05) / (Math.min(lum(hex1), lum(hex2)) + 0.05);
+  if (ratio >= 3.2) { $("contrastDot").style.background = "#6bbf8a"; $("contrastText").textContent = "تباين الألوان ممتاز وجاهز للمسح"; }
+  else { $("contrastDot").style.background = "#d96b6b"; $("contrastText").textContent = "تنبيه: التباين ضعيف، يُنصح بزيادة الفرق بين اللونين"; }
+}
+
+function updateQR() {
+  const fg = $("fgColor").value, bg = $("bgColor").value, dotType = $("dotStyle").value;
+  const stage = $("qrStage");
+  stage.style.backgroundColor = bg; stage.style.color = fg;
+  $("activeTypeBadge").textContent = typeMeta[currentQrType].label;
+  $("cardTitlePreview").textContent = $("cardTitleInput").value || "أثر";
+  $("cardCtaPreview").textContent = $("cardCtaInput").value || typeMeta[currentQrType].defaultCta;
+  checkContrast(fg, bg);
+  qrCode.update({
+    data: buildQrPayload(), image: uploadedLogoDataUrl || "",
+    dotsOptions: { color: fg, type: dotType },
+    cornersSquareOptions: { color: fg, type: dotType === "dots" ? "dot" : "extra-rounded" },
+    cornersDotOptions: { color: fg },
+    backgroundOptions: { color: bg }
+  });
+}
+
+document.querySelectorAll(".qr-type-card").forEach((card) => card.addEventListener("click", () => selectType(card.dataset.type)));
+function selectType(type) {
+  if (!typeMeta[type]) return;
+  document.querySelectorAll(".qr-type-card").forEach((c) => c.classList.toggle("active", c.dataset.type === type));
+  currentQrType = type;
+  document.querySelectorAll(".type-panel").forEach((p) => p.classList.remove("active"));
+  $("panel-" + type).classList.add("active");
+  $("cardCtaInput").value = typeMeta[type].defaultCta;
+  if (type === "menu") $("cardTitleInput").value = $("menuStoreName").value || "مقهى وضيافة أثر";
+  updateQR();
+}
+
+document.querySelectorAll(".view-tab-btn").forEach((btn) => btn.addEventListener("click", () => {
+  document.querySelectorAll(".view-tab-btn").forEach((b) => b.classList.remove("active"));
+  btn.classList.add("active");
+  const isCard = btn.dataset.mode === "card-mockup";
+  $("qrStage").classList.toggle("card-mockup-mode", isCard);
+  $("cardTextCustomizer").classList.toggle("visible", isCard);
+}));
+
+document.querySelectorAll(".bundle-option").forEach((card) => card.addEventListener("click", () => {
+  document.querySelectorAll(".bundle-option").forEach((c) => c.classList.remove("active"));
+  card.classList.add("active");
+  selectedBundle = { id: card.dataset.id, price: Number(card.dataset.price), qty: Number(card.dataset.qty) };
+  $("totalAmountDisplay").textContent = selectedBundle.price + " ريال";
+  $("continueBtn").textContent = "متابعة إلى الطلب والدفع (" + selectedBundle.price + " ريال)";
+  $("extraNotesGroup").style.display = selectedBundle.id === "single" ? "none" : "block";
+  if (selectedBundle.id === "print_pack") document.querySelector('.view-tab-btn[data-mode="card-mockup"]').click();
+}));
+
+document.querySelectorAll(".preset-btn").forEach((btn) => btn.addEventListener("click", () => {
+  document.querySelectorAll(".preset-btn").forEach((b) => b.classList.remove("active"));
+  btn.classList.add("active");
+  $("fgColor").value = btn.dataset.fg; $("bgColor").value = btn.dataset.bg;
+  updateQR();
+}));
+
+["websiteUrl","waPhone","waMessage","contactName","contactOrg","contactPhone","contactEmailField","wifiSsid","wifiEncryption","wifiPassword","menuStoreName","menuUrl","locationUrl","fgColor","bgColor","dotStyle","cardTitleInput","cardCtaInput"].forEach((id) => {
+  const el = $(id);
+  if (el) { el.addEventListener("input", updateQR); el.addEventListener("change", updateQR); }
+});
+
+$("logoUpload").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  $("logoFileName").textContent = "تم اختيار: " + file.name;
+  const reader = new FileReader();
+  reader.onload = () => { uploadedLogoDataUrl = reader.result; updateQR(); };
+  reader.readAsDataURL(file);
+});
+
+function describe() {
+  const lines = [
+    "طلب رمز QR مخصص — " + BUNDLE_NAME[selectedBundle.id],
+    "النوع: " + typeMeta[currentQrType].label,
+    "محتوى الرمز: " + buildQrPayload().replace(/\n/g, " | "),
+    "لون الرمز: " + $("fgColor").value + " — الخلفية: " + $("bgColor").value + " — النقاط: " + $("dotStyle").value,
+    "عنوان البطاقة: " + (val("cardTitleInput") || "أثر"),
+    "العبارة أسفل الرمز: " + (val("cardCtaInput") || typeMeta[currentQrType].defaultCta),
+    uploadedLogoDataUrl ? "شعار في منتصف الرمز: نعم (أرفق الشعار في خطوة الطلب)" : "شعار في منتصف الرمز: لا"
+  ];
+  const notes = val("orderNotes");
+  if (notes) lines.push("ملاحظات: " + notes);
+  return lines.join("\n").slice(0, 1500);
+}
+
+$("continueBtn").addEventListener("click", __gated("متابعة طلب رمز QR", () => {
+  const key = BUNDLE_KEY[selectedBundle.id];
+  try { sessionStorage.setItem("athar-qr-draft", JSON.stringify({ key, desc: describe(), at: Date.now() })); } catch (e) {}
+  (window.parent !== window ? window.parent : window).location.hash = "#order-" + key;
+}));
+
+const initType = new URLSearchParams(location.search).get("type");
+if (initType) selectType(initType);
+updateQR();
+</script>
+</body>
+</html>

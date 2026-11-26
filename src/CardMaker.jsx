@@ -309,7 +309,7 @@ export default function CardMaker() {
         </aside>
 
         <section className={`cm-stage ${full ? "full" : ""}`}>
-          <div className="cm-canvas">
+          <div className="cm-canvas athar-wm">
             <div className="cm-tools">
               <button title="تنزيل" aria-label="تنزيل" onClick={() => requireAuth(downloadPng, { label: "تنزيل PNG" })}>⤓</button>
               <button title="مشاركة" aria-label="مشاركة" onClick={share}>⤴</button>

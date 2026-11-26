@@ -227,7 +227,7 @@ export default function CreativeStudio() {
             <h2>معاينة {title}</h2>
             <span className="cs-live">معاينة مباشرة</span>
           </div>
-          <div className="cs-stage">
+          <div className="cs-stage athar-wm">
             <div className={`cs-art ${mode}`} style={{ background: palette.paper, color: palette.ink }} ref={stage}>
               <div className="cs-svg" dangerouslySetInnerHTML={{ __html: svg }} />
             </div>

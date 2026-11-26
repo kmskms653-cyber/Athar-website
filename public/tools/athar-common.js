@@ -4,6 +4,18 @@
   // خارج الموقع (فتح الملف مباشرة): نعيد التوجيه إلى صفحة الأداة داخل الموقع
   if (window.parent === window && route) { location.replace('/#' + route); return; }
 
+  // علامة أثر المائية على مناطق المعاينة (data-wm = محددات CSS)
+  var wmSel = document.documentElement.getAttribute('data-wm');
+  if (wmSel) {
+    var st = document.createElement('style');
+    var sels = wmSel.split(',').map(function (x) { return x.trim(); });
+    st.textContent = sels.map(function (x) { return x + '{position:relative}'; }).join('') +
+      sels.map(function (x) { return x + '::after'; }).join(',') +
+      '{content:"";position:absolute;inset:0;pointer-events:none;z-index:20;user-select:none;background:url(/img/athar-wm-tile.png) center/240px 165px repeat;opacity:.55;border-radius:inherit}' +
+      '@media print{' + sels.map(function (x) { return x + '::after'; }).join(',') + '{display:none}}';
+    document.documentElement.appendChild(st);
+  }
+
   window.__gated = function (label, fn) {
     return function () {
       var args = arguments, self = this;

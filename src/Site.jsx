@@ -6,6 +6,7 @@ import { BUNDLES } from "./bundles";
 import "./home.css";
 import { useReveal } from "./useReveal";
 import { useSession } from "./AuthContext.jsx";
+import { useFeatures } from "./useFeatures.js";
 
 function scrollToId(id) {
   const el = document.getElementById(id);
@@ -127,7 +128,12 @@ export const STUDIOS = [
     items: [["مصور المنتجات الذكي", "#order-productPhoto", "35 ريال للصورة"], ["تصميم عروض المنتجات", "#order-productPresentation", "39 ريال"], ["محتوى بصري للمشاريع والمتاجر", "#order-visualContent", "49 ريال"]] },
   { id: 5, title: "استديو القوالب والتصاميم", text: "قوالب قابلة للتخصيص للمنشورات والإعلانات والهويات.", img: "/img/svc-digital.jpg", href: "#studio-5",
     items: [["قوالب المنشورات", "#studio", "9 ريال للقالب"], ["قوالب الإعلانات", "#order-adTemplates", "19 ريال للقالب"], ["قوالب الهوية التجارية", "#order-brandTemplates", "39 ريال"], ["تصميم أسماء الشركات وشعاراتها وبصمتها", "#creative-corporate", "69 ريال"], ["حزم التصاميم الجاهزة", "store", "29 ريال للحزمة"]] },
+  { id: 6, feature: "qr", title: "QR code", text: "رموز QR احترافية بتصميمك وألوانك وشعارك، وبطاقات طاولة وستيكرات جاهزة للطباعة.", img: "/img/svc-digital.jpg", href: "#studio-6",
+    items: [["رمز QR لمتجر أو موقع", "#qr-website", "15 ريال"], ["رمز QR لواتساب مباشر", "#qr-whatsapp", "15 ريال"], ["رمز QR لبيانات الاتصال", "#qr-contact", "15 ريال"], ["رمز QR لشبكة واي فاي", "#qr-wifi", "15 ريال"], ["رمز QR لمنيو المطاعم", "#qr-menu", "15 ريال"], ["رمز QR لموقع جغرافي", "#qr-location", "15 ريال"], ["بطاقة طاولة / ستيكر مع الرمز", "#qr-website", "49 ريال"]] },
 ];
+
+// الأقسام المخفية تظهر فقط بعد تفعيلها من لوحة الإدارة
+export const visibleStudios = (features, isAdmin = false) => STUDIOS.filter((s) => !s.feature || features?.[s.feature] || isAdmin);
 
 const FEATURES = [
   ["جودة عالية", "M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z M8.5 12l2.5 2.5 4.5-5"],
@@ -143,6 +149,8 @@ const Ico = ({ d, size = 22 }) => (
 
 export default function Site() {
   const c = useContent();
+  const features = useFeatures();
+  const studios = visibleStudios(features);
   const [menu, setMenu] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [slide, setSlide] = useState(0);
@@ -195,7 +203,7 @@ export default function Site() {
           <div className="hm-dd">
             <button onClick={() => go("studios")}>استديوهاتنا <i>▾</i></button>
             <div className="hm-sub">
-              {STUDIOS.map((st) => <a key={st.id} href={st.href || "#studios"} onClick={(e) => { setMenu(false); if (!st.href) { e.preventDefault(); go("studios"); } }}>{st.title}</a>)}
+              {studios.map((st) => <a key={st.id} href={st.href || "#studios"} onClick={(e) => { setMenu(false); if (!st.href) { e.preventDefault(); go("studios"); } }}>{st.title}</a>)}
             </div>
           </div>
           <button onClick={() => go("store")}>الباقات المميزة</button>
@@ -234,7 +242,7 @@ export default function Site() {
       <section className="hm-sec" id="studios">
         <h2 className="hm-h rv" id="services">استديوهاتنا</h2>
         <div className="hm-st">
-          {STUDIOS.map((st, n) => (
+          {studios.map((st, n) => (
             <article className="hm-card hm-studio rv" style={{ "--d": `${n * 70}ms` }} key={st.id}>
               <a className="hm-ph" href={st.href || "#contact"} onClick={(e) => { if (!st.href) { e.preventDefault(); go("contact"); } }} aria-label={st.title} style={{ backgroundImage: `url(${st.img})` }}><b className="hm-num">{st.id}</b></a>
               <div className="hm-cb">
