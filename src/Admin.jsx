@@ -43,6 +43,11 @@ function FeaturesPanel() {
           <span>{label} — {features[k] ? "ظاهر للزوار" : "مخفي"}</span>
         </label>
       ))}
+      <h3 style={{ marginTop: 18 }}>العلامة المائية</h3>
+      <label className="field" style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+        <input type="checkbox" checked={features.wm !== false} disabled={busy} onChange={(e) => toggle("wm", e.target.checked)} />
+        <span>إظهار علامة أثر المائية على معاينات جميع الخدمات قبل الدفع — {features.wm !== false ? "مفعّلة" : "متوقفة"}</span>
+      </label>
       {msg && <p className="ok">{msg}</p>}
     </section>
   );

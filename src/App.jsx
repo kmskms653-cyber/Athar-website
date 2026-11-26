@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useFeatures } from "./useFeatures.js";
 import Site from "./Site.jsx";
 import Admin from "./Admin.jsx";
 import Studio from "./Studio.jsx";
@@ -25,6 +26,7 @@ function useHash() {
 
 export default function App() {
   const hash = useHash();
+  useFeatures();
   if (hash === "#admin") return <Admin />;
   if (hash === "#studio") return <Studio />;
   if (hash === "#account") return <Account />;
