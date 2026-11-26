@@ -469,3 +469,8 @@ section[id] { scroll-margin-top: 90px; }
 .legal-page .am-legal { max-height: none; }
 .legal-page .am-legal-body { overflow: visible; }
 .svh .ic .ic-img { width: 110px; height: 110px; object-fit: cover; border-radius: 14px; display: block; }
+
+/* علامة أثر المائية على كل المعاينات قبل الدفع (طبقة فوق المعاينة فقط، لا تدخل في الملفات المصدَّرة) */
+.athar-wm { position: relative; }
+.athar-wm::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 20; user-select: none; background: url(/img/athar-wm-tile.png) center / 240px 165px repeat; opacity: 0.55; }
+@media print { .athar-wm::after { display: none; } }

@@ -34,7 +34,9 @@ export default function App() {
   if (hash === "#digital-card" || hash === "#cards-custom") return <ToolFrame tool="card" />;
   if (/^#cards(-[a-z]+)?$/.test(hash)) return <CardMaker />;
   if (/^#creative(-(personal|corporate|signature|mark))?$/.test(hash)) return <CreativeStudio />;
-  const hb = /^#studio-([1-5])$/.exec(hash);
+  const qm = /^#qr(?:-(website|whatsapp|contact|wifi|menu|location))?$/.exec(hash);
+  if (qm) return <ToolFrame tool="qr" type={qm[1] || ""} />;
+  const hb = /^#studio-([1-6])$/.exec(hash);
   if (hb) return <StudioHub id={Number(hb[1])} />;
   if (hash === "#cartoon") return <CartoonStudio />;
   const so = /^#order-([a-zA-Z0-9]+)$/.exec(hash);

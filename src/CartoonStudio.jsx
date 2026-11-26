@@ -124,7 +124,7 @@ export default function CartoonStudio() {
           <p className="note small">المعالجة محلية في المتصفح؛ لا تُرفع صورتك عند استخدام التحويل الفوري.</p>
         </div>
         <div className="cartoon-result">
-          {ready ? <canvas ref={canvasRef} aria-label="الصورة بعد التحويل" /> :
+          {ready ? <div className="athar-wm" style={{ display: "block" }}><canvas ref={canvasRef} aria-label="الصورة بعد التحويل" style={{ display: "block", maxWidth: "100%" }} /></div> :
             <div className="cartoon-empty">ستظهر النتيجة هنا بعد التحويل</div>}
           {ready && <button className="btn" onClick={() => saveCanvas(canvasRef.current)}>تنزيل الصورة</button>}
         </div>

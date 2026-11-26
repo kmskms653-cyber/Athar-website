@@ -28,7 +28,8 @@ service cloud.firestore {
     function serviceUnit(svc) {
       return {
         'cartoon3d': 19, 'adventure': 69, 'stickers': 29, 'productPhoto': 35,
-        'productPresentation': 39, 'visualContent': 49, 'adTemplates': 19, 'brandTemplates': 39
+        'productPresentation': 39, 'visualContent': 49, 'adTemplates': 19, 'brandTemplates': 39,
+        'qrSingle': 15, 'qrTriple': 39, 'qrPrint': 49
       }.get(svc, 0);
     }
 
