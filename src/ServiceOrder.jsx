@@ -16,8 +16,9 @@ export default function ServiceOrder({ keyName }) {
   const features = useFeatures();
   const [photos, setPhotos] = useState([]);
   const [desc, setDesc] = useState(() => {
-    if (!/^qr/.test(keyName)) return "";
-    try { const d = JSON.parse(sessionStorage.getItem("athar-qr-draft") || "null"); return d && d.key === keyName ? d.desc : ""; } catch { return ""; }
+    const dk = /^qr/.test(keyName) ? "athar-qr-draft" : /^biz/.test(keyName) ? "athar-biz-draft" : "";
+    if (!dk) return "";
+    try { const d = JSON.parse(sessionStorage.getItem(dk) || "null"); return d && d.key === keyName ? d.desc : ""; } catch { return ""; }
   });
   const [sender, setSender] = useState("");
   const [receipt, setReceipt] = useState(null);
