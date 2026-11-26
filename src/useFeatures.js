@@ -3,7 +3,7 @@ import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "./firebase";
 
 // أقسام مخفية تُفعَّل من لوحة الإدارة (الوثيقة العامة site/features). الافتراضي: مخفية.
-export const FEATURE_DEFAULTS = { qr: false, bizAds: false, bizProducts: false, bizMenu: false };
+export const FEATURE_DEFAULTS = { qr: false, bizAds: false, bizProducts: false, bizMenu: false, wm: true };
 
 export function useFeatures() {
   const [f, setF] = useState(FEATURE_DEFAULTS);
@@ -12,5 +12,9 @@ export function useFeatures() {
     (snap) => setF({ ...FEATURE_DEFAULTS, ...(snap.exists() ? snap.data() : {}) }),
     () => setF(FEATURE_DEFAULTS)
   ), []);
+  useEffect(() => {
+    const el = document.documentElement;
+    if (f.wm === false) el.setAttribute("data-wm-off", "1"); else el.removeAttribute("data-wm-off");
+  }, [f.wm]);
   return f;
 }

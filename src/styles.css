@@ -473,4 +473,5 @@ section[id] { scroll-margin-top: 90px; }
 /* علامة أثر المائية على كل المعاينات قبل الدفع (طبقة فوق المعاينة فقط، لا تدخل في الملفات المصدَّرة) */
 .athar-wm { position: relative; }
 .athar-wm::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 20; user-select: none; background: url(/img/athar-wm-tile.png) center / 240px 165px repeat; opacity: 0.55; }
+[data-wm-off] .athar-wm::after { display: none; }
 @media print { .athar-wm::after { display: none; } }
