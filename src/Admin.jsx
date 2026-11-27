@@ -19,7 +19,7 @@ import {
   testAdminKey,
   validateBridgeUrl,
 } from "./drive";
-import { useFeatures } from "./useFeatures.js";
+import { useFeatures, WM_SERVICES } from "./useFeatures.js";
 import Receipt from "./Receipt.jsx";
 import DriveReceipt from "./DriveReceipt.jsx";
 
@@ -29,7 +29,7 @@ function FeaturesPanel() {
   const [msg, setMsg] = useState("");
   async function toggle(key, on) {
     setBusy(true); setMsg("");
-    try { await setDoc(doc(db, "site", "features"), { [key]: on }, { merge: true }); setMsg(on ? "تم إظهار القسم للزوار." : "تم إخفاء القسم عن الزوار."); }
+    try { await setDoc(doc(db, "site", "features"), { [key]: on }, { merge: true }); setMsg(on ? "تم التفعيل." : "تم الإيقاف."); }
     catch (e) { setMsg("تعذر الحفظ: " + (e.code || e.message)); }
     setBusy(false);
   }
@@ -48,6 +48,13 @@ function FeaturesPanel() {
         <input type="checkbox" checked={features.wm !== false} disabled={busy} onChange={(e) => toggle("wm", e.target.checked)} />
         <span>إظهار علامة أثر المائية على معاينات جميع الخدمات قبل الدفع — {features.wm !== false ? "مفعّلة" : "متوقفة"}</span>
       </label>
+      <p className="muted" style={{ marginTop: 10 }}>التحكم لكل خدمة على حدة (يعمل عندما يكون المفتاح العام أعلاه مفعّلاً):</p>
+      {WM_SERVICES.map(([k, label]) => (
+        <label key={k} className="field" style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+          <input type="checkbox" checked={features["wm_" + k] !== false} disabled={busy} onChange={(e) => toggle("wm_" + k, e.target.checked)} />
+          <span>{label} — {features["wm_" + k] !== false ? "العلامة ظاهرة" : "العلامة متوقفة"}</span>
+        </label>
+      ))}
       {msg && <p className="ok">{msg}</p>}
     </section>
   );
